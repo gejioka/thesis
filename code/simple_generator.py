@@ -97,8 +97,10 @@ def check_arguments(args):
 
 if __name__=="__main__":
     check_arguments(argv)
-    if(argv[1] == "--help"):
-        exit(1)
+
+    if(len(argv) > 1):
+        if(argv[1] == "--help"):
+            exit(1)
 
     print "number of nodes", gv.NUMBEROFNODES
     print "number of neighbors", gv.NUMBEROFNEIGHBORS
