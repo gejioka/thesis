@@ -28,6 +28,30 @@ class Node:
         """
         return self.name
     
+    def set_layer(self,layer):
+        """
+        Description: Set layer of node
+
+        Args:
+            layer (int): A variable for the layer
+
+        Returns:
+            -
+        """
+        self.layer = layer
+    
+    def get_layer(self):
+        """
+        Description: Return layer of node
+
+        Args:
+            -
+
+        Returns:
+            layer
+        """
+        return self.layer
+
     def find_N_of_u(self,intralinks,interlinks):
         """
         Description: Find N(u) where u is specific node
@@ -242,6 +266,18 @@ class Node:
             self.N2_of_u = [x for x in self.N2_of_u if x not in self.N_of_u]
         return self.N2_of_u
     
+    def get_N2_of_u(self):
+        """
+        Description: Return two hopes away neighbors of this node
+
+        Args:
+            -
+
+        Returns:
+            N2_of_u
+        """
+        return self.N2_of_u
+    
     def find_node_obj_by_name(self,name,list_of_objects):
         """
         Description: Find node object by name
@@ -278,7 +314,7 @@ class Node:
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_clPCI()))
         self.Nu_xPCIs_list.sort(key=lambda tup: tup[1],reverse=True)
     
-    def check_for_dominator(self):
+    def check_for_dominator(self,list_of_objects):
         #TODO: Check if exist node in CDS which belongs to N(u) and if dont add other neighbor of u to CDS
         node_obj = self.find_node_obj_by_name(self.get_name(),list_of_objects)
         for dominator in connected_dominating_set:
@@ -286,7 +322,7 @@ class Node:
                 return dominator
         return None
 
-    def find_dominator(self):
+    def find_dominator(self,list_of_objects):
         """
         Description: Find dominator of node
 
@@ -296,7 +332,7 @@ class Node:
         Returns:
             -
         """
-        dominator = self.check_for_dominator()
+        dominator = self.check_for_dominator(list_of_objects)
         value = filter(lambda tup: self.Nu_xPCIs_list[0][0] in tup, connected_dominating_set)
         if value:
             position = connected_dominating_set.index(value[0])
@@ -352,5 +388,5 @@ class Node:
         Returns:
             New representation of str
         """
-        string_obj = "Name of node is: " + str(self.name) + "\n" + "N(u) is: " + str(self.N_of_u) + "\n" + "N2(u) is: " + str(self.N2_of_u) + "\n" + "xPCI is: " + str(self.xPCI_value)
+        string_obj = "Name of node is: " + str(self.name) + "\n" + "Layer of node is: " + str(self.layer) + "\n" + "Intra-layer links are: " + str(self.intralinks) + "\n" + "Inter-layer links are: " + str(self.interlinks) + "\n" + "N(u) is: " + str(self.N_of_u) + "\n" + "N2(u) is: " + str(self.N2_of_u) + "\n" + "xPCI is: " + str(self.xPCI_value) + "\n" + "Unique links are: " + str(self.unique_links) + "\n"
         return string_obj

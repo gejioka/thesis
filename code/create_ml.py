@@ -1,6 +1,7 @@
 from metrics import *
 from node import *
 from global_variables import *
+import network_parser as np
 import sys
 import ast
 import os.path
@@ -64,6 +65,7 @@ def create_dict_of_nodes(path):
     with open(path,"r") as f:
         for line in f:
             if line[0] != "#" and len(line) > 1:
+                line = line.replace(" ","")
                 item = re.split(' |\t',line)
                 item = filter(None,item)
                 neighbors = item[2].split(";")
@@ -72,24 +74,9 @@ def create_dict_of_nodes(path):
                 intralayer_links = find_intralayer_links(int(item[1]),neighbors)
                 interlayer_links = find_interlayer_links(int(item[1]),neighbors)
 
-                links[item[0]] = {"intralinks" : intralayer_links, "interlinks" : interlayer_links}
+                links[item[0]] = {"layer" : item[1], "intralinks" : intralayer_links, "interlinks" : interlayer_links}
     return links
-
-def create_objects_of_nodes(nodes):
-    for node in nodes:
-        node_obj = Node(node)
-        node_obj.set_intralinks(nodes[node]["intralinks"])
-        node_obj.set_interlinks(nodes[node]["interlinks"])
-        node_obj.find_N_of_u(nodes[node]["intralinks"],nodes[node]["interlinks"])
-        node_obj.find_N2_of_u(nodes)
-        result = find_xPCI(nodes,node)
-        node_obj.set_xPCI(result[0])
-        node_obj.set_xPCI_nodes(result[1])
-
-        list_of_objects.append(node_obj)
     
-    return list_of_objects
-
 def check_args(args):
     """
     Description: Check if user's argument is correct
@@ -122,16 +109,30 @@ def check_args(args):
     
     return pci
 
+def choose_parser(path):
+    with open(path,"r") as f:
+        for line in f:
+            if ";" in line:
+                return 1
+    return 2
+
 if __name__=="__main__":
     pci = check_args(sys.argv)
-    links = create_dict_of_nodes(sys.argv[1])
-    list_of_objects = create_objects_of_nodes(links)
+    parser = choose_parser(sys.argv[1])
+    if parser == 1:
+        links = create_dict_of_nodes(sys.argv[1])
+        list_of_objects = create_objects_of_nodes(links)
+    else:
+        np.parser()
     for node in list_of_objects:
         unique_links = find_links_between_neighbors(node.get_xPCI_nodes())
         node.set_unique_links_between_nodes(unique_links)
         node.find_clPCI()
         node.find_Nu_PCIs(list_of_objects,pci)
-        node.find_dominator()
+        node.find_dominator(list_of_objects)
     for node in list_of_objects:
         node.add_node_in_CDS()
-    print_CDS()
+    for node in list_of_objects:
+        print str(node)
+    #print_CDS()
+    

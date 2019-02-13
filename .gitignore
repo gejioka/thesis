@@ -1,3 +1,6 @@
 code/networks/*
 code/*.pyc
+code/example.py
 papers/*
+generators/*
+network_samples/*

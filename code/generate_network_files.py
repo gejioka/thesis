@@ -1,10 +1,7 @@
 from __future__ import division
 from random import randint
-from sys import *
-import random
-import time
 import global_variables as gv
-
+from sys import *
 
 def generate_layers_of_nodes():
     """
@@ -18,20 +15,12 @@ def generate_layers_of_nodes():
     """
     nodes_layers_list = []
     for node in range(gv.NUMBEROFNODES):
-        nodes_layers_list.append(((str(node),randint(1,gv.NUMBEROFLAYERS)),[]))
+        nodes_layers_list.append((str(node),randint(1,gv.NUMBEROFLAYERS)))
     nodes_layers_list.sort(key=lambda tup: tup[1],reverse=False)
     
     return nodes_layers_list
 
-def add_neighbor_to_node(node,neighbor):
-    for i in range(len(nodes_layers_list)):
-        if nodes_layers_list[i][0] == node and node[0] in neighbor[1]:
-            nodes_layers_list[i][1].append(neighbor[0])
-            break
-    
-    return nodes_layers_list
-
-def generate_neighbors(nodes_layers_list,node,first_time):
+def generate_neighbors(nodes_layers_list):
     """
     Description: Generate neighbors of the specific node
 
@@ -41,38 +30,16 @@ def generate_neighbors(nodes_layers_list,node,first_time):
     Returns:
         A list with all neighbors of this node
     """
-    is_central = bool(random.getrandbits(1))
+    neighbors = []
+    num_of_neighbors = randint(1,gv.NUMBEROFNEIGHBORS)
+
+    for neighbor in range(num_of_neighbors):
+        temp_neighbor = str(randint(0,gv.NUMBEROFNODES))
+        value = filter(lambda tup: temp_neighbor in tup, nodes_layers_list)
+        if value and value[0] not in neighbors:
+            neighbors.append(value[0])
     
-    if is_central and gv.NUMBEROFCENTRALNODES > 0:
-        num_of_neighbors = gv.NUMBEROFCENTRALNODESNEIGHBORS
-        gv.central_nodes.append(node)
-        gv.NUMBEROFCENTRALNODES -= 1
-    else:
-        num_of_neighbors = randint(1,gv.NUMBEROFNEIGHBORS)
-
-    for i in range(len(nodes_layers_list)):
-        if node[0] in nodes_layers_list[i][1] and nodes_layers_list[i][0] not in node[1]:
-            node[1].append(nodes_layers_list[i][0])
-            num_of_neighbors -= 1
-
-    for i in range(len(nodes_layers_list)):
-        if nodes_layers_list[i][0] == node[0]:
-            nodes_layers_list[i] = node
-            break
-
-    if first_time:    
-        i = 0
-        while i < num_of_neighbors:
-            neighbor = random.choice(nodes_layers_list)
-            if neighbor[0] != node[0]:
-                for j in range(len(nodes_layers_list)):
-                    if nodes_layers_list[j][0] == node[0] and neighbor[0] not in node[1]:
-                        nodes_layers_list[j][1].append(neighbor[0])
-                        nodes_layers_list = add_neighbor_to_node(neighbor,node)
-                        i += 1
-                        break
-    
-    return nodes_layers_list
+    return neighbors
 
 def create_str(node,layer,neighbors):
     """
@@ -88,12 +55,12 @@ def create_str(node,layer,neighbors):
     """
     string_to_write = node + "\t" + str(layer) + "\t"
     for neighbor in neighbors:
-        string_to_write += str(neighbor).replace(" ","") + ";"
+        string_to_write += str(neighbor) + ";"
     if string_to_write[len(string_to_write)-1] == ';':
         string_to_write = string_to_write[:-1]
     
     return string_to_write
-
+    
 def check_arguments(args):
     if len(argv) > 2:
         print "Takes maximum 2 arguments. (3 given)"
@@ -109,16 +76,12 @@ def check_arguments(args):
             print "\tenormous:\tCreate a network with 10000 nodes, maximum 5000 neighbors and 1000 layers"
         elif argv[1] == "small":
             gv.set_number_of_nodes(gv.SMALL)
-            gv.set_number_of_neighbors(int(gv.SMALL/5))
-            gv.set_number_of_central_nodes(int(gv.SMALL/10))
-            gv.set_number_of_neighbors_for_central_nodes(argv[1])
+            gv.set_number_of_neighbors(int(gv.SMALL/2))
             gv.set_number_of_layers(int(gv.SMALL/10))
         elif argv[1] == "medium":
             gv.set_number_of_nodes(gv.MEDIUM)
-            gv.set_number_of_neighbors(int(gv.MEDIUM/50))
-            gv.set_number_of_central_nodes(int(5))
-            gv.set_number_of_neighbors_for_central_nodes(argv[1])
-            gv.set_number_of_layers(int(gv.MEDIUM/20))
+            gv.set_number_of_neighbors(int(gv.MEDIUM/2))
+            gv.set_number_of_layers(int(gv.MEDIUM/10))
         elif argv[1] == "large":
             gv.set_number_of_nodes(gv.LARGE)
             gv.set_number_of_neighbors(int(gv.LARGE/2))
@@ -139,6 +102,10 @@ if __name__=="__main__":
         if(argv[1] == "--help"):
             exit(1)
 
+    print "number of nodes", gv.NUMBEROFNODES
+    print "number of neighbors", gv.NUMBEROFNEIGHBORS
+    print "number of layers", gv.NUMBEROFLAYERS
+
     nodes_layers_list = generate_layers_of_nodes()
 
     type_of_network = ""
@@ -148,24 +115,8 @@ if __name__=="__main__":
         type_of_network = "medium"
 
     with open("networks/dynamic_" + type_of_network + "_network.txt","a") as f:
-        stdout.write("Start writing network.")
-        stdout.flush()
-        time.sleep(1)
-        stdout.write(".")
-        stdout.flush()
-        time.sleep(1)
-        stdout.write(".")
-        stdout.flush()
-        time.sleep(1)
-        f.truncate(0)
         for node in nodes_layers_list:
-            nodes_layers_list = generate_neighbors(nodes_layers_list,node,True)
-        
-        for node in nodes_layers_list:
-            nodes_layers_list = generate_neighbors(nodes_layers_list,node,False)
-
-        for node in nodes_layers_list:
-            string_to_write = create_str(node[0][0],node[0][1],node[1])
+            neighbors = generate_neighbors(nodes_layers_list)
+            string_to_write = create_str(node[0],node[1],neighbors)
             f.write(string_to_write)
             f.write("\n")
-        print "\nA new network created!"
