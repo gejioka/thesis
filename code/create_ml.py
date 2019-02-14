@@ -1,7 +1,9 @@
 from metrics import *
 from node import *
 from global_variables import *
+from graph import *
 import network_parser as np
+import time
 import sys
 import ast
 import os.path
@@ -65,7 +67,7 @@ def create_dict_of_nodes(path):
     with open(path,"r") as f:
         for line in f:
             if line[0] != "#" and len(line) > 1:
-                line = line.replace(" ","")
+                line = line.replace(", ","")
                 item = re.split(' |\t',line)
                 item = filter(None,item)
                 neighbors = item[2].split(";")
@@ -116,14 +118,44 @@ def choose_parser(path):
                 return 1
     return 2
 
+def check_connectivity(node_obj,connectivity_list):
+    """
+    Description: Check if dominating set is connected
+
+    Args:
+        node_obj (Node): An object representation of node
+        connectivity_list (list): A list with all connected nodes in DS
+    Returns:
+        connectivity list
+    """
+    connectivity_list.append(node_obj.get_name())
+    for neighbor in node_obj.get_N_of_u():
+        if neighbor in [a[0] for a in connected_dominating_set] and neighbor not in connectivity_list:
+            neighbor_obj = find_node_obj_by_name(neighbor,list_of_objects)
+            connectivity_list = check_connectivity(neighbor_obj,connectivity_list)
+    return connectivity_list
+
 if __name__=="__main__":
     pci = check_args(sys.argv)
     parser = choose_parser(sys.argv[1])
+    
     if parser == 1:
+        print "Process 1 of 3"
+        start = time.time()
         links = create_dict_of_nodes(sys.argv[1])
+        end = time.time()
+        print "Time running process 1:", end-start
+        
+        print "Process 2 of 3"
+        start = time.time()
         list_of_objects = create_objects_of_nodes(links)
+        end = time.time()
+        print "Time running process 2:", end-start
     else:
         np.parser()
+
+    print "Process 3 of 3"
+    start = time.time()
     for node in list_of_objects:
         unique_links = find_links_between_neighbors(node.get_xPCI_nodes())
         node.set_unique_links_between_nodes(unique_links)
@@ -132,7 +164,20 @@ if __name__=="__main__":
         node.find_dominator(list_of_objects)
     for node in list_of_objects:
         node.add_node_in_CDS()
-    for node in list_of_objects:
-        print str(node)
-    #print_CDS()
+    
+    end = time.time()
+    print "Time running process 3:", end-start
+
+    print "An extra process for connectivity"
+    start = time.time()
+    connectivity_list = check_connectivity(find_node_obj_by_name(connected_dominating_set[0][0],list_of_objects),[])
+    if len(set(connectivity_list) & set([a[0] for a in connected_dominating_set])) == len(connected_dominating_set):
+        print "DS is connected"
+    else:
+        print "DS is not connected"
+    end = time.time()
+    print "Time running extra process:", end-start
+    
+    print_CDS()
+    create_graph()
     

@@ -9,10 +9,8 @@ def add_nodes(G):
             try:
                 if neighbor not in G.neighbors(node.get_name()):
                     edges.append((node.get_name(),neighbor))
-                    #G.add_nodes_from((node.get_name(),neighbor))
             except:
                 edges.append((node.get_name(),neighbor))
-                #G.add_nodes_from((node.get_name(),neighbor))
     
     G.add_edges_from(edges)
     

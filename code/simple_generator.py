@@ -114,7 +114,7 @@ if __name__=="__main__":
     else:
         type_of_network = "medium"
 
-    with open("networks/dynamic_" + type_of_network + "_network.txt","a") as f:
+    with open("networks/dynamic_" + type_of_network + "_network.txt","w") as f:
         for node in nodes_layers_list:
             neighbors = generate_neighbors(nodes_layers_list)
             string_to_write = create_str(node[0],node[1],neighbors)

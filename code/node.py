@@ -66,7 +66,7 @@ class Node:
         self.N_of_u = intralinks
         for neighbor in interlinks:
             self.N_of_u = self.N_of_u + interlinks[neighbor]
-
+    
     def set_N_of_u(self,N_of_u):
         """
         Description: Set N(u)

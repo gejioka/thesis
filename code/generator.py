@@ -115,10 +115,8 @@ def check_arguments(args):
             gv.set_number_of_layers(int(gv.SMALL/10))
         elif argv[1] == "medium":
             gv.set_number_of_nodes(gv.MEDIUM)
-            gv.set_number_of_neighbors(int(gv.MEDIUM/50))
-            gv.set_number_of_central_nodes(int(5))
-            gv.set_number_of_neighbors_for_central_nodes(argv[1])
-            gv.set_number_of_layers(int(gv.MEDIUM/20))
+            gv.set_number_of_neighbors(int(gv.MEDIUM/2))
+            gv.set_number_of_layers(int(gv.MEDIUM/10))
         elif argv[1] == "large":
             gv.set_number_of_nodes(gv.LARGE)
             gv.set_number_of_neighbors(int(gv.LARGE/2))
