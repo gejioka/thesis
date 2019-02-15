@@ -24,6 +24,16 @@ def generate_layers_of_nodes():
     return nodes_layers_list
 
 def add_neighbor_to_node(node,neighbor):
+    """
+    Description: Add a new node as neighbor of this node
+
+    Args:
+        node (tuple): A variable for specific node
+        neighbor (tuple): A variable for specific neighbor of node
+
+    Returns:
+        nodes_layer_list
+    """
     for i in range(len(nodes_layers_list)):
         if nodes_layers_list[i][0] == node and node[0] in neighbor[1]:
             nodes_layers_list[i][1].append(neighbor[0])

@@ -3,6 +3,15 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 def add_nodes(G):
+    """
+    Description: Add nodes to graph
+
+    Args:
+        G (Graph): An object represent this network
+
+    Returns:
+        G
+    """
     edges = []
     for node in list_of_objects:
         for neighbor in node.get_N_of_u():
@@ -17,6 +26,15 @@ def add_nodes(G):
     return G
     
 def create_graph():
+    """
+    Description: Create and plot final network
+
+    Args:
+        -
+
+    Returns:
+        -
+    """
     G = nx.Graph()
     G = add_nodes(G)
     nx.draw(G,with_labels = True)

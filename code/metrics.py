@@ -29,6 +29,15 @@ def different_layers_node_reach(nodes,key):
     return len(nodes["key"]["interlinks"])
 
 def find_links_between_neighbors(pci_nodes):
+    """
+    Description: Find all links between neighbors which partitiate PCI of specific node
+
+    Args:
+        pci_nodes (list): A list with pci of nodes
+
+    Returns:
+        The unique links between neighbors participate to PCI of this node
+    """
     unique_links = 0    # All unique links between nodes that participate xPCI
     list_of_links = []      # A list with all nodes have links with other nodes
     for node in pci_nodes:

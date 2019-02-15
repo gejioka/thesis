@@ -3,11 +3,20 @@ from node import *
 import sys
 
 def parser():
+    """
+    Description: Parse a file represents a network and create the first structure for this
+
+    Args:
+        -
+
+    Returns:
+        -
+    """
     if len(sys.argv) < 2:
-        print "Network parser takes exactly 2 arguments (1 given)" 
+        print "Network parser takes exactly 2 arguments (" + str(len(sys.argv)) + " given)" 
         exit(1)
 
-    line_number = 0
+    line_number = 0     # A variable for number of line in file
     try:
         filename = sys.argv[1]
         with open(filename,"r") as f:
@@ -16,6 +25,7 @@ def parser():
             number_of_layers    = 0 
             for line in f:
                 item = line.rstrip().split("\t")
+                # Parse all different types of lines in file
                 if line_number == 0:
                     number_of_nodes = item[0]
                     print "Number of nodes is:", item[0]

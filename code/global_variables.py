@@ -90,6 +90,15 @@ def set_number_of_neighbors_for_central_nodes(network_type):
         NUMBEROFCENTRALNODESNEIGHBORS = ENORMOUS/20
 
 def create_objects_of_nodes(nodes):
+    """
+    Description: Create all objects of nodes for this network
+
+    Args:
+        nodes (dictionary): A dictionary with all nodes
+
+    Returns:
+        list_of_objecs
+    """
     import node
 
     for key in nodes:

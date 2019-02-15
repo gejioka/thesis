@@ -315,7 +315,15 @@ class Node:
         self.Nu_xPCIs_list.sort(key=lambda tup: tup[1],reverse=True)
     
     def check_for_dominator(self,list_of_objects):
-        #TODO: Check if exist node in CDS which belongs to N(u) and if dont add other neighbor of u to CDS
+        """
+        Description: Check if all nodes has dominators
+
+        Args:
+            list_of_objects (list): A list with all node objects
+
+        Returns:
+            dominator or None if doesn't exist
+        """
         node_obj = self.find_node_obj_by_name(self.get_name(),list_of_objects)
         for dominator in connected_dominating_set:
             if dominator[0] in node_obj.get_N_of_u():

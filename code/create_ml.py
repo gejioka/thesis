@@ -112,6 +112,14 @@ def check_args(args):
     return pci
 
 def choose_parser(path):
+    """
+    Description: Choose parser for specific file
+
+    Args:
+        path (String): The path of specific file
+    Returns:
+        An int represents 1 of 2 parsers
+    """
     with open(path,"r") as f:
         for line in f:
             if ";" in line:
@@ -180,4 +188,3 @@ if __name__=="__main__":
     
     print_CDS()
     create_graph()
-    
