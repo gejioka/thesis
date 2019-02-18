@@ -3,6 +3,7 @@ from node import *
 from global_variables import *
 from graph import *
 import network_parser as np
+import ml_visualization as mlv
 import time
 import sys
 import ast
@@ -187,4 +188,5 @@ if __name__=="__main__":
     print "Time running extra process:", end-start
     
     print_CDS()
+    mlv.multilayer_visualization()
     create_graph()
