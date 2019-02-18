@@ -13,7 +13,7 @@ def add_nodes(G):
         G
     """
     edges = []
-    for node in list_of_objects:
+    for name, node in dict_of_objects.iteritems():
         for neighbor in node.get_N_of_u():
             try:
                 if neighbor not in G.neighbors(node.get_name()):

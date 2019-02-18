@@ -68,7 +68,7 @@ def create_dict_of_nodes(path):
     with open(path,"r") as f:
         for line in f:
             if line[0] != "#" and len(line) > 1:
-                line = line.replace(", ","")
+                line = line.replace(", ",",")
                 item = re.split(' |\t',line)
                 item = filter(None,item)
                 neighbors = item[2].split(";")
@@ -139,9 +139,8 @@ def check_connectivity(node_obj,connectivity_list):
     """
     connectivity_list.append(node_obj.get_name())
     for neighbor in node_obj.get_N_of_u():
-        if neighbor in [a[0] for a in connected_dominating_set] and neighbor not in connectivity_list:
-            neighbor_obj = find_node_obj_by_name(neighbor,list_of_objects)
-            connectivity_list = check_connectivity(neighbor_obj,connectivity_list)
+        if neighbor in connected_dominating_set and neighbor not in connectivity_list:
+            connectivity_list = check_connectivity(dict_of_objects[neighbor],connectivity_list)
     return connectivity_list
 
 if __name__=="__main__":
@@ -157,7 +156,9 @@ if __name__=="__main__":
         
         print "Process 2 of 3"
         start = time.time()
-        list_of_objects = create_objects_of_nodes(links)
+        dict_of_objects = create_objects_of_nodes(links)
+        # Release links
+        links = None
         end = time.time()
         print "Time running process 2:", end-start
     else:
@@ -165,13 +166,13 @@ if __name__=="__main__":
 
     print "Process 3 of 3"
     start = time.time()
-    for node in list_of_objects:
+    for name, node in dict_of_objects.iteritems():
         unique_links = find_links_between_neighbors(node.get_xPCI_nodes())
         node.set_unique_links_between_nodes(unique_links)
         node.find_clPCI()
-        node.find_Nu_PCIs(list_of_objects,pci)
-        node.find_dominator(list_of_objects)
-    for node in list_of_objects:
+        node.find_Nu_PCIs(dict_of_objects,pci)
+        node.find_dominator(dict_of_objects)
+    for name, node in dict_of_objects.iteritems():
         node.add_node_in_CDS()
     
     end = time.time()
@@ -179,14 +180,15 @@ if __name__=="__main__":
 
     print "An extra process for connectivity"
     start = time.time()
-    connectivity_list = check_connectivity(find_node_obj_by_name(connected_dominating_set[0][0],list_of_objects),[])
-    if len(set(connectivity_list) & set([a[0] for a in connected_dominating_set])) == len(connected_dominating_set):
-        print "DS is connected"
-    else:
-        print "DS is not connected"
+    connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[])
     end = time.time()
     print "Time running extra process:", end-start
+
+    if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
+        print "\nDS is connected\n"
+    else:
+        print "\nDS is not connected\n"
     
     print_CDS()
-    mlv.multilayer_visualization()
-    create_graph()
+    #mlv.multilayer_visualization()
+    #create_graph()

@@ -41,7 +41,7 @@ def find_links_between_neighbors(pci_nodes):
     unique_links = 0    # All unique links between nodes that participate xPCI
     list_of_links = []      # A list with all nodes have links with other nodes
     for node in pci_nodes:
-        node_obj = find_node_obj_by_name(node[0],list_of_objects)
+        node_obj = dict_of_objects[node[0]]
         for neighbor in node_obj.get_N_of_u():
             if filter(lambda tup: neighbor in tup, pci_nodes):
                 if neighbor < node[0] and (neighbor,node[0]) not in list_of_links:
@@ -52,22 +52,6 @@ def find_links_between_neighbors(pci_nodes):
                     unique_links += 1
     
     return unique_links
-
-def find_node_obj_by_name(name,list_of_objects):
-        """
-        Description: Find node object by name
-
-        Args:
-            name (String): The name of node
-            list_of_objects (list): A list with all node objects
-
-        Returns:
-            Node with specific name or None if doesn't exist
-        """
-        for node in list_of_objects:
-            if node.get_name() == name:
-                return node
-        return None
 
 def random_nodes(list_of_nodes,pci_value):
     """

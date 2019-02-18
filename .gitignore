@@ -3,6 +3,7 @@ code/*.pyc
 code/build
 code/dist
 code/pymnet*
+code/tests
 papers/*
 generators/*
 network_samples/*

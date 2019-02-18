@@ -277,36 +277,20 @@ class Node:
             N2_of_u
         """
         return self.N2_of_u
-    
-    def find_node_obj_by_name(self,name,list_of_objects):
-        """
-        Description: Find node object by name
 
-        Args:
-            name (String): The name of node
-            list_of_objects (list): A list with all node objects
-
-        Returns:
-            Node with specific name or None if doesn't exist
-        """
-        for node in list_of_objects:
-            if node.get_name() == name:
-                return node
-        return None
-
-    def find_Nu_PCIs(self,list_of_objects,pci):
+    def find_Nu_PCIs(self,dict_of_objects,pci):
         """
         Description: Add all xPCI values of neighbors to a list and sort it
 
         Args:
-            list_of_objects (list): A list with all node objects
+            dict_of_objects (list): A list with all node objects
 
         Returns:
             -
         """
         self.Nu_xPCIs_list = []
         for neighbor in self.N_of_u:
-            node_obj = self.find_node_obj_by_name(neighbor,list_of_objects)
+            node_obj = dict_of_objects[neighbor]
             if node_obj != None:
                 if pci == "x":
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_xPCI()))
@@ -314,23 +298,23 @@ class Node:
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_clPCI()))
         self.Nu_xPCIs_list.sort(key=lambda tup: tup[1],reverse=True)
     
-    def check_for_dominator(self,list_of_objects):
+    def check_for_dominator(self,dict_of_objects):
         """
         Description: Check if all nodes has dominators
 
         Args:
-            list_of_objects (list): A list with all node objects
+            dict_of_objects (list): A list with all node objects
 
         Returns:
             dominator or None if doesn't exist
         """
-        node_obj = self.find_node_obj_by_name(self.get_name(),list_of_objects)
+        node_obj = dict_of_objects[self.get_name()]
         for dominator in connected_dominating_set:
-            if dominator[0] in node_obj.get_N_of_u():
+            if dominator in node_obj.get_N_of_u():
                 return dominator
         return None
 
-    def find_dominator(self,list_of_objects):
+    def find_dominator(self,dict_of_objects):
         """
         Description: Find dominator of node
 
@@ -340,21 +324,19 @@ class Node:
         Returns:
             -
         """
-        dominator = self.check_for_dominator(list_of_objects)
-        value = filter(lambda tup: self.Nu_xPCIs_list[0][0] in tup, connected_dominating_set)
-        if value:
-            position = connected_dominating_set.index(value[0])
-            connected_dominating_set[position] = (connected_dominating_set[position][0],connected_dominating_set[position][1] + 1)
+        dominator = self.check_for_dominator(dict_of_objects)
+        if self.Nu_xPCIs_list[0][0] in connected_dominating_set: 
+            connected_dominating_set[self.Nu_xPCIs_list[0][0]] += 1
         else:
             has_dominator = False
             for node in connected_dominating_set:
-                node_obj = self.find_node_obj_by_name(node[0],list_of_objects)
+                node_obj = dict_of_objects[node]
                 if self.name in node_obj.get_N_of_u():
                     has_dominator = True
                     break
             
             if not has_dominator:
-                connected_dominating_set.append((self.Nu_xPCIs_list[0][0],1))
+                connected_dominating_set[self.Nu_xPCIs_list[0][0]] = 1
     
     def add_node_in_CDS(self):
         """
@@ -373,17 +355,17 @@ class Node:
 
         has_dominator = False
         for item in self.N2_of_u:
-            node_obj = self.find_node_obj_by_name(item,list_of_objects)
+            node_obj = dict_of_objects[item]
             for neighbor in node_obj.N_of_u:
-                if filter(lambda tup: neighbor in tup, connected_dominating_set):
+                if neighbor in connected_dominating_set:
                     has_dominator = True
             if not has_dominator:
                 temp_nodes_list.append(item)
         
         for node in self.Nu_xPCIs_list:
-            node_obj = self.find_node_obj_by_name(node[0],list_of_objects)
+            node_obj = dict_of_objects[node[0]]
             if list(set(node_obj.get_N_of_u()) & set(temp_nodes_list)):
-                connected_dominating_set.append((node_obj.get_name(),1))
+                connected_dominating_set[node_obj.get_name()] = 1
                 break
 
     def __str__(self):

@@ -1,4 +1,5 @@
 import metrics
+import collections
 
 NUMBEROFNODES                   = 0     # A variable of number of nodes for this network
 NUMBEROFNEIGHBORS               = 0     # A variable of number of neighbors for this network
@@ -11,8 +12,8 @@ MEDIUM  = 100       # Number of nodes for medium network
 LARGE   = 1000      # Number of nodes for large network
 ENORMOUS = 10000    # Number of nodes for enormous network
 
-connected_dominating_set = []   # A list with all node in CDS
-list_of_objects = []            # A list with all objects represent nodes
+connected_dominating_set = {}   # A dictionary with all node in CDS
+dict_of_objects = {}            # A dictionary with all objects represent nodes
 central_nodes = []              # A list of nodes with most neighbors
 all_neighbors = []              # A list with all neighbors of all nodes
 
@@ -112,9 +113,9 @@ def create_objects_of_nodes(nodes):
         node_obj.set_xPCI(result[0])
         node_obj.set_xPCI_nodes(result[1])
 
-        list_of_objects.append(node_obj)
-    
-    return list_of_objects
+        dict_of_objects[node_obj.get_name()] = node_obj
+
+    return dict_of_objects
 
 def print_CDS():
     """
@@ -127,6 +128,7 @@ def print_CDS():
         -
     """
     to_print = ""
-    for node in connected_dominating_set:
-        print node
+    
+    for node, value in connected_dominating_set.iteritems():
+        print "Node name is " + node + " and number of dominees is " + str(value) 
 
