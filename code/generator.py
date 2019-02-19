@@ -5,7 +5,6 @@ import random
 import time
 import global_variables as gv
 
-
 def generate_layers_of_nodes():
     """
     Description: Generate tuples of nodes and the layers they beyong
@@ -133,8 +132,8 @@ def check_arguments(args):
             gv.set_number_of_layers(int(gv.LARGE/10))
         elif argv[1] == "enormous":
             gv.set_number_of_nodes(gv.ENORMOUS)
-            gv.set_number_of_neighbors(int(gv.ENORMOUS/2))
-            gv.set_number_of_layers(int(gv.ENORMOUS/10))
+            gv.set_number_of_neighbors(int(10))
+            gv.set_number_of_layers(int(20))
     elif len(argv) == 1:
         gv.set_number_of_nodes(gv.MEDIUM)
         gv.set_number_of_neighbors(int(gv.MEDIUM/2))

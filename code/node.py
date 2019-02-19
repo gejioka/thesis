@@ -253,19 +253,18 @@ class Node:
         """
         self.N2_of_u = []
         for neighbor in self.N_of_u:
-            for node in nodes[neighbor]["intralinks"]:
-                if node not in self.N2_of_u:
-                    self.N2_of_u.append(node)
-            for node in nodes[neighbor]["interlinks"]:
-                self.N2_of_u = self.N2_of_u + nodes[neighbor]["interlinks"][node]
-            self.N2_of_u = self.remove_duplicate(self.N2_of_u)
+            self.N2_of_u = self.N2_of_u + nodes[neighbor]["intralinks"]
             try:
-                self.N2_of_u.remove(self.name)
+                self.N2_of_u = self.N2_of_u + reduce(lambda x,y :x+y,nodes[neighbor]["interlinks"].values())
             except Exception:
                 pass
-            self.N2_of_u = [x for x in self.N2_of_u if x not in self.N_of_u]
+        self.N2_of_u = self.remove_duplicate(self.N2_of_u)
+        try:
+            self.N2_of_u.remove(self.name)
+        except Exception:
+            pass
         return self.N2_of_u
-    
+
     def get_N2_of_u(self):
         """
         Description: Return two hopes away neighbors of this node
@@ -359,8 +358,10 @@ class Node:
             for neighbor in node_obj.N_of_u:
                 if neighbor in connected_dominating_set:
                     has_dominator = True
+                    break
             if not has_dominator:
                 temp_nodes_list.append(item)
+                break
         
         for node in self.Nu_xPCIs_list:
             node_obj = dict_of_objects[node[0]]

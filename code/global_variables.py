@@ -1,3 +1,4 @@
+from sys import *
 import metrics
 import collections
 
@@ -101,7 +102,7 @@ def create_objects_of_nodes(nodes):
         list_of_objecs
     """
     import node
-
+    
     for key in nodes:
         node_obj = node.Node(key)
         node_obj.set_layer(nodes[key]["layer"])
@@ -128,7 +129,7 @@ def print_CDS():
         -
     """
     to_print = ""
-    
+
     for node, value in connected_dominating_set.iteritems():
         print "Node name is " + node + " and number of dominees is " + str(value) 
 
