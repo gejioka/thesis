@@ -127,7 +127,7 @@ def choose_parser(path):
                 return 1
     return 2
 
-def check_connectivity(node_obj,connectivity_list):
+def check_connectivity(node_obj,connectivity_list,current_connected_dominating_set):
     """
     Description: Check if dominating set is connected
 
@@ -139,9 +139,37 @@ def check_connectivity(node_obj,connectivity_list):
     """
     connectivity_list.append(node_obj.get_name())
     for neighbor in node_obj.get_N_of_u():
-        if neighbor in connected_dominating_set and neighbor not in connectivity_list:
-            connectivity_list = check_connectivity(dict_of_objects[neighbor],connectivity_list)
+        if neighbor in current_connected_dominating_set and neighbor not in connectivity_list:
+            connectivity_list = check_connectivity(dict_of_objects[neighbor],connectivity_list,current_connected_dominating_set)
     return connectivity_list
+
+def find_MCDS():
+    is_connected = False    # Boolean variable which used to check connectivity of DS
+    significant_nodes = []  # A list with all significant nodes of DS
+    counter = 0
+    while not is_connected:
+        temp_connected_dominating_set = {}
+        node_to_remove = connected_dominating_set.keys()[counter] # A variable for node to be removed from DS
+        for key in connected_dominating_set:
+            if key != node_to_remove:
+                temp_connected_dominating_set[key] = connected_dominating_set[key]
+        if len(temp_connected_dominating_set) == 1:
+            break
+        connectivity_list = check_connectivity(dict_of_objects[temp_connected_dominating_set.keys()[0]],[],temp_connected_dominating_set)
+        all_nodes = []
+        for key1 in temp_connected_dominating_set:
+            all_nodes = all_nodes + dict_of_objects[key1].get_N_of_u()
+        final_list = []
+        for item in all_nodes: 
+            if item not in final_list: 
+                final_list.append(item)
+        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(temp_connected_dominating_set) and len(final_list) == 15:
+            del connected_dominating_set[node_to_remove]
+        else:
+            counter += 1
+            significant_nodes.append(node_to_remove)
+            if len(significant_nodes) == len(connected_dominating_set.keys()):
+                is_connected = True
 
 if __name__=="__main__":
     pci = check_args(sys.argv)
@@ -180,14 +208,22 @@ if __name__=="__main__":
 
     print "An extra process for connectivity"
     start = time.time()
-    connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[])
-    end = time.time()
-    print "Time running extra process:", end-start
-
+    connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
     if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
         print "\nDS is connected\n"
     else:
         print "\nDS is not connected\n"
-    
+    end = time.time()
+    print "Time running extra process:", end-start
     print_CDS()
-    #mlv.multilayer_visualization()
+    mlv.multilayer_visualization()
+    find_MCDS()
+    connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
+    if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
+        print "\nDS is connected\n"
+    else:
+        print "\nDS is not connected\n"
+
+    print_CDS()
+    mlv.multilayer_visualization()
+    create_graph()
