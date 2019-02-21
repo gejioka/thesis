@@ -150,21 +150,27 @@ def find_MCDS():
     while not is_connected:
         temp_connected_dominating_set = {}
         node_to_remove = connected_dominating_set.keys()[counter] # A variable for node to be removed from DS
+        # Create a temp connected dominating set without node to be removed
         for key in connected_dominating_set:
             if key != node_to_remove:
                 temp_connected_dominating_set[key] = connected_dominating_set[key]
         if len(temp_connected_dominating_set) == 1:
             break
         connectivity_list = check_connectivity(dict_of_objects[temp_connected_dominating_set.keys()[0]],[],temp_connected_dominating_set)
+        # Check if all dominees have at least one dominator as neighbor
         all_nodes = []
         for key1 in temp_connected_dominating_set:
             all_nodes = all_nodes + dict_of_objects[key1].get_N_of_u()
+            if temp_connected_dominating_set[key1] not in all_nodes:
+                all_nodes.append(dict_of_objects[key1].get_name())
         final_list = []
         for item in all_nodes: 
             if item not in final_list: 
                 final_list.append(item)
-        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(temp_connected_dominating_set) and len(final_list) == 15:
+        # Check if node belongs to dominating set need to be removed
+        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(temp_connected_dominating_set) and len(final_list) == len(dict_of_objects):
             del connected_dominating_set[node_to_remove]
+        # Add node to list with significant nodes
         else:
             counter += 1
             significant_nodes.append(node_to_remove)
