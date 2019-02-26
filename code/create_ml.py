@@ -254,4 +254,19 @@ if __name__=="__main__":
 
     print_CDS()
     mlv.multilayer_visualization()
-    create_graph()
+
+    # Create network
+    G = initialize_graph()
+    G = add_nodes(G)
+
+    # Pick two nonadjacent nodes of network and check if network is k-connected
+    source = dict_of_objects.keys()[0]
+    destination = ""
+    for key in dict_of_objects:
+        node = dict_of_objects[key]
+        if source not in node.get_N_of_u() and source != node.get_name():
+            destination = node.get_name()
+            break
+    check_k_connectivity(G,source,destination)
+
+    plot_graph(G)

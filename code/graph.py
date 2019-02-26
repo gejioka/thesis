@@ -2,6 +2,20 @@ from global_variables import *
 import networkx as nx
 import matplotlib.pyplot as plt
 
+def initialize_graph():
+    """
+    Description: Initialize a new graph object
+
+    Args:
+        -
+
+    Returns:
+        G
+    """
+    G = nx.Graph()
+    
+    return G
+
 def add_nodes(G):
     """
     Description: Add nodes to graph
@@ -25,7 +39,7 @@ def add_nodes(G):
     
     return G
 
-def check_k_connectivity(G):
+def check_k_connectivity(G,source,destination):
     """
     Description: Check if network is k-connected
 
@@ -37,7 +51,7 @@ def check_k_connectivity(G):
     """
     maximum_disjoint_paths = []
     sorted_paths = []
-    all_paths = nx.all_simple_paths(G,'v','u')
+    all_paths = nx.all_simple_paths(G,source,destination)
     list_of_paths = [path for path in all_paths]
     sorted_paths = sorted(list_of_paths,key=len)
     
@@ -56,7 +70,7 @@ def check_k_connectivity(G):
 
     return len(maximum_disjoint_paths)
                 
-def create_graph():
+def plot_graph(G):
     """
     Description: Create and plot final network
 
@@ -66,8 +80,5 @@ def create_graph():
     Returns:
         -
     """
-    G = nx.Graph()
-    G = add_nodes(G)
-    check_k_connectivity(G)
     nx.draw(G,with_labels = True)
     plt.show()
