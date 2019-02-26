@@ -24,7 +24,6 @@ def find_intralayer_links(node_layer,neighbors):
         A list with all intra-layer links
     """
     intralayer_links = []
-    
     for neighbor in neighbors:
         if node_layer == neighbor[1]:
             intralayer_links.append(neighbor[0])
@@ -42,7 +41,6 @@ def find_interlayer_links(node_layer,neighbors):
         A list with all inter-layer links
     """
     interlayer_links = {}
-
     for neighbor in neighbors:
         if node_layer != neighbor[1]:
             if neighbor[1] not in interlayer_links:
@@ -144,11 +142,21 @@ def check_connectivity(node_obj,connectivity_list,current_connected_dominating_s
     return connectivity_list
 
 def find_MCDS():
+    """
+    Description: Find Minimum Connected Dominating Set (MCDS) of this network
+
+    Args:
+        -
+    Returns:
+        -
+    """
     is_connected = False    # Boolean variable which used to check connectivity of DS
     significant_nodes = []  # A list with all significant nodes of DS
     counter = 0
     while not is_connected:
         temp_connected_dominating_set = {}
+        if counter == len(connected_dominating_set.keys()):
+            break
         node_to_remove = connected_dominating_set.keys()[counter] # A variable for node to be removed from DS
         # Create a temp connected dominating set without node to be removed
         for key in connected_dominating_set:
@@ -181,6 +189,7 @@ if __name__=="__main__":
     pci = check_args(sys.argv)
     parser = choose_parser(sys.argv[1])
     
+    # Choose parser depends on network file format
     if parser == 1:
         print "Process 1 of 3"
         start = time.time()
@@ -198,8 +207,18 @@ if __name__=="__main__":
     else:
         np.parser()
 
+    '''
+    if check_k_connectivity() == 1:
+        # Run milcom algorithm
+        pass
+    else:
+        # Run robust MCDS algorithm
+        pass
+    '''
+
     print "Process 3 of 3"
     start = time.time()
+    # Create Dominating Set (DS) of network
     for name, node in dict_of_objects.iteritems():
         unique_links = find_links_between_neighbors(node.get_xPCI_nodes())
         node.set_unique_links_between_nodes(unique_links)
@@ -208,12 +227,12 @@ if __name__=="__main__":
         node.find_dominator(dict_of_objects)
     for name, node in dict_of_objects.iteritems():
         node.add_node_in_CDS()
-    
     end = time.time()
     print "Time running process 3:", end-start
 
     print "An extra process for connectivity"
     start = time.time()
+    # Check if DS is connected
     connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
     if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
         print "\nDS is connected\n"
@@ -221,8 +240,11 @@ if __name__=="__main__":
         print "\nDS is not connected\n"
     end = time.time()
     print "Time running extra process:", end-start
+
     print_CDS()
     mlv.multilayer_visualization()
+    
+    # Find Minimum Connected Dominating Set (MCDS)
     find_MCDS()
     connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
     if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):

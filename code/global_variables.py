@@ -8,11 +8,14 @@ NUMBEROFLAYERS                  = 0     # A variable of number of layers for thi
 NUMBEROFCENTRALNODES            = 0     # A variable of number of central nodes for this network
 NUMBEROFCENTRALNODESNEIGHBORS   = 0     # A variable of number of neighbors of central node for this network
 
-#SMALL   = 10        # Number of nodes for small network
-SMALL   = 15        # Number of nodes for small network
+SMALL   = 10        # Number of nodes for small network
 MEDIUM  = 100       # Number of nodes for medium network
 LARGE   = 1000      # Number of nodes for large network
 ENORMOUS = 10000    # Number of nodes for enormous network
+
+LOWCONNECTIVITY     = 3
+MEDIUMCONNECTIVITY  = 10
+HIGHCONNECTIVITY    = 20 
 
 connected_dominating_set = {}   # A dictionary with all node in CDS
 dict_of_objects = {}            # A dictionary with all objects represent nodes

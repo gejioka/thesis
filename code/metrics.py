@@ -1,5 +1,6 @@
 import time
 import random
+from itertools import chain
 from global_variables import *
 
 def find_node_degree(nodes,key):

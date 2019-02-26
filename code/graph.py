@@ -24,7 +24,38 @@ def add_nodes(G):
     G.add_edges_from(edges)
     
     return G
+
+def check_k_connectivity(G):
+    """
+    Description: Check if network is k-connected
+
+    Args:
+        G (Graph):  An object represent this network
+
+    Returns:
+        -
+    """
+    maximum_disjoint_paths = []
+    sorted_paths = []
+    all_paths = nx.all_simple_paths(G,'v','u')
+    list_of_paths = [path for path in all_paths]
+    sorted_paths = sorted(list_of_paths,key=len)
     
+    for path in sorted_paths:
+        if maximum_disjoint_paths == []:
+            maximum_disjoint_paths.append(path)
+        else:
+            is_disjoint_path = True
+            for disjoint_paths in maximum_disjoint_paths:
+                if len(set(path) & set(disjoint_paths)) > 2:
+                    is_disjoint_path = False
+            if is_disjoint_path:
+                maximum_disjoint_paths.append(path)
+    print "Maximum disjoint paths are: ", maximum_disjoint_paths
+    print "Network is {}-connected".format(len(maximum_disjoint_paths))
+
+    return len(maximum_disjoint_paths)
+                
 def create_graph():
     """
     Description: Create and plot final network
@@ -37,5 +68,6 @@ def create_graph():
     """
     G = nx.Graph()
     G = add_nodes(G)
+    check_k_connectivity(G)
     nx.draw(G,with_labels = True)
     plt.show()
