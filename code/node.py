@@ -15,6 +15,10 @@ class Node:
         """
         self.name = name
         self.clPCI = 0.0
+        self.N_of_u = []
+        self.N2_of_u = []
+        self.N3_of_u = []
+        self.Ns_of_u_dict = {1:self.N_of_u,2:self.N2_of_u,3:self.N3_of_u}
 
     def get_name(self):
         """
@@ -66,7 +70,8 @@ class Node:
         self.N_of_u = intralinks
         for neighbor in interlinks:
             self.N_of_u = self.N_of_u + interlinks[neighbor]
-    
+        self.Ns_of_u_dict[1] = self.N_of_u
+
     def set_N_of_u(self,N_of_u):
         """
         Description: Set N(u)
@@ -240,8 +245,8 @@ class Node:
             if item not in final_list: 
                 final_list.append(item) 
         return final_list
-
-    def find_N2_of_u(self,nodes):
+    
+    def find_N2_or_N3_of_u(self,nodes,neighborhood):
         """
         Description: Find N2(u) where u is specific node
 
@@ -251,19 +256,33 @@ class Node:
         Returns:
             N2(u)
         """
-        self.N2_of_u = []
-        for neighbor in self.N_of_u:
-            self.N2_of_u = self.N2_of_u + nodes[neighbor]["intralinks"]
+        # Create a list with next neighborhood of node
+        for neighbor in self.Ns_of_u_dict[neighborhood-1]:
+            self.Ns_of_u_dict[neighborhood] = self.Ns_of_u_dict[neighborhood] + nodes[neighbor]["intralinks"]
             try:
-                self.N2_of_u = self.N2_of_u + reduce(lambda x,y :x+y,nodes[neighbor]["interlinks"].values())
+                self.Ns_of_u_dict[neighborhood] = self.Ns_of_u_dict[neighborhood] + reduce(lambda x,y :x+y,nodes[neighbor]["interlinks"].values())
             except Exception:
                 pass
-        self.N2_of_u = self.remove_duplicate(self.N2_of_u)
+        self.Ns_of_u_dict[neighborhood] = self.remove_duplicate(self.Ns_of_u_dict[neighborhood])
         try:
-            self.N2_of_u.remove(self.name)
+            self.Ns_of_u_dict[neighborhood].remove(self.name)
         except Exception:
             pass
-        return self.N2_of_u
+
+        # Check if next neighborhood is N2(u) and remove all nodes of list exist in N(u)
+        if neighborhood == 2:
+            self.Ns_of_u_dict[neighborhood] = list(set(self.Ns_of_u_dict[neighborhood])-set(self.Ns_of_u_dict[neighborhood-1]))
+            self.N2_of_u = self.Ns_of_u_dict[neighborhood]
+        else:
+            # Check if next neighborhood is N3(u) and remove all nodes of list exist in N(u) and N2(u)
+            self.Ns_of_u_dict[neighborhood] = list(set(self.Ns_of_u_dict[neighborhood])-set(self.Ns_of_u_dict[neighborhood-1]))
+            if len(self.N_of_u) > len(self.Ns_of_u_dict[neighborhood]):
+                self.Ns_of_u_dict[neighborhood] = list(set(self.Ns_of_u_dict[neighborhood-2])-set(self.Ns_of_u_dict[neighborhood]))
+            else:
+                self.Ns_of_u_dict[neighborhood] = list(set(self.Ns_of_u_dict[neighborhood])-set(self.Ns_of_u_dict[neighborhood-2]))
+            self.N3_of_u = self.Ns_of_u_dict[neighborhood]
+        
+        return self.Ns_of_u_dict[neighborhood]
 
     def get_N2_of_u(self):
         """
@@ -276,6 +295,43 @@ class Node:
             N2_of_u
         """
         return self.N2_of_u
+    
+    def get_N3_of_u(self):
+        """
+        Description: Return three hopes away neighbors of this node
+
+        Args:
+            -
+
+        Returns:
+            N3_of_u
+        """
+        return self.N3_of_u
+    
+    def find_all_nodes_to_3hops(self):
+        """
+        Description: Create a list with all nodes 3-hop away from each node in network
+
+        Args:
+            start_node (String): Name of specific node
+
+        Returns:
+            N2_of_u
+        """
+        self.all_3hop_nodes = []
+        self.all_3hop_nodes = self.N_of_u + self.N2_of_u + self.N3_of_u
+
+    def get_all_nodes_to_3hop(self):
+        """
+        Description: Return a list with all nodes 3-hop away from this node
+
+        Args:
+            -
+
+        Returns:
+            all_3hop_nodes
+        """
+        return self.all_3hop_nodes
 
     def find_Nu_PCIs(self,dict_of_objects,pci):
         """

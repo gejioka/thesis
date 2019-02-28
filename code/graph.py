@@ -1,4 +1,5 @@
 from global_variables import *
+from networkx.algorithms.connectivity import minimum_st_node_cut
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -69,7 +70,13 @@ def check_k_connectivity(G,source,destination):
     print "Network is {}-connected".format(len(maximum_disjoint_paths))
 
     return len(maximum_disjoint_paths)
-                
+
+def find_node_connectivity(G):
+    node_connectivity = nx.node_connectivity(G)
+    
+def betweeness_centrality(G):
+    pass
+
 def plot_graph(G):
     """
     Description: Create and plot final network

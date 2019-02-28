@@ -1,6 +1,7 @@
 from metrics import *
 from node import *
 from global_variables import *
+#from new_algorithm import *
 from graph import *
 import network_parser as np
 import ml_visualization as mlv
@@ -23,10 +24,8 @@ def find_intralayer_links(node_layer,neighbors):
     Returns:
         A list with all intra-layer links
     """
-    intralayer_links = []
-    for neighbor in neighbors:
-        if node_layer == neighbor[1]:
-            intralayer_links.append(neighbor[0])
+    intralayer_links = [neighbor[0] for neighbor in neighbors if node_layer == neighbor[1]]
+    
     return intralayer_links
 
 def find_interlayer_links(node_layer,neighbors):
@@ -259,14 +258,8 @@ if __name__=="__main__":
     G = initialize_graph()
     G = add_nodes(G)
 
-    # Pick two nonadjacent nodes of network and check if network is k-connected
-    source = dict_of_objects.keys()[0]
-    destination = ""
-    for key in dict_of_objects:
-        node = dict_of_objects[key]
-        if source not in node.get_N_of_u() and source != node.get_name():
-            destination = node.get_name()
-            break
-    check_k_connectivity(G,source,destination)
-
+    # Find connectivity of network
+    find_node_connectivity(G)
+    
+    # Plot network
     plot_graph(G)

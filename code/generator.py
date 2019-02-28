@@ -59,11 +59,9 @@ def generate_neighbors(nodes_layers_list,node,first_time):
     else:
         num_of_neighbors = randint(1,gv.NUMBEROFNEIGHBORS)
 
-    for i in range(len(nodes_layers_list)):
-        if node[0] in nodes_layers_list[i][1] and nodes_layers_list[i][0] not in node[1]:
-            node[1].append(nodes_layers_list[i][0])
-            num_of_neighbors -= 1
-
+    [node[1].append(nodes_layers_list[i][0]) for i in range(len(nodes_layers_list)) if node[0] in nodes_layers_list[i][1] and nodes_layers_list[i][0] not in node[1]]
+    num_of_neighbors -= len(node[1])
+    
     for i in range(len(nodes_layers_list)):
         if nodes_layers_list[i][0] == node[0]:
             nodes_layers_list[i] = node
