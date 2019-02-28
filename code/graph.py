@@ -3,6 +3,8 @@ from networkx.algorithms.connectivity import minimum_st_node_cut
 import networkx as nx
 import matplotlib.pyplot as plt
 
+G = None
+
 def initialize_graph():
     """
     Description: Initialize a new graph object
@@ -13,11 +15,12 @@ def initialize_graph():
     Returns:
         G
     """
+    global G
     G = nx.Graph()
     
-    return G
+    #return G
 
-def add_nodes(G):
+def add_nodes():
     """
     Description: Add nodes to graph
 
@@ -27,6 +30,7 @@ def add_nodes(G):
     Returns:
         G
     """
+    global G
     edges = []
     for name, node in dict_of_objects.iteritems():
         for neighbor in node.get_N_of_u():
@@ -38,9 +42,9 @@ def add_nodes(G):
     
     G.add_edges_from(edges)
     
-    return G
+    #return G
 
-def check_k_connectivity(G,source,destination):
+def check_k_connectivity(source,destination):
     """
     Description: Check if network is k-connected
 
@@ -50,6 +54,7 @@ def check_k_connectivity(G,source,destination):
     Returns:
         -
     """
+    global G
     maximum_disjoint_paths = []
     sorted_paths = []
     all_paths = nx.all_simple_paths(G,source,destination)
@@ -71,13 +76,13 @@ def check_k_connectivity(G,source,destination):
 
     return len(maximum_disjoint_paths)
 
-def find_node_connectivity(G):
-    node_connectivity = nx.node_connectivity(G)
-    
-def betweeness_centrality(G):
-    pass
+def find_node_connectivity():
+    global G
 
-def plot_graph(G):
+    node_connectivity = nx.node_connectivity(G)
+    return node_connectivity
+
+def plot_graph():
     """
     Description: Create and plot final network
 
@@ -87,5 +92,9 @@ def plot_graph(G):
     Returns:
         -
     """
+    global G
+
     nx.draw(G,with_labels = True)
     plt.show()
+
+# TODO: Need to create two graph objects. One for plot the input graph and one more to calculate betweeness centrality for every node

@@ -184,7 +184,7 @@ def find_MCDS():
             if len(significant_nodes) == len(connected_dominating_set.keys()):
                 is_connected = True
 
-if __name__=="__main__":
+def create_structures():
     pci = check_args(sys.argv)
     parser = choose_parser(sys.argv[1])
     
@@ -205,16 +205,14 @@ if __name__=="__main__":
         print "Time running process 2:", end-start
     else:
         np.parser()
+        
+    # Create network
+    initialize_graph()
+    add_nodes()
 
-    '''
-    if check_k_connectivity() == 1:
-        # Run milcom algorithm
-        pass
-    else:
-        # Run robust MCDS algorithm
-        pass
-    '''
+    return pci
 
+def milcom_algorithm(pci):
     print "Process 3 of 3"
     start = time.time()
     # Create Dominating Set (DS) of network
@@ -254,12 +252,9 @@ if __name__=="__main__":
     print_CDS()
     mlv.multilayer_visualization()
 
-    # Create network
-    G = initialize_graph()
-    G = add_nodes(G)
-
-    # Find connectivity of network
-    find_node_connectivity(G)
-    
     # Plot network
-    plot_graph(G)
+    plot_graph()
+
+if __name__=="__main__":
+    pci = create_structures()
+    milcom_algorithm(pci)
