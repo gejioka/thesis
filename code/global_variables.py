@@ -95,7 +95,7 @@ def set_number_of_neighbors_for_central_nodes(network_type):
     elif network_type == "enormous":
         NUMBEROFCENTRALNODESNEIGHBORS = ENORMOUS/20
 
-def create_objects_of_nodes(nodes):
+def create_objects_of_nodes(nodes,user_input):
     """
     Description: Create all objects of nodes for this network
 
@@ -113,12 +113,18 @@ def create_objects_of_nodes(nodes):
         node_obj.set_intralinks(nodes[key]["intralinks"])
         node_obj.set_interlinks(nodes[key]["interlinks"])
         node_obj.find_N_of_u(nodes[key]["intralinks"],nodes[key]["interlinks"])
-        node_obj.find_N2_or_N3_of_u(nodes,2)
-        node_obj.find_N2_or_N3_of_u(nodes,3)
-        node_obj.find_all_nodes_to_3hops()
-        result = metrics.find_xPCI(nodes,key)
-        node_obj.set_xPCI(result[0])
-        node_obj.set_xPCI_nodes(result[1])
+        if user_input == 1:
+            node_obj.find_N2_or_N3_of_u(nodes,2)
+            result = metrics.find_xPCI(nodes,key)
+            node_obj.set_xPCI(result[0])
+            node_obj.set_xPCI_nodes(result[1])
+        else:
+            localPCI = metrics.single_layer_pci(nodes,key)[0]
+            mlPCI = metrics.find_mlPCI(nodes,key)
+            newPCI = metrics.find_newPCI(nodes,key,mlPCI)
+            node_obj.set_localPCI(localPCI)
+            node_obj.set_mlPCI(mlPCI)
+            node_obj.set_newPCI(newPCI)
 
         dict_of_objects[node_obj.get_name()] = node_obj
 

@@ -1,7 +1,6 @@
 from metrics import *
 from node import *
 from global_variables import *
-#from new_algorithm import *
 from graph import *
 import network_parser as np
 import ml_visualization as mlv
@@ -184,7 +183,16 @@ def find_MCDS():
             if len(significant_nodes) == len(connected_dominating_set.keys()):
                 is_connected = True
 
-def create_structures():
+def create_structures(user_input):
+    """
+    Description: Create a dictionary with all objects of nodes in network
+
+    Args:
+        user_input (int): Option 1 is for milcom algorithm and 2 for new algorithm
+
+    Returns:
+        pci
+    """
     pci = check_args(sys.argv)
     parser = choose_parser(sys.argv[1])
     
@@ -198,13 +206,13 @@ def create_structures():
         
         print "Process 2 of 3"
         start = time.time()
-        dict_of_objects = create_objects_of_nodes(links)
+        dict_of_objects = create_objects_of_nodes(links,user_input)
         # Release links
         links = None
         end = time.time()
         print "Time running process 2:", end-start
     else:
-        np.parser()
+        np.parser(user_input)
         
     # Create network
     initialize_graph()
@@ -212,21 +220,16 @@ def create_structures():
 
     return pci
 
-def milcom_algorithm(pci):
-    print "Process 3 of 3"
-    start = time.time()
-    # Create Dominating Set (DS) of network
-    for name, node in dict_of_objects.iteritems():
-        unique_links = find_links_between_neighbors(node.get_xPCI_nodes())
-        node.set_unique_links_between_nodes(unique_links)
-        node.find_clPCI()
-        node.find_Nu_PCIs(dict_of_objects,pci)
-        node.find_dominator(dict_of_objects)
-    for name, node in dict_of_objects.iteritems():
-        node.add_node_in_CDS()
-    end = time.time()
-    print "Time running process 3:", end-start
+def last_step():
+    """
+    Description: Check if DS is connected, minimize it and plot it
 
+    Args:
+        -
+
+    Returns:
+        -
+    """
     print "An extra process for connectivity"
     start = time.time()
     # Check if DS is connected
@@ -253,8 +256,66 @@ def milcom_algorithm(pci):
     mlv.multilayer_visualization()
 
     # Plot network
-    plot_graph()
+    plot_input_graph()
+
+def milcom_algorithm(pci,user_input):
+    """
+    Description: Create a CDS for this network
+
+    Args:
+        pci (String): A variable tell us which PCI algorithm to use
+        user_input(int): Option 1 is for milcom algorithm and 2 for new algorithm
+
+    Returns:
+        -
+    """
+    print "Process 3 of 3"
+    start = time.time()
+    # Create Dominating Set (DS) of network
+    for name, node in dict_of_objects.iteritems():
+        unique_links = find_links_between_neighbors(node.get_xPCI_nodes())
+        node.set_unique_links_between_nodes(unique_links)
+        node.find_clPCI()
+        node.find_Nu_PCIs(dict_of_objects,pci)
+        node.find_dominator(dict_of_objects)
+    for name, node in dict_of_objects.iteritems():
+        node.add_node_in_CDS(user_input)
+    end = time.time()
+    print "Time running process 3:", end-start
+    
+    last_step()
+
+def new_algorithm(user_input):
+    """
+    Description: Create a CDS for this network
+
+    Args:
+        user_input(int): Option 1 is for milcom algorithm and 2 for new algorithm
+
+    Returns:
+        -
+    """
+    print "Process 3 of 3"
+    start = time.time()
+
+    # Create Dominating Set (DS) of network
+    for name, node in dict_of_objects.iteritems():
+        node.find_weight()
+        node.find_Nu_PCIs(dict_of_objects,"new")
+        node.add_node_in_CDS(user_input)
+
+    last_step()
 
 if __name__=="__main__":
-    pci = create_structures()
-    milcom_algorithm(pci)
+    # Get user input and check if this input is correct
+    user_input = int(raw_input("Choose one of the following algorithms: 1.milcom algorithm\n\t\t\t\t\t2.new algorithm\n"))
+    if user_input not in [1,2]:
+        print "Wrong input. Type 1 for milcom or 2 for new algorithm."
+        exit(1)
+
+    # Run one of the algorithms
+    pci = create_structures(user_input)
+    if user_input == 1:
+        milcom_algorithm(pci,user_input)
+    else:
+        new_algorithm(user_input)

@@ -1,5 +1,7 @@
 from __future__ import division
 import math
+import networkx as nx
+import metrics as mt
 from global_variables import *
 
 class Node:
@@ -15,11 +17,12 @@ class Node:
         """
         self.name = name
         self.clPCI = 0.0
+        self.weight = 0.0
         self.N_of_u = []
         self.N2_of_u = []
         self.N3_of_u = []
         self.Ns_of_u_dict = {1:self.N_of_u,2:self.N2_of_u,3:self.N3_of_u}
-
+       
     def get_name(self):
         """
         Description: Return name of node
@@ -143,6 +146,30 @@ class Node:
         """
         return self.interlinks
     
+    def set_localPCI(self,localPCI):
+        """
+        Description: Set local PCI of this node
+
+        Args:
+            localPCI (int): A variable which tell us how important is this node in it's neighborhood
+
+        Returns:
+            -
+        """
+        self.localPCI = localPCI
+    
+    def get_localPCI(self):
+        """
+        Description: Return local PCI of this node
+
+        Args:
+            -
+
+        Returns:
+            localPCI
+        """
+        return self.localPCI
+
     def set_xPCI(self,xPCI_value):
         """
         Description: Set xPCI value of node
@@ -190,6 +217,90 @@ class Node:
             xPCI nodes list
         """
         return self.xPCI_nodes
+    
+    def set_mlPCI(self,mlPCI):
+        """
+        Description: Set mlPCI for this node.
+
+        Args:
+            mlPCI (int): Number which tell us that, node has at least n neighbors in n layers
+
+        Returns:
+            -
+        """
+        self.mlPCI = mlPCI
+
+    def get_mlPCI(self):
+        """
+        Description: Return mlPCI for this node
+
+        Args:
+            -
+
+        Returns:
+            mlPCI
+        """
+        return self.mlPCI
+
+    def set_newPCI(self,newPCI):
+        """
+        Description: Set newPCI for this node
+
+        Args:
+            newPCI (int): Variable for new PCI of node
+
+        Returns:
+            -
+        """
+        self.newPCI = newPCI
+
+    def get_newPCI(self):
+        """
+        Description: Return newPCI for this node
+
+        Args:
+            -
+
+        Returns:
+            newPCI
+        """
+        return self.newPCI
+
+    def find_weight(self):
+        """
+        Description: Find how important is this node
+
+        Args:
+            -
+
+        Returns:
+            -
+        """
+        self.weight = 0.4*self.localPCI + 0.6*self.newPCI
+
+    def set_weight(self,weight):
+        """
+        Description: Set total weight for this node 
+
+        Args:
+            weight (float): Variable for total weight
+
+        Returns:
+            -
+        """
+        self.weight = weight
+
+    def get_weight(self):
+        """
+        Description: Return the weight for this node
+
+        Args:
+            -
+
+        Returns:
+            weight
+        """
+        return self.weight
 
     def find_clPCI(self):
         """
@@ -351,6 +462,8 @@ class Node:
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_xPCI()))
                 elif pci == "cl":
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_clPCI()))
+                elif pci == "new":
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_weight()))
         self.Nu_xPCIs_list.sort(key=lambda tup: tup[1],reverse=True)
     
     def check_for_dominator(self,dict_of_objects):
@@ -393,7 +506,7 @@ class Node:
             if not has_dominator:
                 connected_dominating_set[self.Nu_xPCIs_list[0][0]] = 1
     
-    def add_node_in_CDS(self):
+    def add_node_in_CDS(self,algorithm):
         """
         Description: Check if exists node of N2 of u without dominator as neighbor
                      and if so add as dominator node of N of u this with largest xPCI
@@ -405,25 +518,32 @@ class Node:
         Returns:
             -
         """
-        # A list with all nodes which doesn't connect with some dominator node
-        temp_nodes_list = []
+        if algorithm == 1:
+            # A list with all nodes which doesn't connect with some dominator node
+            temp_nodes_list = []
 
-        has_dominator = False
-        for item in self.N2_of_u:
-            node_obj = dict_of_objects[item]
-            for neighbor in node_obj.N_of_u:
-                if neighbor in connected_dominating_set:
-                    has_dominator = True
+            has_dominator = False
+            for item in self.N2_of_u:
+                has_dominator = False
+                node_obj = dict_of_objects[item]
+                for neighbor in node_obj.N_of_u:
+                   if neighbor in connected_dominating_set:
+                       has_dominator = True
+                       break
+                if not has_dominator:
+                    temp_nodes_list.append(item)
                     break
-            if not has_dominator:
-                temp_nodes_list.append(item)
-                break
-        
-        for node in self.Nu_xPCIs_list:
-            node_obj = dict_of_objects[node[0]]
-            if list(set(node_obj.get_N_of_u()) & set(temp_nodes_list)):
-                connected_dominating_set[node_obj.get_name()] = 1
-                break
+            
+            for node in self.Nu_xPCIs_list:
+                node_obj = dict_of_objects[node[0]]
+                if list(set(node_obj.get_N_of_u()) & set(temp_nodes_list)):
+                    connected_dominating_set[node_obj.get_name()] = 1
+                    break
+        else:
+            if self.Nu_xPCIs_list[0][0] in connected_dominating_set: 
+                connected_dominating_set[self.Nu_xPCIs_list[0][0]] += 1
+            else:
+                connected_dominating_set[self.Nu_xPCIs_list[0][0]] = 1
 
     def __str__(self):
         """

@@ -3,6 +3,8 @@ code/*.pyc
 code/build
 code/dist
 code/pymnet*
+code/new_algorithm.py
+code/spread_message.py
 code/tests
 papers/*
 generators/*

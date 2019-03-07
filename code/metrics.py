@@ -1,3 +1,4 @@
+from __future__ import division
 import time
 import random
 from itertools import chain
@@ -118,7 +119,6 @@ def create_interlayer_nodes_list(nodes,parent,key,list_of_interlayer_nodes):
             for node in nodes[key]["interlinks"][k]:
                 if node != parent and node not in list_of_interlayer_nodes:
                     list_of_interlayer_nodes = create_interlayer_nodes_list(nodes,key,node,list_of_interlayer_nodes)
-
     return list_of_interlayer_nodes
     
 def find_xPCI(nodes,node):
@@ -135,6 +135,10 @@ def find_xPCI(nodes,node):
     xPCI = 0
     xPCI_nodes = []
     list_of_interlayer_nodes = create_interlayer_nodes_list(nodes,None,node,[])
+    list_of_interlayer_nodes = []
+    for key in nodes[node]["interlinks"]:
+        list_of_interlayer_nodes = list(set(list_of_interlayer_nodes) | set(nodes[node]["interlinks"][key]))
+    
     if node not in list_of_interlayer_nodes:
         list_of_interlayer_nodes.append(node)
 
@@ -144,3 +148,59 @@ def find_xPCI(nodes,node):
         xPCI_nodes = xPCI_nodes + result[1]
     
     return (xPCI,xPCI_nodes)
+
+def find_mlPCI(nodes,node):
+    """
+    Description: Find mlPCI for this node
+
+    Args:
+        -
+
+    Returns:
+        layers, min_nodes
+    """
+    number_of_layers = 1
+    number_of_nodes = 1
+    layers_counter = 0
+    mlPCI = 0
+    while True:
+        layers_counter = 0
+        for layer in nodes[node]["interlinks"]:
+            if len(nodes[node]["interlinks"][layer]) >= number_of_nodes:
+                layers_counter += 1
+                if layers_counter == number_of_layers:
+                    mlPCI = layers_counter
+                    break
+        if mlPCI < number_of_layers:
+            break
+        else:
+            number_of_layers += 1
+            number_of_nodes += 1
+    return mlPCI
+
+def find_newPCI(nodes,node,mlPCI):
+    """
+    Description: Find newPCI metric for this node
+
+    Args:
+        nodes (dictionary): A dictionary with all nodes of network
+        node (String):      The name of specific node
+        k (int):            The number of minimun neighbors has node per layer
+        n ()
+
+    Returns:
+        layers, min_nodes
+    """
+    totalPCI = 0
+    newPCI = 0
+    neighbors = 0
+    for layer in nodes[node]["interlinks"]:
+        neighbors += len(nodes[node]["interlinks"][layer])
+        for neighbor in nodes[node]["interlinks"][layer]:
+            totalPCI += single_layer_pci(nodes,neighbor)[0]
+    if mlPCI < len(nodes[node]["interlinks"]):
+        newPCI = (mlPCI**2/float(neighbors))*totalPCI
+    else:
+        newPCI = totalPCI
+
+    return newPCI

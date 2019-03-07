@@ -18,8 +18,6 @@ def initialize_graph():
     global G
     G = nx.Graph()
     
-    #return G
-
 def add_nodes():
     """
     Description: Add nodes to graph
@@ -42,8 +40,6 @@ def add_nodes():
     
     G.add_edges_from(edges)
     
-    #return G
-
 def check_k_connectivity(source,destination):
     """
     Description: Check if network is k-connected
@@ -82,9 +78,22 @@ def find_node_connectivity():
     node_connectivity = nx.node_connectivity(G)
     return node_connectivity
 
-def plot_graph():
+def plot_local_graph(network):
     """
-    Description: Create and plot final network
+    Description: Create and plot local network
+
+    Args:
+        network (Graph)
+
+    Returns:
+        -
+    """
+    nx.draw(network,with_labels = True)
+    plt.show()
+
+def plot_input_graph():
+    """
+    Description: Create and plot input network
 
     Args:
         -
@@ -96,5 +105,3 @@ def plot_graph():
 
     nx.draw(G,with_labels = True)
     plt.show()
-
-# TODO: Need to create two graph objects. One for plot the input graph and one more to calculate betweeness centrality for every node

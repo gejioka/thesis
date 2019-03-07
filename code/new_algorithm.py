@@ -2,12 +2,24 @@
 
 # Initial state O(nm)
 for all nodes in network:
-    calculate betweeness centrality
-    set a weight for betweeness centrality
+    #calculate betweeness centrality
+    #set a weight for betweeness centrality
+    
+    # How important is node for it's layer
     calculate PCI
-    set a weight for PCI
-    calculate mlPCI
-    set a weight for mlPCI
+    
+    # How important is node for other layers
+    calculate xPCI per layer
+    for all neighbors per layer:
+        xPCI += neighborPCI*((number of layers node has neighbors)/(neighbors per layer))
+    
+    # How connected are neighbors of interlayer neighbors of node
+    nodes_connecticity = 0
+    for all interlayer nodes:
+        nodes_connecticity += number of layers every neighbor has neighbors
+
+    # Calculate total weight of node
+    total_weight_of_node = 0.4*PCI + 0.5*xPCI + 0.1*nodes_connecticity
 
 # 1st Main state (Create CDS) O(nmlog(m))
 i = 0
