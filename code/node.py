@@ -276,7 +276,7 @@ class Node:
         Returns:
             -
         """
-        self.weight = 0.4*self.localPCI + 0.6*self.newPCI
+        self.weight = 0.3*self.localPCI + 0.7*self.newPCI
 
     def set_weight(self,weight):
         """
@@ -482,6 +482,16 @@ class Node:
                 return dominator
         return None
 
+    def find_next_dominators(self,node_obj,next_dominators_dict):
+        if not set(node_obj.get_N_of_u()) & set([a[0] for a in connected_dominating_set]):
+            for neighbor in node_obj.get_N_of_u():
+                neighbor_obj = dict_of_objects[neighbor]
+                if neighbor not in next_dominators_dict:
+                    next_dominators_dict[neighbor] = 1
+                else:
+                    next_dominators_dict[neighbor] += 1
+        return next_dominators_dict
+
     def find_dominator(self,dict_of_objects):
         """
         Description: Find dominator of node
@@ -540,10 +550,17 @@ class Node:
                     connected_dominating_set[node_obj.get_name()] = 1
                     break
         else:
-            if self.Nu_xPCIs_list[0][0] in connected_dominating_set: 
+            if self.Nu_xPCIs_list[0][0] in connected_dominating_set:
                 connected_dominating_set[self.Nu_xPCIs_list[0][0]] += 1
             else:
-                connected_dominating_set[self.Nu_xPCIs_list[0][0]] = 1
+                has_dominator = False
+                for node in connected_dominating_set:
+                    node_obj = dict_of_objects[node]
+                    if self.name in node_obj.get_N_of_u():
+                        has_dominator = True
+                        break        
+                if not has_dominator:
+                    connected_dominating_set[self.Nu_xPCIs_list[0][0]] = 1
 
     def __str__(self):
         """

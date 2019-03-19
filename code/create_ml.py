@@ -4,6 +4,7 @@ from global_variables import *
 from graph import *
 import network_parser as np
 import ml_visualization as mlv
+import operator
 import time
 import sys
 import ast
@@ -156,28 +157,26 @@ def find_MCDS():
         if counter == len(connected_dominating_set.keys()):
             break
         node_to_remove = connected_dominating_set.keys()[counter] # A variable for node to be removed from DS
-        # Create a temp connected dominating set without node to be removed
-        for key in connected_dominating_set:
-            if key != node_to_remove:
-                temp_connected_dominating_set[key] = connected_dominating_set[key]
+        value = connected_dominating_set.pop(node_to_remove)
         if len(temp_connected_dominating_set) == 1:
             break
-        connectivity_list = check_connectivity(dict_of_objects[temp_connected_dominating_set.keys()[0]],[],temp_connected_dominating_set)
+        connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],temp_connected_dominating_set)
         # Check if all dominees have at least one dominator as neighbor
         all_nodes = []
-        for key1 in temp_connected_dominating_set:
+        for key1 in connected_dominating_set:
             all_nodes = all_nodes + dict_of_objects[key1].get_N_of_u()
-            if temp_connected_dominating_set[key1] not in all_nodes:
+            if connected_dominating_set[key1] not in all_nodes:
                 all_nodes.append(dict_of_objects[key1].get_name())
         final_list = []
         for item in all_nodes: 
             if item not in final_list: 
                 final_list.append(item)
         # Check if node belongs to dominating set need to be removed
-        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(temp_connected_dominating_set) and len(final_list) == len(dict_of_objects):
-            del connected_dominating_set[node_to_remove]
+        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set) and len(final_list) == len(dict_of_objects):
+            pass
         # Add node to list with significant nodes
         else:
+            connected_dominating_set[node_to_remove] = value
             counter += 1
             significant_nodes.append(node_to_remove)
             if len(significant_nodes) == len(connected_dominating_set.keys()):
@@ -198,13 +197,13 @@ def create_structures(user_input):
     
     # Choose parser depends on network file format
     if parser == 1:
-        print "Process 1 of 3"
+        print "\nProcess 1 of 6"
         start = time.time()
         links = create_dict_of_nodes(sys.argv[1])
         end = time.time()
         print "Time running process 1:", end-start
         
-        print "Process 2 of 3"
+        print "\nProcess 2 of 6"
         start = time.time()
         dict_of_objects = create_objects_of_nodes(links,user_input)
         # Release links
@@ -220,7 +219,95 @@ def create_structures(user_input):
 
     return pci
 
-def last_step():
+def remove_duplicates(input_list):
+    """
+    Description: Remove duplicates of input list and return it
+
+    Args:
+        input_list (list): Input list
+
+    Returns:
+        final_list
+    """
+    final_list = []
+    for item in input_list: 
+        if item not in final_list: 
+            final_list.append(item) 
+    return final_list
+
+def add_next_dominators(list_of_next_dominators):
+    """
+    Description: Add next dominators to connected dominating set
+
+    Args:
+        list_of_next_dominators (list): A list with next dominators
+
+    Returns:
+        -
+    """
+    # Sort list of next dominators by how important are
+    sorted_list_of_next_dominators = sorted(list_of_next_dominators.items(), key=operator.itemgetter(1))  
+    
+    # Add next dominators until DS be connected
+    for node in sorted_list_of_next_dominators:
+        connected_dominating_set[node[0]] = node[1]
+        connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
+        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set) and all_dominees_have_dominators():
+            break
+
+def remove_non_significant_nodes(non_significant_nodes):
+    """
+    Description: Check if can remove dominators that not significants
+
+    Args:
+        non_significant_nodes (list): A list with non significant nodes
+
+    Returns:
+        -
+    """
+    for node in non_significant_nodes:
+        # Remove node from connected dominating set
+        value = connected_dominating_set.pop(node)
+        # Check if DS is still connected
+        try:
+            connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
+        except Exception as err:
+            pass
+        is_connected = False
+        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
+            # Check if all dominees have at least one dominator 1-hop away
+            all_nodes = []
+            for key in connected_dominating_set:
+                all_nodes = all_nodes + dict_of_objects[key].get_N_of_u()
+            final_list = remove_duplicates(all_nodes)
+            # Check if node belongs to dominating set need to be removed
+            if len(final_list) != len(dict_of_objects):
+                connected_dominating_set[node] = value
+            is_connected = True
+        if not is_connected:
+            connected_dominating_set[node] = value
+
+def all_dominees_have_dominators():
+    """
+    Description: Check if all dominees have dominator
+
+    Args:
+        -
+
+    Returns:
+        -
+    """
+    all_nodes = []
+    for node in connected_dominating_set:
+        node_obj = dict_of_objects[node]
+        all_nodes = all_nodes + node_obj.get_N_of_u()
+    final_list = remove_duplicates(all_nodes)
+    if len(final_list) == len(dict_of_objects):
+        return True
+    
+    return False
+
+def last_step(algorithm):
     """
     Description: Check if DS is connected, minimize it and plot it
 
@@ -230,32 +317,49 @@ def last_step():
     Returns:
         -
     """
-    print "An extra process for connectivity"
+    print "\nProcess 4 of 6"
     start = time.time()
     # Check if DS is connected
+    connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
+    end = time.time()
+    print "Time running process 4:", end-start
+    is_connected = False
+    if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
+        print "\nDS is connected\n"
+        is_connected = True
+    else:
+        print "\nDS is not connected\n"
+    if algorithm == 2:
+        print "\nProcess 5 of 6"
+        start = time.time()
+        results = poll_nodes_for_dominators({})
+        non_significant_nodes = [k for k,v in results[0].iteritems() if int(v) == 0]
+        if not is_connected:
+            add_next_dominators(results[1])
+            remove_non_significant_nodes(non_significant_nodes)
+        else:
+            add_next_dominators(results[1])
+            remove_non_significant_nodes(non_significant_nodes)
+        end = time.time()
+        print "Time running process 5:", end-start
+
+    # Find Minimum Connected Dominating Set (MCDS)
+    print "\nProcess 6 of 6"
+    start = time.time()
+    find_MCDS()
+    end = time.time()
+    print "Time running process 6:", end-start
+
     connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
     if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
         print "\nDS is connected\n"
     else:
         print "\nDS is not connected\n"
-    end = time.time()
-    print "Time running extra process:", end-start
 
     print_CDS()
     mlv.multilayer_visualization()
     
-    # Find Minimum Connected Dominating Set (MCDS)
-    find_MCDS()
-    connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
-    if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
-        print "\nDS is connected\n"
-    else:
-        print "\nDS is not connected\n"
-
-    print_CDS()
-    mlv.multilayer_visualization()
-
-    # Plot network
+    # Print input graph
     plot_input_graph()
 
 def milcom_algorithm(pci,user_input):
@@ -269,7 +373,7 @@ def milcom_algorithm(pci,user_input):
     Returns:
         -
     """
-    print "Process 3 of 3"
+    print "\nProcess 3 of 6"
     start = time.time()
     # Create Dominating Set (DS) of network
     for name, node in dict_of_objects.iteritems():
@@ -283,7 +387,7 @@ def milcom_algorithm(pci,user_input):
     end = time.time()
     print "Time running process 3:", end-start
     
-    last_step()
+    last_step(1)
 
 def new_algorithm(user_input):
     """
@@ -295,16 +399,21 @@ def new_algorithm(user_input):
     Returns:
         -
     """
-    print "Process 3 of 3"
+    print "\nProcess 3 of 6"
     start = time.time()
-
     # Create Dominating Set (DS) of network
     for name, node in dict_of_objects.iteritems():
         node.find_weight()
         node.find_Nu_PCIs(dict_of_objects,"new")
         node.add_node_in_CDS(user_input)
+    end = time.time()
+    print "Time running process 3:", end-start
+    print 
 
-    last_step()
+    print_CDS()
+    mlv.multilayer_visualization()
+
+    last_step(2)
 
 if __name__=="__main__":
     # Get user input and check if this input is correct

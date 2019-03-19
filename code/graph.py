@@ -78,6 +78,46 @@ def find_node_connectivity():
     node_connectivity = nx.node_connectivity(G)
     return node_connectivity
 
+def poll_nodes_for_dominators(dict_of_next_dominators):
+    """
+    Description: All nodes in connected dominating set poll other nodes to join
+
+    Args:
+        dict_of_next_nodes (dictionary)
+
+    Returns:
+        -
+    """
+    global G
+
+    counter = 0
+    dict_of_significant_nodes = {}
+    for i in range(counter,len(connected_dominating_set)):
+        for j in range(counter+1,len(connected_dominating_set)):
+            node_obj = dict_of_objects[connected_dominating_set.keys()[i]]
+            if connected_dominating_set.keys()[j] not in node_obj.get_N_of_u():
+                paths = list(nx.shortest_path(G,connected_dominating_set.keys()[i],connected_dominating_set.keys()[j]))
+                for node in paths[1:len(paths)-1]:
+                    if node not in dict_of_next_dominators:
+                        if node not in connected_dominating_set:
+                            dict_of_next_dominators[node] = 1
+                        else:
+                            if node not in dict_of_significant_nodes:
+                                dict_of_significant_nodes[node] = 1
+                            else:
+                                dict_of_significant_nodes[node] += 1
+                    else:
+                        dict_of_next_dominators[node] += 1
+                else:
+                    break
+        counter += 1
+
+    for node in connected_dominating_set:
+        if node not in dict_of_significant_nodes:
+            dict_of_significant_nodes[node] = 0
+    
+    return (dict_of_significant_nodes,dict_of_next_dominators) 
+
 def plot_local_graph(network):
     """
     Description: Create and plot local network
