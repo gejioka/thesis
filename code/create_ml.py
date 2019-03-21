@@ -8,6 +8,7 @@ import operator
 import time
 import sys
 import ast
+import os
 import os.path
 import re
 
@@ -88,8 +89,11 @@ def check_args(args):
         Terminate program if arguments are not correct
     """
     pci = ""
-    if len(args) == 3:
-        pci = args[2]   # User set the pci algorithm he wants
+    if len(args) >= 3:
+        if not args[2].isdigit():
+            pci = args[2]   # User set the pci algorithm he wants
+        else:
+            pci = "cl"
     elif len(args) == 2:
         if args[1] == "--help":
             print "Usage of pci argument:"
@@ -356,11 +360,22 @@ def last_step(algorithm):
     else:
         print "\nDS is not connected\n"
 
-    print_CDS()
-    mlv.multilayer_visualization()
+    testing = False
+    try:
+        if sys.argv[3] == "testing":
+            testing = True
+    except Exception:
+        pass
     
+    if not testing:
+        print_CDS()
+        mlv.multilayer_visualization()
+    
+    all_dominees_have_dominators()
+
     # Print input graph
-    plot_input_graph()
+    if not testing:
+        plot_input_graph()
 
 def milcom_algorithm(pci,user_input):
     """
@@ -410,17 +425,175 @@ def new_algorithm(user_input):
     print "Time running process 3:", end-start
     print 
 
-    print_CDS()
-    mlv.multilayer_visualization()
+    testing = False
+    try:
+        if sys.argv[3] == "testing":
+            testing = True
+    except Exception:
+        pass
+    
+    if not testing:
+        print_CDS()
+        mlv.multilayer_visualization()
 
     last_step(2)
 
+def testing_function():
+    # This code is for testing the two algorithms
+    _50_nodes_total         = "/home/giorgos/Documents/University/git_projects/thesis/code/root/50_nodes_total/"
+    _degree_experiments     = "/home/giorgos/Documents/University/git_projects/thesis/code/root/degree_experiments/"
+    _diameter_experiments   = "/home/giorgos/Documents/University/git_projects/thesis/code/root/diameter_experiments/"
+    _layer_experiments      = "/home/giorgos/Documents/University/git_projects/thesis/code/root/layer_experiments/"
+
+    result = re.split('_DM|_D',sys.argv[1])[1].split("_")[0]
+    if not result.isdigit():
+        result = re.split('_DM|_D',sys.argv[1])[2].split("_")[0]
+    
+    string_to_write = ""
+    if "50 nodes total" in sys.argv[1]:
+        if os.path.isfile(_50_nodes_total+"_"+str(result)+"_degree.txt"):
+            with open(_50_nodes_total+"_"+str(result)+"_degree.txt", "a") as f:
+                if int(sys.argv[2]) == 1:
+                    if all_dominees_have_dominators():
+                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                else:
+                    if all_dominees_have_dominators():
+                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                    f.write("\n")
+        else:
+            with open(_50_nodes_total+"_"+str(result)+"_degree.txt", "w") as f:
+                if int(sys.argv[2]) == 1:
+                    if all_dominees_have_dominators():
+                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                else:
+                    if all_dominees_have_dominators():
+                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                    f.write("\n")
+    elif "Layers Experiments" in sys.argv[1]:
+        if os.path.isfile(_layer_experiments+"_"+str(result)+"_degree.txt"):
+            with open(_layer_experiments+"_"+str(result)+"_degree.txt", "a") as f:
+                if int(sys.argv[2]) == 1:
+                    if all_dominees_have_dominators():
+                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                else:
+                    if all_dominees_have_dominators():
+                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                    f.write("\n")
+        else:
+            with open(_layer_experiments+"_"+str(result)+"_degree.txt", "w") as f:
+                if int(sys.argv[2]) == 1:
+                    if all_dominees_have_dominators():
+                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                else:
+                    if all_dominees_have_dominators():
+                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                    f.write("\n")
+    elif "Degree Experiments" in sys.argv[1]:
+        if os.path.isfile(_degree_experiments+"_"+str(result)+"_degree.txt"):
+            with open(_degree_experiments+"_"+str(result)+"_degree.txt", "a") as f:
+                if int(sys.argv[2]) == 1:
+                    if all_dominees_have_dominators():
+                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                else:
+                    if all_dominees_have_dominators():
+                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                    f.write("\n")
+        else:
+            with open(_degree_experiments+"_"+str(result)+"_degree.txt", "w") as f:
+                if int(sys.argv[2]) == 1:
+                    if all_dominees_have_dominators():
+                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                else:
+                    if all_dominees_have_dominators():
+                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                    f.write("\n")
+    elif "Diameter Experiments" in sys.argv[1]:
+        if os.path.isfile(_diameter_experiments+"_"+str(result)+"_degree.txt"):
+            with open(_diameter_experiments+"_"+str(result)+"_degree.txt", "a") as f:
+                if int(sys.argv[2]) == 1:
+                    if all_dominees_have_dominators():
+                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                else:
+                    if all_dominees_have_dominators():
+                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                    f.write("\n")
+        else:
+            with open(_diameter_experiments+"_"+str(result)+"_degree.txt", "w") as f:
+                if int(sys.argv[2]) == 1:
+                    if all_dominees_have_dominators():
+                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                else:
+                    if all_dominees_have_dominators():
+                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                    else:
+                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                    f.write(string_to_write)
+                    f.write("\n")
+
 if __name__=="__main__":
+    testing = False
+    try:
+        if argv[3] == "testing":
+            testing = True
+    except Exception:
+        pass
+
+    print "Filename is:", argv[1]
+
     # Get user input and check if this input is correct
-    user_input = int(raw_input("Choose one of the following algorithms: 1.milcom algorithm\n\t\t\t\t\t2.new algorithm\n"))
-    if user_input not in [1,2]:
-        print "Wrong input. Type 1 for milcom or 2 for new algorithm."
-        exit(1)
+    user_input = 0
+    if not testing:
+        user_input = int(raw_input("Choose one of the following algorithms: 1.milcom algorithm\n\t\t\t\t\t2.new algorithm\n"))
+        if user_input not in [1,2]:
+            print "Wrong input. Type 1 for milcom or 2 for new algorithm."
+            exit(1)
+    else:
+        user_input = int(sys.argv[2])
 
     # Run one of the algorithms
     pci = create_structures(user_input)
@@ -428,3 +601,7 @@ if __name__=="__main__":
         milcom_algorithm(pci,user_input)
     else:
         new_algorithm(user_input)
+
+    # Write results to file
+    if testing:
+        testing_function()

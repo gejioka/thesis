@@ -143,5 +143,6 @@ def print_CDS():
     to_print = ""
 
     for node, value in connected_dominating_set.iteritems():
-        print "Node name is " + node + " and number of dominees is " + str(value) 
+        print "Node name is " + node + " and number of dominees is " + str(value)
+    print "Number of nodes in MCDS is:", len(connected_dominating_set) 
 
