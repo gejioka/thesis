@@ -3,7 +3,7 @@ from node import *
 import time
 import sys
 
-def parser():
+def parser(user_input,args):
     """
     Description: Parse a file represents a network and create the first structure for this
 
@@ -20,7 +20,7 @@ def parser():
     line_number = 0     # A variable for number of line in file
     start_time = time.time()
     try:
-        filename = sys.argv[1]
+        filename = args.path
         with open(filename,"r") as f:
             nodes = {}
             number_of_nodes     = 0
@@ -59,7 +59,7 @@ def parser():
             
             print "Process 2 of 3"
             start_time = time.time()
-            dict_of_objects = create_objects_of_nodes(nodes)
+            dict_of_objects = create_objects_of_nodes(nodes,user_input)
             end_time = time.time()
             print "Time running process 1:", end_time-start_time
             

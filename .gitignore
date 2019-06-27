@@ -2,8 +2,9 @@ code/networks/*
 code/*.pyc
 code/build
 code/dist
+code/logs
+code/root
+code/tools/*.pyc
 code/pymnet*
-code/tests
+code/new_algorithm.py
 papers/*
-generators/*
-network_samples/*

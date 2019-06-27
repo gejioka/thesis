@@ -5,7 +5,6 @@ import random
 import time
 import global_variables as gv
 
-
 def generate_layers_of_nodes():
     """
     Description: Generate tuples of nodes and the layers they beyong
@@ -60,11 +59,9 @@ def generate_neighbors(nodes_layers_list,node,first_time):
     else:
         num_of_neighbors = randint(1,gv.NUMBEROFNEIGHBORS)
 
-    for i in range(len(nodes_layers_list)):
-        if node[0] in nodes_layers_list[i][1] and nodes_layers_list[i][0] not in node[1]:
-            node[1].append(nodes_layers_list[i][0])
-            num_of_neighbors -= 1
-
+    [node[1].append(nodes_layers_list[i][0]) for i in range(len(nodes_layers_list)) if node[0] in nodes_layers_list[i][1] and nodes_layers_list[i][0] not in node[1]]
+    num_of_neighbors -= len(node[1])
+    
     for i in range(len(nodes_layers_list)):
         if nodes_layers_list[i][0] == node[0]:
             nodes_layers_list[i] = node
@@ -119,10 +116,11 @@ def check_arguments(args):
             print "\tenormous:\tCreate a network with 10000 nodes, maximum 5000 neighbors and 1000 layers"
         elif argv[1] == "small":
             gv.set_number_of_nodes(gv.SMALL)
-            gv.set_number_of_neighbors(int(gv.SMALL/5))
-            gv.set_number_of_central_nodes(int(gv.SMALL/10))
-            gv.set_number_of_neighbors_for_central_nodes(argv[1])
-            gv.set_number_of_layers(int(gv.SMALL/10))
+            #gv.set_number_of_neighbors(int(gv.SMALL/5))
+            gv.set_number_of_neighbors(6)
+            #gv.set_number_of_central_nodes(int(gv.SMALL/10))
+            #gv.set_number_of_neighbors_for_central_nodes(argv[1])
+            gv.set_number_of_layers(1)
         elif argv[1] == "medium":
             gv.set_number_of_nodes(gv.MEDIUM)
             gv.set_number_of_neighbors(int(gv.MEDIUM/2))
@@ -133,8 +131,8 @@ def check_arguments(args):
             gv.set_number_of_layers(int(gv.LARGE/10))
         elif argv[1] == "enormous":
             gv.set_number_of_nodes(gv.ENORMOUS)
-            gv.set_number_of_neighbors(int(gv.ENORMOUS/2))
-            gv.set_number_of_layers(int(gv.ENORMOUS/10))
+            gv.set_number_of_neighbors(int(10))
+            gv.set_number_of_layers(int(20))
     elif len(argv) == 1:
         gv.set_number_of_nodes(gv.MEDIUM)
         gv.set_number_of_neighbors(int(gv.MEDIUM/2))
