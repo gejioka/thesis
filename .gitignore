@@ -6,6 +6,7 @@ code/logs
 code/root
 code/tools/*.pyc
 code/pymnet
+code_back/*
 code/pymnet*
 code/network.txt
 code/new_algorithm.py
