@@ -1,6 +1,5 @@
 from global_variables import *
 from node import *
-from log import *
 import time
 import sys
 
@@ -37,8 +36,7 @@ def parser(user_input,args):
                     print "Number of layers is:", item[0]
                 elif line_number == 2:
                     print "Names of columns are: " + str(item[0]) + " " + str(item[1]) + " " + str(item[2]) + " " + str(item[3]) + " " + str(item[4]) + " " + str(item[5]) + " "
-                    if args.time:
-                        print "\nProcess 1 of 3"
+                    print "\nProcess 1 of 3"
                 else:
                     if item[2] not in nodes:
                         nodes[item[2]] = {}
@@ -56,21 +54,17 @@ def parser(user_input,args):
                             nodes[item[2]]["interlinks"][int(item[1])].append(item[3])
 
                 line_number += 1
-            if args.time:
-                end_time = time.time()
-                print "Time running process 1:", end_time-start_time
-            if args.time:
-                print "Process 2 of 3"
-                start_time = time.time()
-            dict_of_objects = create_objects_of_nodes(nodes,user_input,args)
-            if args.time:
-                end_time = time.time()
-                print "Time running process 1:", end_time-start_time
+            end_time = time.time()
+            print "Time running process 1:", end_time-start_time
+            
+            print "Process 2 of 3"
+            start_time = time.time()
+            dict_of_objects = create_objects_of_nodes(nodes,user_input)
+            end_time = time.time()
+            print "Time running process 1:", end_time-start_time
             
             # Release nodes dictionary
             nodes = None
-    except IOError as err:
-        write_message(args,err,"ERROR")
-        sys.exit(1)
     except Exception as err:
-        write_message(args,err,"ERROR")
+        print err
+        exit(1)

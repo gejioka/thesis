@@ -1,6 +1,5 @@
 from global_variables import *
 from networkx.algorithms.connectivity import minimum_st_node_cut
-from log import *
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -87,7 +86,7 @@ def find_node_connectivity():
     node_connectivity = nx.node_connectivity(G)
     return node_connectivity
 
-def poll_nodes_for_dominators(dict_of_next_dominators,args):
+def poll_nodes_for_dominators(dict_of_next_dominators):
     """
     Description: All nodes in connected dominating set poll other nodes to join
 
@@ -101,31 +100,21 @@ def poll_nodes_for_dominators(dict_of_next_dominators,args):
 
     counter = 0
     dict_of_significant_nodes = {}
-    write_message(args,"[!] Start poll proccess","INFO")
-    write_message(args,"[!] Try to add most significant nodes to DS and remove non significant nodes.","INFO")
     for i in range(counter,len(connected_dominating_set)):
         for j in range(counter+1,len(connected_dominating_set)):
             node_obj = dict_of_objects[connected_dominating_set.keys()[i]]
             if connected_dominating_set.keys()[j] not in node_obj.get_N_of_u():
                 paths = list(nx.shortest_path(G,connected_dominating_set.keys()[i],connected_dominating_set.keys()[j]))
-                message = "Sortest path from {} --> {} is [%s]"%", ".join(paths)
-                message = message.format(dict_of_objects[connected_dominating_set.keys()[i]].get_name(),dict_of_objects[connected_dominating_set.keys()[j]].get_name())
-                write_message(args,message,"DEBUG")
                 for node in paths[1:len(paths)-1]:
-                    write_message(args,"[!] Check significance of node with name {}".format(node),"INFO")
                     if node not in dict_of_next_dominators:
                         if node not in connected_dominating_set:
-                            write_message(args,"[+] Node with name {} added to list with next dominators".format(node),"INFO")
                             dict_of_next_dominators[node] = 1
                         else:
                             if node not in dict_of_significant_nodes:
-                                write_message(args,"[+] Node with name {} added to list with significant nodes".format(node),"INFO")
                                 dict_of_significant_nodes[node] = 1
                             else:
-                                write_message(args,"[-] Node with name {} already exist in list with significant nodes".format(node),"INFO")
                                 dict_of_significant_nodes[node] += 1
                     else:
-                        write_message(args,"[-] Node with name {} already exist in list with next dominators".format(node),"INFO")
                         dict_of_next_dominators[node] += 1
                 else:
                     break

@@ -21,7 +21,6 @@ class Node:
         self.N_of_u = []
         self.N2_of_u = []
         self.N3_of_u = []
-        self.dominators = []
         self.Ns_of_u_dict = {1:self.N_of_u,2:self.N2_of_u,3:self.N3_of_u}
        
     def get_name(self):
@@ -420,18 +419,6 @@ class Node:
         """
         return self.N3_of_u
     
-    def get_node_dominators(self):
-        """
-        Description: Return dominators of specific node
-
-        Args:
-            -
-
-        Returns:
-            dominators
-        """
-        return self.dominators
-    
     def find_all_nodes_to_3hops(self):
         """
         Description: Create a list with all nodes 3-hop away from each node in network
@@ -527,19 +514,16 @@ class Node:
         dominator = self.check_for_dominator(dict_of_objects)
         if self.Nu_xPCIs_list[0][0] in connected_dominating_set:
             connected_dominating_set[self.Nu_xPCIs_list[0][0]] += 1
-            self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[0][0]])
         else:
             has_dominator = False
             for node in connected_dominating_set:
                 node_obj = dict_of_objects[node]
                 if self.name in node_obj.get_N_of_u():
-                    self.dominators.append(node_obj)
                     has_dominator = True
                     break
             
             if not has_dominator:
                 connected_dominating_set[self.Nu_xPCIs_list[0][0]] = 1
-                self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[0][0]])
     
     def add_node_in_CDS(self,algorithm):
         """
@@ -559,7 +543,6 @@ class Node:
             node_obj = dict_of_objects[item]
             for neighbor in node_obj.get_N_of_u():
                 if neighbor in connected_dominating_set:
-                    self.dominators.append(dict_of_objects[neighbor])
                     has_dominator = True
                     break
                 else:
@@ -569,10 +552,8 @@ class Node:
                         if node_obj.get_name() in nodeObj.get_N_of_u():
                             if nodeObj.get_name() not in connected_dominating_set:
                                 connected_dominating_set[nodeObj.get_name()] = 1
-                                self.dominators.append(dict_of_objects[nodeObj.get_name()])
                             else:
                                 connected_dominating_set[nodeObj.get_name()] += 1
-                                self.dominators.append(dict_of_objects[nodeObj.get_name()])
                                 
     def __str__(self):
         """

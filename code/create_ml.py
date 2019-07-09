@@ -2,11 +2,13 @@ from metrics import *
 from node import *
 from global_variables import *
 from graph import *
+from log import *
 import networkx as nx
 import network_parser as np
 import ml_visualization as mlv
 import operator
 import argparse
+import logging
 import time
 import sys
 import ast
@@ -28,7 +30,7 @@ def find_intralayer_links(node_layer,neighbors):
         A list with all intra-layer links
     """
     intralayer_links = [neighbor[0] for neighbor in neighbors if node_layer == neighbor[1]]
-    
+
     return intralayer_links
 
 def find_interlayer_links(node_layer,neighbors):
@@ -54,7 +56,7 @@ def find_interlayer_links(node_layer,neighbors):
     
     return interlayer_links
 
-def create_dict_of_nodes(path):
+def create_dict_of_nodes(args):
     """
     Description: Create a dictionary with all nodes and their links
 
@@ -65,19 +67,26 @@ def create_dict_of_nodes(path):
         A dictionary with status of all nodes
     """
     links = {}
-    with open(path,"r") as f:
-        for line in f:
-            if line[0] != "#" and len(line) > 1:
-                line = line.replace(", ",",")
-                item = re.split(' |\t',line)
-                item = filter(None,item)
-                neighbors = item[2].split(";")
-                for i in range(len(neighbors)):
-                    neighbors[i] = ast.literal_eval(neighbors[i])
-                intralayer_links = find_intralayer_links(int(item[1]),neighbors)
-                interlayer_links = find_interlayer_links(int(item[1]),neighbors)
+    try:
+        with open(args.path,"r") as f:
+            for line in f:
+                if line[0] != "#" and len(line) > 1:
+                    line = line.replace(", ",",")
+                    item = re.split(' |\t',line)
+                    item = filter(None,item)
+                    neighbors = item[2].split(";")
+                    for i in range(len(neighbors)):
+                        neighbors[i] = ast.literal_eval(neighbors[i])
+                    intralayer_links = find_intralayer_links(int(item[1]),neighbors)
+                    interlayer_links = find_interlayer_links(int(item[1]),neighbors)
 
-                links[item[0]] = {"layer" : item[1], "intralinks" : intralayer_links, "interlinks" : interlayer_links}
+                    links[item[0]] = {"layer" : item[1], "intralinks" : intralayer_links, "interlinks" : interlayer_links}
+    except IOError as err:
+        write_message(args,err,"ERROR")
+        sys.exit(1)
+    except Exception as err:
+        write_message(args,err,"ERROR")
+
     return links
 
 def choose_parser(path):
@@ -89,10 +98,18 @@ def choose_parser(path):
     Returns:
         An int represents 1 of 2 parsers
     """
-    with open(path,"r") as f:
-        for line in f:
-            if ";" in line:
-                return 1
+    try:
+        with open(path,"r") as f:
+            for line in f:
+                if ";" in line:
+                    return 1
+    except IOError as err:
+        write_message(args,err,"ERROR")
+        sys.exit(1)
+    except Exception as err:
+        write_message(args,err,"ERROR")
+        sys.exit(1)
+
     return 2
 
 def check_connectivity(node_obj,connectivity_list,current_connected_dominating_set):
@@ -111,7 +128,7 @@ def check_connectivity(node_obj,connectivity_list,current_connected_dominating_s
             connectivity_list = check_connectivity(dict_of_objects[neighbor],connectivity_list,current_connected_dominating_set)
     return connectivity_list
 
-def find_MCDS():
+def find_MCDS(args):
     """
     Description: Minimize existing connected dominating set (CDS)
 
@@ -120,12 +137,16 @@ def find_MCDS():
     Returns:
         -
     """
+    write_message(args,"[!] CDS created. Need to minimize CDS and create MCDS", "INFO")
+    write_message(args,"[!] Start to minimize CDS","INFO")
+    
     counter = 0
-    while counter < len(connected_dominating_set):
+    while counter < len(connected_dominating_set) and len(connected_dominating_set) > 1:
         # Remove dominator from DS to find out if it needs
         key = list(connected_dominating_set.iteritems())[counter][0]
         value = connected_dominating_set.pop(key)
-        
+        write_message(args,"[-] Try to remove node with name {}".format(key),"INFO")
+
         # Check if every dominatee has dominator
         all_nodes = []
         for key1 in connected_dominating_set:
@@ -138,7 +159,13 @@ def find_MCDS():
         all_nodes = dict_of_objects[list(connected_dominating_set.keys())[0]].remove_duplicate(all_nodes)
         if not len(set(connectivity_list)&set(connected_dominating_set)) == len(connected_dominating_set) or not len(set(all_nodes)&set(dict_of_objects)) == len(dict_of_objects):
             connected_dominating_set[key] = value
+            write_message(args,"[!] Node with name {} cannot be removed because CDS will disconnected".format(key),"INFO")
             counter += 1
+        else:
+            write_message(args,"[-] Node with name {} removed from CDS","INFO")
+            message = "New CDS with out node {} is [%s]"%", ".join([a for a in connected_dominating_set])
+            message = message.format(key)
+            write_message(args,message,"DEBUG")
         
 def create_structures(user_input,args):
     """
@@ -155,21 +182,30 @@ def create_structures(user_input,args):
 
     # Choose parser depends on network file format
     if parser == 1:
-        print "\nProcess 1 of 6"
-        start = time.time()
-        links = create_dict_of_nodes(args.path)
-        end = time.time()
-        print "Time running process 1:", end-start
+        if args.time:
+            print "\nProcess 1 of 6"
+            start = time.time()
+        links = create_dict_of_nodes(args)
+        if args.time:
+            end = time.time()
+            print "Time running process 1:", end-start
         
-        print "\nProcess 2 of 6"
-        start = time.time()
-        dict_of_objects = create_objects_of_nodes(links,user_input)
+            print "\nProcess 2 of 6"
+            start = time.time()
+        dict_of_objects = create_objects_of_nodes(links,user_input,args)
         # Release links
         links = None
-        end = time.time()
-        print "Time running process 2:", end-start
+        if args.time:
+            end = time.time()
+            print "Time running process 2:", end-start
     else:
-        np.parser(user_input,args)
+        try:
+            np.parser(user_input,args)
+        except IOError as err:
+            write_message(args,err,"ERROR")
+            sys.exit(1)
+        except Exception as err:
+            write_message(args,err,"ERROR")
     # Create network
     initialize_graph()
     add_nodes()
@@ -208,6 +244,7 @@ def add_next_dominators(list_of_next_dominators):
     # Add next dominators until DS be connected
     for node in sorted_list_of_next_dominators:
         connected_dominating_set[node[0]] = node[1]
+        write_message(args,"[+] Add to DS node with name {}".format(node[0]),"INFO")
         connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
         if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set) and all_dominees_have_dominators():
             break
@@ -225,6 +262,7 @@ def remove_non_significant_nodes(non_significant_nodes):
     for node in non_significant_nodes:
         # Remove node from connected dominating set
         value = connected_dominating_set.pop(node)
+        write_message(args,"[-] Try to remove node with name {} from CDS".format(node),"INFO")
         # Check if DS is still connected
         try:
             connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
@@ -243,6 +281,10 @@ def remove_non_significant_nodes(non_significant_nodes):
             is_connected = True
         if not is_connected:
             connected_dominating_set[node] = value
+            write_message(args,"[!] Node with name {} cannot be removed because network disconnected!".format(node), "INFO")
+        else:
+            write_message(args,"[-] Node with name {} removed from CDS".format(node),"INFO")
+
 
 def all_dominees_have_dominators():
     """
@@ -274,12 +316,14 @@ def last_step(algorithm,args):
     Returns:
         -
     """
-    print "\nProcess 4 of 6"
-    start = time.time()
+    if args.time:
+        print "\nProcess 4 of 6"
+        start = time.time()
     # Check if DS is connected
     connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
-    end = time.time()
-    print "Time running process 4:", end-start
+    if args.time:
+        end = time.time()
+        print "Time running process 4:", end-start
     is_connected = False
     if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
         print "\nDS is connected\n"
@@ -287,31 +331,38 @@ def last_step(algorithm,args):
     else:
         print "\nDS is not connected\n"
     if algorithm == 2:
-        print "\nProcess 5 of 6"
-        start = time.time()
-        results = poll_nodes_for_dominators({})
+        if args.time:
+            print "\nProcess 5 of 6"
+            start = time.time()
+        results = poll_nodes_for_dominators({},args)
         non_significant_nodes = [k for k,v in results[0].iteritems() if int(v) == 0]
+        write_message(args,"[+] Create list with non significant nodes","INFO")
+        write_message(args,"List of non significant list created. Nodes induced to list are [%s]"%", ".join(non_significant_nodes),"DEBUG")
         if not is_connected:
             add_next_dominators(results[1])
             remove_non_significant_nodes(non_significant_nodes)
         else:
             add_next_dominators(results[1])
             remove_non_significant_nodes(non_significant_nodes)
-        end = time.time()
-        print "Time running process 5:", end-start
+        if args.time:
+            end = time.time()
+            print "Time running process 5:", end-start
 
     # Find Minimum Connected Dominating Set (MCDS)
-    print "\nProcess 6 of 6"
-    start = time.time()
-    find_MCDS()
-    end = time.time()
-    print "Time running process 6:", end-start
+    if args.mcds:
+        if args.time:
+            print "\nProcess 6 of 6"
+            start = time.time()
+        find_MCDS(args)
+        if args.time:
+            end = time.time()
+            print "Time running process 6:", end-start
 
-    connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
-    if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
-        print "\nDS is connected\n"
-    else:
-        print "\nDS is not connected\n"
+        connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
+        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
+            print "\nDS is connected\n"
+        else:
+            print "\nDS is not connected\n"
 
     testing = False
     try:
@@ -321,7 +372,7 @@ def last_step(algorithm,args):
         pass
     
     if not testing:
-        print_CDS()
+        print_CDS(args)
         if args.plotting:
             mlv.multilayer_visualization()
     
@@ -343,19 +394,31 @@ def milcom_algorithm(pci,user_input,args):
     Returns:
         -
     """
-    print "\nProcess 3 of 6"
-    start = time.time()
+    import log 
+
+    if args.log:
+        write_message(args,"[!] Start running milcom algorithm","INFO")
+        write_message(args,"[!] Start to calculate cross-layer PCI for all nodes","INFO")
+    if args.time:
+        print "\nProcess 3 of 6"
+        start = time.time()
     # Create Dominating Set (DS) of network
     for name, node in dict_of_objects.iteritems():
+        # if args.log:
+        #     log.write_message()
         unique_links = find_links_between_neighbors(node.get_xPCI_nodes())
         node.set_unique_links_between_nodes(unique_links)
         node.find_clPCI()
         node.find_Nu_PCIs(dict_of_objects,pci)
         node.find_dominator(dict_of_objects)
+        message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([a.get_name() for a in node.get_node_dominators()])
+        message = message.format(node.get_name(),len(node.get_node_dominators()))
+        write_message(args,message,"DEBUG")
     for name, node in dict_of_objects.iteritems():
         node.add_node_in_CDS(user_input)
-    end = time.time()
-    print "Time running process 3:", end-start
+    if args.time:
+        end = time.time()
+        print "Time running process 3:", end-start
 
     testing = False
     try:
@@ -365,7 +428,7 @@ def milcom_algorithm(pci,user_input,args):
         pass
     
     if not testing:
-        print_CDS()
+        print_CDS(args)
         if args.plotting:
             mlv.multilayer_visualization()
     
@@ -381,8 +444,9 @@ def new_algorithm(user_input,args):
     Returns:
         -
     """
-    print "\nProcess 3 of 6"
-    start = time.time()
+    if args.time:
+        print "\nProcess 3 of 6"
+        start = time.time()
     # Create Dominating Set (DS) of network
     for name, node in dict_of_objects.iteritems():
         node.find_weight()
@@ -390,9 +454,13 @@ def new_algorithm(user_input,args):
         node.find_dominator(dict_of_objects)
     for name, node in dict_of_objects.iteritems():
         node.add_node_in_CDS(user_input)
-    end = time.time()
-    print "Time running process 3:", end-start
-    print 
+        message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([a.get_name() for a in node.get_node_dominators()])
+        message = message.format(node.get_name(),len(node.get_node_dominators()))
+        write_message(args,message,"DEBUG")
+    if args.time:
+        end = time.time()
+        print "Time running process 3:", end-start
+        print 
 
     testing = False
     try:
@@ -402,7 +470,7 @@ def new_algorithm(user_input,args):
         pass
     
     if not testing:
-        print_CDS()
+        print_CDS(args)
         if args.plotting:
             mlv.multilayer_visualization()
 
@@ -422,128 +490,183 @@ def testing_function(args):
     string_to_write = ""
     if "50 nodes total" in args.path:
         if os.path.isfile(_50_nodes_total+"_"+str(result)+"_degree.txt"):
-            with open(_50_nodes_total+"_"+str(result)+"_degree.txt", "a") as f:
-                if int(args.algorithm) == 1:
-                    if all_dominees_have_dominators():
-                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+            try:
+                with open(_50_nodes_total+"_"+str(result)+"_degree.txt", "a") as f:
+                    if int(args.algorithm) == 1:
+                        if all_dominees_have_dominators():
+                            string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
                     else:
-                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                else:
-                    if all_dominees_have_dominators():
-                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
-                    else:
-                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                    f.write("\n")
+                        if all_dominees_have_dominators():
+                            string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
+                        f.write("\n")
+            except IOError as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
+            except Exception as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
         else:
-            with open(_50_nodes_total+"_"+str(result)+"_degree.txt", "w") as f:
-                if int(args.algorithm) == 1:
-                    if all_dominees_have_dominators():
-                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+            try:
+                with open(_50_nodes_total+"_"+str(result)+"_degree.txt", "w") as f:
+                    if int(args.algorithm) == 1:
+                        if all_dominees_have_dominators():
+                            string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
                     else:
-                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                else:
-                    if all_dominees_have_dominators():
-                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
-                    else:
-                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                    f.write("\n")
+                        if all_dominees_have_dominators():
+                            string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
+                        f.write("\n")
+            except IOError as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
+            except Exception as err:
+                write_message(args,err,"ERROR")
     elif "Layers Experiments" in args.path:
         if os.path.isfile(_layer_experiments+"_"+str(result)+"_degree.txt"):
-            with open(_layer_experiments+"_"+str(result)+"_degree.txt", "a") as f:
-                if int(args.algorithm) == 1:
-                    if all_dominees_have_dominators():
-                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+            try:
+                with open(_layer_experiments+"_"+str(result)+"_degree.txt", "a") as f:
+                    if int(args.algorithm) == 1:
+                        if all_dominees_have_dominators():
+                            string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
                     else:
-                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                else:
-                    if all_dominees_have_dominators():
-                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
-                    else:
-                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                    f.write("\n")
+                        if all_dominees_have_dominators():
+                            string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
+                        f.write("\n")
+            except IOError as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
+            except Exception as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
         else:
-            with open(_layer_experiments+"_"+str(result)+"_degree.txt", "w") as f:
-                if int(args.algorithm) == 1:
-                    if all_dominees_have_dominators():
-                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+            try:
+                with open(_layer_experiments+"_"+str(result)+"_degree.txt", "w") as f:
+                    if int(args.algorithm) == 1:
+                        if all_dominees_have_dominators():
+                            string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
                     else:
-                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                else:
-                    if all_dominees_have_dominators():
-                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
-                    else:
-                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                    f.write("\n")
+                        if all_dominees_have_dominators():
+                            string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
+                        f.write("\n")
+            except IOError as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
+            except Exception as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
     elif "Degree Experiments" in args.path:
         if os.path.isfile(_degree_experiments+"_"+str(result)+"_degree.txt"):
-            with open(_degree_experiments+"_"+str(result)+"_degree.txt", "a") as f:
-                if int(args.algorithm) == 1:
-                    if all_dominees_have_dominators():
-                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+            try:
+                with open(_degree_experiments+"_"+str(result)+"_degree.txt", "a") as f:
+                    if int(args.algorithm) == 1:
+                        if all_dominees_have_dominators():
+                            string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
                     else:
-                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                else:
-                    if all_dominees_have_dominators():
-                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
-                    else:
-                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                    f.write("\n")
+                        if all_dominees_have_dominators():
+                            string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
+                        f.write("\n")
+            except IOError as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
+            except Exception as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
         else:
-            with open(_degree_experiments+"_"+str(result)+"_degree.txt", "w") as f:
-                if int(args.algorithm) == 1:
-                    if all_dominees_have_dominators():
-                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+            try:
+                with open(_degree_experiments+"_"+str(result)+"_degree.txt", "w") as f:
+                    if int(args.algorithm) == 1:
+                        if all_dominees_have_dominators():
+                            string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
                     else:
-                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                else:
-                    if all_dominees_have_dominators():
-                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
-                    else:
-                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                    f.write("\n")
+                        if all_dominees_have_dominators():
+                            string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
+                        f.write("\n")
+            except IOError as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
+            except Exception as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
     elif "Diameter Experiments" in args.path:
         if os.path.isfile(_diameter_experiments+"_"+str(result)+"_degree.txt"):
-            with open(_diameter_experiments+"_"+str(result)+"_degree.txt", "a") as f:
-                if int(args.algorithm) == 1:
-                    if all_dominees_have_dominators():
-                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+            try:
+                with open(_diameter_experiments+"_"+str(result)+"_degree.txt", "a") as f:
+                    if int(args.algorithm) == 1:
+                        if all_dominees_have_dominators():
+                            string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
                     else:
-                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                else:
-                    if all_dominees_have_dominators():
-                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
-                    else:
-                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                    f.write("\n")
+                        if all_dominees_have_dominators():
+                            string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
+                        f.write("\n")
+            except IOError as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
+            except Exception as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
         else:
-            with open(_diameter_experiments+"_"+str(result)+"_degree.txt", "w") as f:
-                if int(args.algorithm) == 1:
-                    if all_dominees_have_dominators():
-                        string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+            try:
+                with open(_diameter_experiments+"_"+str(result)+"_degree.txt", "w") as f:
+                    if int(args.algorithm) == 1:
+                        if all_dominees_have_dominators():
+                            string_to_write = "milcom algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
                     else:
-                        string_to_write = "milcom algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                else:
-                    if all_dominees_have_dominators():
-                        string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
-                    else:
-                        string_to_write = "new algorithm created MCDS with - number of nodes\n"
-                    f.write(string_to_write)
-                    f.write("\n")
+                        if all_dominees_have_dominators():
+                            string_to_write = "new algorithm created MCDS with {} number of nodes\n".format(len(connected_dominating_set))
+                        else:
+                            string_to_write = "new algorithm created MCDS with - number of nodes\n"
+                        f.write(string_to_write)
+                        f.write("\n")
+            except IOError as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
+            except Exception as err:
+                write_message(args,err,"ERROR")
+                sys.exit(1)
 
 def check_arguments(parser,args):
     """
@@ -575,6 +698,14 @@ def check_arguments(parser,args):
     if args.pci not in ["cl","x"]:
         parser.error("Invalid PCI. This PCI code doesn't exist")
         sys.exit(1)
+    if args.log:
+        if args.logLevel.upper() not in [a.upper() for a in LEVELS.keys()]:
+            parser.error("There in no log level {}. The list with all log levels is {}".format(args.logLevel.upper(),[name.upper() for name,obj in LEVELS.iteritems()]))
+            sys.exit(1)
+    else:
+        if args.logLevel:
+            parser.error("Cannot pass level argument without enable logging.")
+            sys.exit(1)
 
 def get_args():
     """
@@ -587,12 +718,28 @@ def get_args():
     """
     # Create argument parser
     parser = argparse.ArgumentParser(description="Robust MCDS for multi-layer Ad hoc Networks")
-    parser.add_argument("-fp", "--path", help="Path where network has stored", action="store", dest="path", default=False)
-    parser.add_argument("-p", "--pci", help="Algorithm which will use program to calculate PCI value", nargs="?", const="cl", type=str, dest="pci", default="cl")
-    parser.add_argument("-a", "--algorithm", help="Which algorithm will use program to calculate robust MCDS", action="store", dest="algorithm", default=False)
-    parser.add_argument("--testing", help="Test which algorithm is better for each case", action="store_true", dest="testing", default=False)
-    parser.add_argument("--plotting", help="Needs or not to plot network", action="store_true", dest="plotting", default=False)
-    parser.add_argument("--clock", help="Track algorithm duration", action="store", dest="time", default=False)
+    parser.add_argument("-fp", "--path", help="Path where network has stored", \
+        action="store", dest="path", default=False)
+    parser.add_argument("-p", "--pci", help="Algorithm which will use program to calculate PCI value",\
+         nargs="?", const="cl", type=str, dest="pci", default="cl")
+    parser.add_argument("-a", "--algorithm", help="Which algorithm will use program to calculate robust MCDS", \
+        action="store", dest="algorithm", default=False)
+    parser.add_argument("--cds", help="Create a connected dominating set for backbone in network", \
+        action="store_true", dest="cds", default=False)
+    parser.add_argument("--mcds", help="Create a minimum connected dominating set for backbone in network", \
+        action="store_true", dest="mcds", default=False)
+    parser.add_argument("--rmcds", help="Create a robust minimum connected dominating set for backbone in network", \
+        action="store_true", dest="rmcds", default=False)
+    parser.add_argument("--testing", help="Test which algorithm is better for each case", \
+        action="store_true", dest="testing", default=False)
+    parser.add_argument("--plotting", help="Needs or not to plot network", \
+        action="store_true", dest="plotting", default=False)
+    parser.add_argument("--clock", help="Track algorithm duration", \
+        action="store_true", dest="time", default=False)
+    parser.add_argument("--log", help="Check if need to add log messages", \
+        action="store_true", dest="log", default=False)
+    parser.add_argument("-lv", "--level", help="An argument for log level", \
+        action="store", dest="logLevel", default=False)
     args = parser.parse_args()
     
     check_arguments(parser,args)
@@ -608,14 +755,24 @@ if __name__=="__main__":
             testing = True
     except Exception:
         pass
+    
+    if args.log:
+        configure_logging(args)
+    
+    if args.log:
+        # Create two format strings 
+        alg = "milcom" if args.algorithm == 1 else "new"
+        backbone = "CDS" if args.cds else ("MCDS" if args.mcds else "RMCDS")    
+        
+        # Write message
+        write_message(args,"[!] Start running {} algorithm to create {} as backbone and path for input file is {}\n".format(alg,backbone,args.path),"INFO")
 
     # Get user input and check if this input is correct
     user_input = int(args.algorithm)
     if user_input not in [1,2]:
-        print "Wrong input. Type 1 for milcom or 2 for new algorithm."
+        write_message(args,"Wrong input. Type 1 for milcom or 2 for new algorithm.","ERROR")
         sys.exit(1)
-    
-    # Run one of the algorithms
+
     pci = create_structures(user_input,args)
     if user_input == 1:
         milcom_algorithm(pci,user_input,args)

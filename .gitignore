@@ -5,6 +5,8 @@ code/dist
 code/logs
 code/root
 code/tools/*.pyc
+code/pymnet
 code/pymnet*
+code/network.txt
 code/new_algorithm.py
 papers/*

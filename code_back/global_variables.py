@@ -1,5 +1,4 @@
 from sys import *
-import logging
 import metrics
 import collections
 
@@ -22,14 +21,6 @@ connected_dominating_set = {}   # A dictionary with all node in CDS
 dict_of_objects = {}            # A dictionary with all objects represent nodes
 central_nodes = []              # A list of nodes with most neighbors
 all_neighbors = []              # A list with all neighbors of all nodes
-
-# A dictionary with all levels of logging
-LEVELS = {  'debug'     : logging.DEBUG,        
-            'info'      : logging.INFO,
-            'warning'   : logging.WARNING,
-            'error'     : logging.ERROR,
-            'critical'  : logging.CRITICAL
-}
 
 def set_number_of_nodes(num_of_nodes):
     """
@@ -104,7 +95,7 @@ def set_number_of_neighbors_for_central_nodes(network_type):
     elif network_type == "enormous":
         NUMBEROFCENTRALNODESNEIGHBORS = ENORMOUS/20
 
-def create_objects_of_nodes(nodes,user_input,args):
+def create_objects_of_nodes(nodes,user_input):
     """
     Description: Create all objects of nodes for this network
 
@@ -115,7 +106,6 @@ def create_objects_of_nodes(nodes,user_input,args):
         list_of_objecs
     """
     import node
-    import log
     
     for key in nodes:
         node_obj = node.Node(key)
@@ -123,15 +113,6 @@ def create_objects_of_nodes(nodes,user_input,args):
         node_obj.set_intralinks(nodes[key]["intralinks"])
         node_obj.set_interlinks(nodes[key]["interlinks"])
         node_obj.find_N_of_u(nodes[key]["intralinks"],nodes[key]["interlinks"])
-
-        # Write log messages
-        if args.log:
-            log.write_message(args,"[+] A new node with name {} added to network and is in layer {}".format(key,nodes[key]["layer"]),"INFO")
-            log.write_message(args,"Node with name {} has {} neighbors in its layer and {} in other layers".format(key,len(nodes[key]["intralinks"])\
-                ,len([nodes[key]["interlinks"][a] for a in nodes[key]["interlinks"]])),"DEBUG")
-            message = "The number of layers which node has neighbors is {} and are the following [%s]\n"%", ".join(map(str,[str(a) for a in nodes[key]["interlinks"]]))
-            message = message.format(len(nodes[key]["interlinks"]))
-            log.write_message(args,message,"DEBUG")
         if user_input == 1:
             node_obj.find_N2_or_N3_of_u(nodes,2)
             result = metrics.find_xPCI(nodes,key)
@@ -149,7 +130,7 @@ def create_objects_of_nodes(nodes,user_input,args):
 
     return dict_of_objects
 
-def print_CDS(args):
+def print_CDS():
     """
     Description: Print Connected Dominating Set(CDS) for this network
 
@@ -159,11 +140,9 @@ def print_CDS(args):
     Returns:
         -
     """
-    import log
-
     to_print = ""
 
     for node, value in connected_dominating_set.iteritems():
-        log.write_message(args,"Node name is " + node + " and number of dominees is " + str(value),"INFO")
-    log.write_message(args,"[!] Number of nodes in MCDS is: {}".format(len(connected_dominating_set)),"INFO")
+        print "Node name is " + node + " and number of dominees is " + str(value)
+    print "Number of nodes in MCDS is:", len(connected_dominating_set) 
 
