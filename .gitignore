@@ -10,6 +10,6 @@ code_back/*
 code/pymnet*
 code/network.txt
 code/new_algorithm.py
-pymnet/*
+pymnet/
 papers/*
 networks/*
