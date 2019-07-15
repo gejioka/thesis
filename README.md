@@ -11,6 +11,21 @@
 * UNIX based platforms
 * can create different kinds of backbones
 
+### Installation ###
+```sh
+$ chmod +x install.sh
+$ sudo ./install.sh
+```
+
+if get an error: ImportError: cannot import name sampling
+```sh
+$ sudo nano /usr/local/lib/python2.7/dist-packages/pymnet-0.1-py2.7.egg/pymnet/__init__.py
+$ Comment out last line:
+$ from . import sampling
+$ Comment last line:
+$ #from . import sampling
+```
+
 ### Run Test ###
 ```sh
 cd tools
