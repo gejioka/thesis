@@ -1,4 +1,5 @@
 from global_variables import *
+import structures
 from node import *
 from log import *
 import time
@@ -62,7 +63,7 @@ def parser(user_input,args):
             if args.time:
                 write_message(args,"Process 2 of 3","INFO")
                 start_time = time.time()
-            dict_of_objects = create_objects_of_nodes(nodes,user_input,args)
+            dict_of_objects = structures.create_objects_of_nodes(nodes,user_input,args)
             if args.time:
                 end_time = time.time()
                 write_message(args,"Time running process 1: {}".format(end_time-start_time),"INFO")

@@ -49,7 +49,7 @@ def check_arguments(parser,args):
         if not (args.algorithm == "1" or args.algorithm == "2"):
             parser.error("Invalid input algorithm. This algorithm doesn't exist")
             sys.exit(1)
-    if args.pci not in ["cl","x","new","la","degree"]:
+    if args.pci not in ["cl","x","new","la","ml","degree"]:
         parser.error("Invalid PCI. This PCI code doesn't exist")
         sys.exit(1)
     if args.log:

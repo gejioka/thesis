@@ -62,6 +62,18 @@ def last_step(algorithm,args):
     else:
         write_message(args,"Dominating set (DS) is not connected.","INFO")
 
+    plotting(args,True)
+    all_dominees_have_dominators()
+
+def plotting(args,input_graph=False):
+    """
+    Description: Plot network
+
+    Args:
+        args (obj): An object with all arguments of user
+    Returns:
+        -
+    """
     testing = False
     try:
         if args.testing:
@@ -74,12 +86,11 @@ def last_step(algorithm,args):
         if args.plotting:
             mlv.multilayer_visualization()
     
-    all_dominees_have_dominators()
-
-    # Print input graph
-    if not testing:
-        if args.plotting:
-            plot_input_graph()
+    if input_graph:
+        # Print input graph
+        if not testing:
+            if args.plotting:
+                plot_input_graph()
 
 def milcom_algorithm(pci,user_input,args):
     """
@@ -102,10 +113,10 @@ def milcom_algorithm(pci,user_input,args):
         start = time.time()
     # Create Dominating Set (DS) of network
     for name, node in dict_of_objects.iteritems():
-        unique_links = find_links_between_neighbors(node.get_xPCI_nodes())
-        node.set_unique_links_between_nodes(unique_links)
-        node.find_clPCI()
-        node.find_Nu_PCIs(dict_of_objects,pci)
+        if args.pci == "cl":
+            node.set_unique_links_between_nodes(find_links_between_neighbors(node.get_xPCI_nodes()))
+            node.find_clPCI()
+        node.find_Nu_PCIs(dict_of_objects,args.pci)
         node.find_dominator(dict_of_objects)
         message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([a.get_name() for a in node.get_node_dominators()])
         message = message.format(node.get_name(),len(node.get_node_dominators()))
@@ -119,17 +130,7 @@ def milcom_algorithm(pci,user_input,args):
         end = time.time()
         write_message(args,"Time running process 3: {}".format(end-start),"INFO")
     
-    testing = False
-    try:
-        if args.testing:
-            testing = True
-    except Exception:
-        pass
-    
-    if not testing:
-        print_CDS(args)
-        if args.plotting:
-            mlv.multilayer_visualization()
+    plotting(args)
     
     last_step(1,args)
 
@@ -148,8 +149,10 @@ def new_algorithm(user_input,args):
         start = time.time()
     # Create Dominating Set (DS) of network
     for name, node in dict_of_objects.iteritems():
-        node.find_weight()
-        node.find_Nu_PCIs(dict_of_objects,"new")
+        if args.pci == "cl":
+            node.set_unique_links_between_nodes(find_links_between_neighbors(node.get_xPCI_nodes()))
+            node.find_clPCI()
+        node.find_Nu_PCIs(dict_of_objects,args.pci)
         node.find_dominator(dict_of_objects)
     for name, node in dict_of_objects.iteritems():
         node.add_node_in_CDS(user_input)
@@ -160,16 +163,6 @@ def new_algorithm(user_input,args):
         end = time.time()
         write_message(args,"Time running process 3: {}".format(end-start),"INFO")
 
-    testing = False
-    try:
-        if args.testing:
-            testing = True
-    except Exception:
-        pass
-    
-    if not testing:
-        print_CDS(args)
-        if args.plotting:
-            mlv.multilayer_visualization()
+    plotting(args)
 
     last_step(2,args)

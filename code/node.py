@@ -59,6 +59,30 @@ class Node:
             layer
         """
         return self.layer
+    
+    def set_node_degree(self,node_degree):
+        """
+        Description: Set degree of node
+
+        Args:
+            layer (int): A variable for node degree
+
+        Returns:
+            -
+        """
+        self.node_degree = node_degree
+
+    def get_node_degree(self):
+        """
+        Description: Return node degree
+
+        Args:
+            -
+
+        Returns:
+            node_degree
+        """
+        return self.node_degree
 
     def find_N_of_u(self,intralinks,interlinks):
         """
@@ -231,7 +255,7 @@ class Node:
         """
         self.laPCI = laPCI
 
-    def get_laPCI(self,laPCI):
+    def get_laPCI(self):
         """
         Description: Return laPCI for this node
 
@@ -495,7 +519,13 @@ class Node:
         for neighbor in self.N_of_u:
             node_obj = dict_of_objects[neighbor]
             if node_obj != None:
-                if pci == "x":
+                if pci == "degree":
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_node_degree()))
+                elif pci == "la":
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_laPCI()))
+                elif pci == "ml":
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_mlPCI()))
+                elif pci == "x":
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_xPCI()))
                 elif pci == "cl":
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_clPCI()))

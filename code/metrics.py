@@ -90,6 +90,39 @@ def random_nodes(list_of_nodes,pci_value):
     """
     return random.sample(list_of_nodes,pci_value)
 
+def decice_pci_algorithm(args,nodes,node,node_obj):
+    """
+    Description: Decide which pci algorithm to use as metric
+
+    Args:
+        args  (obj): An object with all user arguments 
+        nodes (list): A list with all nodes of network
+        node  (dict): A dictionary with node informations
+        node_obj(obj): An object with node informations
+    Returns:
+        List with k random nodes
+    """
+    if args.pci == "degree":
+        node_obj.set_node_degree(find_node_degree(nodes,node))
+    elif args.pci == "cl":
+        result = find_xPCI(nodes,node)
+        node_obj.set_xPCI(result[0])
+        node_obj.set_xPCI_nodes(result[1])
+    elif args.pci == "x":
+        result = find_xPCI(nodes,node)
+        node_obj.set_xPCI(result[0])
+        node_obj.set_xPCI_nodes(result[1])
+    elif args.pci == "new":
+        node_obj.set_localPCI(single_layer_pci(nodes,node)[0])
+        mlPCI = find_mlPCI(nodes,node)
+        node_obj.set_mlPCI(mlPCI)
+        node_obj.set_newPCI(mlPCI)
+        node_obj.find_weight()
+    elif args.pci == "la":
+        node_obj.set_laPCI(find_laPCI(nodes,node))
+    elif args.pci == "ml":
+        node_obj.set_mlPCI(find_mlPCI(nodes,node))
+
 def single_layer_pci(nodes,node):
     """
     Description: Find pci value for node

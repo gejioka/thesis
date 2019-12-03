@@ -104,52 +104,6 @@ def set_number_of_neighbors_for_central_nodes(network_type):
     elif network_type == "enormous":
         NUMBEROFCENTRALNODESNEIGHBORS = ENORMOUS/20
 
-def create_objects_of_nodes(nodes,user_input,args):
-    """
-    Description: Create all objects of nodes for this network
-
-    Args:
-        nodes (dictionary): A dictionary with all nodes
-
-    Returns:
-        list_of_objecs
-    """
-    import node
-    import log
-    
-    for key in nodes:
-        node_obj = node.Node(key)
-        node_obj.set_layer(nodes[key]["layer"])
-        node_obj.set_intralinks(nodes[key]["intralinks"])
-        node_obj.set_interlinks(nodes[key]["interlinks"])
-        node_obj.find_N_of_u(nodes[key]["intralinks"],nodes[key]["interlinks"])
-
-        # Write log messages
-        if args.log:
-            log.write_message(args,"[+] A new node with name {} added to network and is in layer {}".format(key,nodes[key]["layer"]),"INFO")
-            log.write_message(args,"Node with name {} has {} neighbors in its layer and {} in other layers".format(key,len(nodes[key]["intralinks"])\
-                ,len([nodes[key]["interlinks"][a] for a in nodes[key]["interlinks"]])),"DEBUG")
-            message = "The number of layers which node has neighbors is {} and are the following [%s]\n"%", ".join(map(str,[str(a) for a in nodes[key]["interlinks"]]))
-            message = message.format(len(nodes[key]["interlinks"]))
-            log.write_message(args,message,"DEBUG")
-        if user_input == 1:
-            node_obj.find_N2_or_N3_of_u(nodes,2)
-            result = metrics.find_xPCI(nodes,key)
-            node_obj.set_xPCI(result[0])
-            node_obj.set_xPCI_nodes(result[1])
-        else:
-            node_obj.find_N2_or_N3_of_u(nodes,2)
-            localPCI = metrics.single_layer_pci(nodes,key)[0]
-            mlPCI = metrics.find_mlPCI(nodes,key)
-            newPCI = metrics.find_newPCI(nodes,key,mlPCI)
-            node_obj.set_localPCI(localPCI)
-            node_obj.set_mlPCI(mlPCI)
-            node_obj.set_newPCI(newPCI)
-
-        dict_of_objects[node_obj.get_name()] = node_obj
-
-    return dict_of_objects
-
 def print_CDS(args):
     """
     Description: Print Connected Dominating Set(CDS) for this network
@@ -167,4 +121,4 @@ def print_CDS(args):
     for node, value in connected_dominating_set.iteritems():
         log.write_message(args,"Node name is " + node + " and number of dominees is " + str(value),"INFO")
     log.write_message(args,"[!] Number of nodes in MCDS is: {}".format(len(connected_dominating_set)),"INFO")
-
+    print "[!] Number of nodes in MCDS is: {}".format(len(connected_dominating_set))
