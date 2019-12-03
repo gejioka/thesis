@@ -17,6 +17,28 @@ def find_node_degree(nodes,key):
     """
     return len(nodes[key]["intralinks"])
 
+def find_total_degree(nodes,key):
+    """
+    Description: Find total degree of node
+
+    Args:
+        nodes (dictionary): A dictionary with all informations of all nodes
+        key (String): The key of specific node
+
+    Returns:
+        Size of total links of specific node
+    """
+    all_neighbors=[]
+    if "interlinks" in nodes[key].keys():
+        all_neighbors=nodes[key]["intralinks"]
+        for layer in nodes[key]["interlinks"]:
+            for neighbor in nodes[key]["interlinks"][layer]:
+                all_neighbors.append(neighbor)
+    else:
+        all_neighbors=nodes[key]["intralinks"]
+    
+    return len(all_neighbors)
+    
 def different_layers_node_reach(nodes,key):
     """
     Description: Find how many layers specific node reach
@@ -149,6 +171,44 @@ def find_xPCI(nodes,node):
     
     return (xPCI,xPCI_nodes)
 
+def find_laPCI(nodes,node):
+    """
+    Description: Calculate laPCI value for specific node
+
+    Args:
+        nodes (dictionary): A dictionary with all informations of all nodes
+        node (String): The specific node
+
+    Returns:
+        laPCI value
+    """
+    degrees = []
+    laPCI = 0
+    number_of_neighbors = 1
+
+    # Add all internal neighbors to list
+    for neighbor in nodes[node]["intralinks"]:
+        degree = find_total_degree(nodes,neighbor)
+        degrees.append((neighbor,degree))
+    
+    # Add all external neighbors to list
+    for layer in nodes[node]["interlinks"]:
+        for neighbor in nodes[node]["interlinks"][layer]:
+            degree = find_total_degree(nodes,neighbor)
+            degrees.append((neighbor,degree))
+    
+    while True:
+        if sum(i[1] >= number_of_neighbors for i in degrees) >= number_of_neighbors:
+            degrees = [i for i in degrees if i[1] >= number_of_neighbors]
+            number_of_neighbors += 1
+        else:
+            laPCI = number_of_neighbors - 1
+            break
+    list_of_nodes = random_nodes(degrees,laPCI)
+    
+    return (laPCI,list_of_nodes)
+
+
 def find_mlPCI(nodes,node):
     """
     Description: Find mlPCI for this node
@@ -176,6 +236,7 @@ def find_mlPCI(nodes,node):
         else:
             number_of_layers += 1
             number_of_nodes += 1
+    
     return mlPCI
 
 def find_newPCI(nodes,node,mlPCI):

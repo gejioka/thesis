@@ -138,6 +138,7 @@ def create_objects_of_nodes(nodes,user_input,args):
             node_obj.set_xPCI(result[0])
             node_obj.set_xPCI_nodes(result[1])
         else:
+            node_obj.find_N2_or_N3_of_u(nodes,2)
             localPCI = metrics.single_layer_pci(nodes,key)[0]
             mlPCI = metrics.find_mlPCI(nodes,key)
             newPCI = metrics.find_newPCI(nodes,key,mlPCI)

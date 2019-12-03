@@ -49,7 +49,7 @@ def check_arguments(parser,args):
         if not (args.algorithm == "1" or args.algorithm == "2"):
             parser.error("Invalid input algorithm. This algorithm doesn't exist")
             sys.exit(1)
-    if args.pci not in ["cl","x"]:
+    if args.pci not in ["cl","x","new","la","degree"]:
         parser.error("Invalid PCI. This PCI code doesn't exist")
         sys.exit(1)
     if args.log:
@@ -130,7 +130,7 @@ if __name__=="__main__":
     pci = create_structures(user_input,args)
     if user_input == 1:
         milcom_algorithm(pci,user_input,args)
-    else:
+    elif user_input == 2:
         new_algorithm(user_input,args)
 
     # Write results to file

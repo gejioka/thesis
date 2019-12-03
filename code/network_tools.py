@@ -106,7 +106,7 @@ def find_MCDS(args):
             write_message(args,"[!] Node with name {} cannot be removed because CDS will disconnected".format(key),"INFO")
             counter += 1
         else:
-            write_message(args,"[-] Node with name {} removed from CDS","INFO")
+            write_message(args,"[-] Node with name {} removed from CDS".format(key),"INFO")
             message = "New CDS with out node {} is [%s]"%", ".join([a for a in connected_dominating_set])
             message = message.format(key)
             write_message(args,message,"DEBUG")

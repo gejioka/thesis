@@ -68,9 +68,9 @@ def check_k_connectivity(source,destination):
                     is_disjoint_path = False
             if is_disjoint_path:
                 maximum_disjoint_paths.append(path)
-    print "Maximum disjoint paths are: ", maximum_disjoint_paths
-    print "Network is {}-connected".format(len(maximum_disjoint_paths))
-
+    write_message(args,"[!] Maximum disjoint paths are: " + str(maximum_disjoint_paths),"INFO")
+    write_message(args,"Network is {}-connected.".format(len(maximum_disjoint_paths)),"INFO")
+    
     return len(maximum_disjoint_paths)
 
 def find_node_connectivity():

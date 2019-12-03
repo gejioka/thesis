@@ -15,7 +15,7 @@ def parser(user_input,args):
         -
     """
     if len(sys.argv) < 2:
-        print "Network parser takes exactly 2 arguments (" + str(len(sys.argv)) + " given)" 
+        write_message(args,"Network parser takes exactly 2 arguments (" + str(len(sys.argv)) + " given)","ERROR")
         exit(1)
 
     line_number = 0     # A variable for number of line in file
@@ -31,14 +31,14 @@ def parser(user_input,args):
                 # Parse all different types of lines in file
                 if line_number == 0:
                     number_of_nodes = item[0]
-                    print "Number of nodes is:", item[0]
+                    write_message(args,"Number of nodes is: {}".format(item[0]),"INFO")
                 elif line_number == 1:
                     number_of_layers = item[0]
-                    print "Number of layers is:", item[0]
+                    write_message(args,"Number of layers is: {}".format(item[0]),"INFO")
                 elif line_number == 2:
-                    print "Names of columns are: " + str(item[0]) + " " + str(item[1]) + " " + str(item[2]) + " " + str(item[3]) + " " + str(item[4]) + " " + str(item[5]) + " "
+                    write_message(args,"Names of columns are: " + str(item[0]) + " " + str(item[1]) + " " + str(item[2]) + " " + str(item[3]) + " " + str(item[4]) + " " + str(item[5]) + " ","INFO")
                     if args.time:
-                        print "\nProcess 1 of 3"
+                        write_message(args,"Process 1 of 3","INFO")
                 else:
                     if item[2] not in nodes:
                         nodes[item[2]] = {}
@@ -58,14 +58,14 @@ def parser(user_input,args):
                 line_number += 1
             if args.time:
                 end_time = time.time()
-                print "Time running process 1:", end_time-start_time
+                write_message(args,"Time running process 1: {}".format(end_time-start_time),"INFO")
             if args.time:
-                print "Process 2 of 3"
+                write_message(args,"Process 2 of 3","INFO")
                 start_time = time.time()
             dict_of_objects = create_objects_of_nodes(nodes,user_input,args)
             if args.time:
                 end_time = time.time()
-                print "Time running process 1:", end_time-start_time
+                write_message(args,"Time running process 1: {}".format(end_time-start_time),"INFO")
             
             # Release nodes dictionary
             nodes = None

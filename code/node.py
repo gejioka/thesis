@@ -219,6 +219,30 @@ class Node:
         """
         return self.xPCI_nodes
     
+    def set_laPCI(self,laPCI):
+        """
+        Description: Set laPCI for this node.
+
+        Args:
+            laPCI (int): Number for layer agnostic PCI metric
+
+        Returns:
+            -
+        """
+        self.laPCI = laPCI
+
+    def get_laPCI(self,laPCI):
+        """
+        Description: Return laPCI for this node
+
+        Args:
+            -
+
+        Returns:
+            laPCI
+        """
+        return self.laPCI
+    
     def set_mlPCI(self,mlPCI):
         """
         Description: Set mlPCI for this node.
@@ -527,19 +551,22 @@ class Node:
         dominator = self.check_for_dominator(dict_of_objects)
         if self.Nu_xPCIs_list[0][0] in connected_dominating_set:
             connected_dominating_set[self.Nu_xPCIs_list[0][0]] += 1
-            self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[0][0]])
+            if dict_of_objects[self.Nu_xPCIs_list[0][0]] not in self.dominators:
+                self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[0][0]])
         else:
             has_dominator = False
             for node in connected_dominating_set:
                 node_obj = dict_of_objects[node]
                 if self.name in node_obj.get_N_of_u():
-                    self.dominators.append(node_obj)
-                    has_dominator = True
-                    break
+                    if node_obj not in self.dominators:
+                        self.dominators.append(node_obj)
+                        has_dominator = True
+                        break
             
             if not has_dominator:
                 connected_dominating_set[self.Nu_xPCIs_list[0][0]] = 1
-                self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[0][0]])
+                if dict_of_objects[self.Nu_xPCIs_list[0][0]] not in self.dominators:
+                    self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[0][0]])
     
     def add_node_in_CDS(self,algorithm):
         """
@@ -558,7 +585,7 @@ class Node:
             has_dominator = False
             node_obj = dict_of_objects[item]
             for neighbor in node_obj.get_N_of_u():
-                if neighbor in connected_dominating_set:
+                if neighbor in connected_dominating_set and dict_of_objects[neighbor] not in self.dominators:
                     self.dominators.append(dict_of_objects[neighbor])
                     has_dominator = True
                     break
@@ -569,10 +596,12 @@ class Node:
                         if node_obj.get_name() in nodeObj.get_N_of_u():
                             if nodeObj.get_name() not in connected_dominating_set:
                                 connected_dominating_set[nodeObj.get_name()] = 1
-                                self.dominators.append(dict_of_objects[nodeObj.get_name()])
+                                if dict_of_objects[nodeObj.get_name()] not in self.dominators:
+                                    self.dominators.append(dict_of_objects[nodeObj.get_name()])
                             else:
                                 connected_dominating_set[nodeObj.get_name()] += 1
-                                self.dominators.append(dict_of_objects[nodeObj.get_name()])
+                                if dict_of_objects[nodeObj.get_name()] not in self.dominators:
+                                    self.dominators.append(dict_of_objects[nodeObj.get_name()])
                                 
     def __str__(self):
         """
