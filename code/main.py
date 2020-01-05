@@ -36,18 +36,13 @@ def check_arguments(parser,args):
         parser.print_help()
         sys.exit(1)
     if not args.path:
-<<<<<<< HEAD
         parser.error("Need to give an input network")
-=======
-        parser.error("Need to add an input network")
->>>>>>> 02b17d25f6c62850a7cfdf015ba382d9f7970469
         sys.exit(1)
     else:
         if not os.path.isfile(args.path):
             parser.error("Invalid input network. This file doesn't exist")
             sys.exit(1)
     if not args.algorithm:
-<<<<<<< HEAD
         parser.error("Need to give an input algorithm")
         sys.exit(1)
     else:
@@ -61,16 +56,6 @@ def check_arguments(parser,args):
         sys.exit(1)
     if args.store_log and not args.log_file:
         parser.error("Need to define a filename to store log messages.")
-=======
-        parser.error("Need to add an input algorithm")
-        sys.exit(1)
-    else:
-        if not (args.algorithm == "1" or args.algorithm == "2"):
-            parser.error("Invalid input algorithm. This algorithm doesn't exist")
-            sys.exit(1)
-    if args.pci not in ["cl","x","new","la","ml","degree"]:
-        parser.error("Invalid PCI. This PCI code doesn't exist")
->>>>>>> 02b17d25f6c62850a7cfdf015ba382d9f7970469
         sys.exit(1)
     if args.log:
         if args.logLevel.upper() not in [a.upper() for a in LEVELS.keys()]:
@@ -80,13 +65,10 @@ def check_arguments(parser,args):
         if args.logLevel:
             parser.error("Cannot pass level argument without enable logging.")
             sys.exit(1)
-<<<<<<< HEAD
     if args.rmcds:
         if int(args.k) <= 0 or int(args.m) <= 0:
             parser.error("k and m numbers must be greater than zero")
             sys.exit(1)
-=======
->>>>>>> 02b17d25f6c62850a7cfdf015ba382d9f7970469
 
 def get_args():
     """
@@ -105,13 +87,10 @@ def get_args():
          nargs="?", const="cl", type=str, dest="pci", default="cl")
     parser.add_argument("-a", "--algorithm", help="Which algorithm will use program to calculate robust MCDS", \
         action="store", dest="algorithm", default=False)
-<<<<<<< HEAD
     parser.add_argument("-k", help="One of two numbers which represent network", \
         action="store", dest="k", default=False)
     parser.add_argument("-m", help="One of two numbers which represent network", \
         action="store", dest="m", default=False)
-=======
->>>>>>> 02b17d25f6c62850a7cfdf015ba382d9f7970469
     parser.add_argument("--cds", help="Create a connected dominating set for backbone in network", \
         action="store_true", dest="cds", default=False)
     parser.add_argument("--mcds", help="Create a minimum connected dominating set for backbone in network", \
@@ -126,13 +105,10 @@ def get_args():
         action="store_true", dest="time", default=False)
     parser.add_argument("--log", help="Check if need to add log messages", \
         action="store_true", dest="log", default=False)
-<<<<<<< HEAD
     parser.add_argument("--store_log", help="Check if need store log messages to file", \
         action="store_true", dest="store_log", default=False)
     parser.add_argument("-lf", "--log_file", help="File to store logging", \
         action="store", dest="log_file", default=False)
-=======
->>>>>>> 02b17d25f6c62850a7cfdf015ba382d9f7970469
     parser.add_argument("-lv", "--level", help="An argument for log level", \
         action="store", dest="logLevel", default=False)
     args = parser.parse_args()
@@ -141,7 +117,6 @@ def get_args():
 
     return args
 
-<<<<<<< HEAD
 def is_testing(args):
     """
     Description: Check if user run testing
@@ -151,18 +126,12 @@ def is_testing(args):
     Returns:
         testing
     """
-=======
-if __name__=="__main__":
-    args = get_args()
-
->>>>>>> 02b17d25f6c62850a7cfdf015ba382d9f7970469
     testing = False
     try:
         if args.testing:
             testing = True
     except Exception:
         pass
-<<<<<<< HEAD
     return testing
 
 def check_input_algorithm(user_input):
@@ -181,19 +150,13 @@ def check_input_algorithm(user_input):
 if __name__=="__main__":
     args = get_args()
     testing = is_testing(args)
-=======
->>>>>>> 02b17d25f6c62850a7cfdf015ba382d9f7970469
     
     if args.log:
         configure_logging(args)
     
     if args.log:
         # Create two format strings 
-<<<<<<< HEAD
         alg = "milcom" if args.algorithm == 1 else ("new" if args.algorithm == 2 else "robust")
-=======
-        alg = "milcom" if args.algorithm == 1 else "new"
->>>>>>> 02b17d25f6c62850a7cfdf015ba382d9f7970469
         backbone = "CDS" if args.cds else ("MCDS" if args.mcds else "RMCDS")    
         
         # Write message
@@ -201,26 +164,16 @@ if __name__=="__main__":
 
     # Get user input and check if this input is correct
     user_input = int(args.algorithm)
-<<<<<<< HEAD
     check_input_algorithm(user_input)
 
     # Solve problem with one of three algorithms
-=======
-    if user_input not in [1,2]:
-        write_message(args,"Wrong input. Type 1 for milcom or 2 for new algorithm.","ERROR")
-        sys.exit(1)
-
->>>>>>> 02b17d25f6c62850a7cfdf015ba382d9f7970469
     pci = create_structures(user_input,args)
     if user_input == 1:
         milcom_algorithm(pci,user_input,args)
     elif user_input == 2:
         new_algorithm(user_input,args)
-<<<<<<< HEAD
     elif user_input == 3:
         robust_algorithm(user_input,args)
-=======
->>>>>>> 02b17d25f6c62850a7cfdf015ba382d9f7970469
 
     # Write results to file
     if testing:
