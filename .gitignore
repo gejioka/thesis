@@ -1,3 +1,4 @@
+*.txt
 code/networks/*
 code/*.pyc
 code/build

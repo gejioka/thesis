@@ -1,9 +1,11 @@
 from global_variables import *
+import structures
 from node import *
+from log import *
 import time
 import sys
 
-def parser(user_input):
+def parser(user_input,args):
     """
     Description: Parse a file represents a network and create the first structure for this
 
@@ -14,13 +16,13 @@ def parser(user_input):
         -
     """
     if len(sys.argv) < 2:
-        print "Network parser takes exactly 2 arguments (" + str(len(sys.argv)) + " given)" 
+        write_message(args,"Network parser takes exactly 2 arguments (" + str(len(sys.argv)) + " given)","ERROR")
         exit(1)
 
     line_number = 0     # A variable for number of line in file
     start_time = time.time()
     try:
-        filename = sys.argv[1]
+        filename = args.path
         with open(filename,"r") as f:
             nodes = {}
             number_of_nodes     = 0
@@ -30,13 +32,14 @@ def parser(user_input):
                 # Parse all different types of lines in file
                 if line_number == 0:
                     number_of_nodes = item[0]
-                    print "Number of nodes is:", item[0]
+                    write_message(args,"Number of nodes is: {}".format(item[0]),"INFO")
                 elif line_number == 1:
                     number_of_layers = item[0]
-                    print "Number of layers is:", item[0]
+                    write_message(args,"Number of layers is: {}".format(item[0]),"INFO")
                 elif line_number == 2:
-                    print "Names of columns are: " + str(item[0]) + " " + str(item[1]) + " " + str(item[2]) + " " + str(item[3]) + " " + str(item[4]) + " " + str(item[5]) + " "
-                    print "\nProcess 1 of 3"
+                    write_message(args,"Names of columns are: " + str(item[0]) + " " + str(item[1]) + " " + str(item[2]) + " " + str(item[3]) + " " + str(item[4]) + " " + str(item[5]) + " ","INFO")
+                    if args.time:
+                        write_message(args,"Process 1 of 3","INFO")
                 else:
                     if item[2] not in nodes:
                         nodes[item[2]] = {}
@@ -54,17 +57,21 @@ def parser(user_input):
                             nodes[item[2]]["interlinks"][int(item[1])].append(item[3])
 
                 line_number += 1
-            end_time = time.time()
-            print "Time running process 1:", end_time-start_time
-            
-            print "Process 2 of 3"
-            start_time = time.time()
-            dict_of_objects = create_objects_of_nodes(nodes,user_input)
-            end_time = time.time()
-            print "Time running process 1:", end_time-start_time
+            if args.time:
+                end_time = time.time()
+                write_message(args,"Time running process 1: {}".format(end_time-start_time),"INFO")
+            if args.time:
+                write_message(args,"Process 2 of 3","INFO")
+                start_time = time.time()
+            dict_of_objects = structures.create_objects_of_nodes(nodes,user_input,args)
+            if args.time:
+                end_time = time.time()
+                write_message(args,"Time running process 1: {}".format(end_time-start_time),"INFO")
             
             # Release nodes dictionary
             nodes = None
+    except IOError as err:
+        write_message(args,err,"ERROR")
+        sys.exit(1)
     except Exception as err:
-        print err
-        exit(1)
+        write_message(args,err,"ERROR")

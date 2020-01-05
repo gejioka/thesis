@@ -21,6 +21,9 @@ class Node:
         self.N_of_u = []
         self.N2_of_u = []
         self.N3_of_u = []
+        self.dominators = []
+        self.dominatees = []
+        self.number_of_dominatees = 0
         self.Ns_of_u_dict = {1:self.N_of_u,2:self.N2_of_u,3:self.N3_of_u}
        
     def get_name(self):
@@ -58,6 +61,30 @@ class Node:
             layer
         """
         return self.layer
+    
+    def set_node_degree(self,node_degree):
+        """
+        Description: Set degree of node
+
+        Args:
+            layer (int): A variable for node degree
+
+        Returns:
+            -
+        """
+        self.node_degree = node_degree
+
+    def get_node_degree(self):
+        """
+        Description: Return node degree
+
+        Args:
+            -
+
+        Returns:
+            node_degree
+        """
+        return self.node_degree
 
     def find_N_of_u(self,intralinks,interlinks):
         """
@@ -217,6 +244,54 @@ class Node:
             xPCI nodes list
         """
         return self.xPCI_nodes
+    
+    def set_laPCI(self,laPCI):
+        """
+        Description: Set laPCI for this node.
+
+        Args:
+            laPCI (int): Number for layer agnostic PCI metric
+
+        Returns:
+            -
+        """
+        self.laPCI = laPCI
+
+    def get_laPCI(self):
+        """
+        Description: Return laPCI for this node
+
+        Args:
+            -
+
+        Returns:
+            laPCI
+        """
+        return self.laPCI
+
+    def set_alPCI(self,alPCI):
+        """
+        Description: Set alPCI for this node.
+
+        Args:
+            laPCI (int): Number for all layer PCI metric
+
+        Returns:
+            -
+        """
+        self.alPCI = alPCI
+    
+    def get_alPCI(self):
+        """
+        Description: Return alPCI for this node
+
+        Args:
+            -
+
+        Returns:
+            alPCI
+        """
+        return self.alPCI
     
     def set_mlPCI(self,mlPCI):
         """
@@ -419,6 +494,18 @@ class Node:
         """
         return self.N3_of_u
     
+    def get_node_dominators(self):
+        """
+        Description: Return dominators of specific node
+
+        Args:
+            -
+
+        Returns:
+            dominators
+        """
+        return self.dominators
+    
     def find_all_nodes_to_3hops(self):
         """
         Description: Create a list with all nodes 3-hop away from each node in network
@@ -458,7 +545,17 @@ class Node:
         for neighbor in self.N_of_u:
             node_obj = dict_of_objects[neighbor]
             if node_obj != None:
-                if pci == "x":
+                if pci == "degree":
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_node_degree()))
+                elif pci == "sl":
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_localPCI()))
+                elif pci == "la":
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_laPCI()))
+                elif pci == "al":
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_alPCI()))
+                elif pci == "ml":
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_mlPCI()))
+                elif pci == "x":
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_xPCI()))
                 elif pci == "cl":
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_clPCI()))
@@ -483,6 +580,15 @@ class Node:
         return None
 
     def find_next_dominators(self,node_obj,next_dominators_dict):
+        """
+        Description: Find next dominator
+
+        Args:
+            node_obj(object): An object with node informations
+            next_dominators_dict(dictionary): A dictionary with all dominators
+        Returns:
+            next_dominators_dict
+        """
         if not set(node_obj.get_N_of_u()) & set([a[0] for a in connected_dominating_set]):
             for neighbor in node_obj.get_N_of_u():
                 neighbor_obj = dict_of_objects[neighbor]
@@ -491,6 +597,44 @@ class Node:
                 else:
                     next_dominators_dict[neighbor] += 1
         return next_dominators_dict
+
+    def node_decision(self,args):
+        """
+        Description: Node decide for itself to be a dominator
+
+        Args:
+            args (obj): An object with all arguments of user
+
+        Returns:
+            -
+        """
+        #print "Node name is:", self.name
+        for neighbor in self.N_of_u:
+            if neighbor in connected_dominating_set.keys():
+                if dict_of_objects[neighbor] not in self.dominators:
+                    #print "Dominator is:", dict_of_objects[neighbor].get_name()
+                    self.dominators.append(dict_of_objects[neighbor])
+        #print "CDS is:", connected_dominating_set
+        if len(self.dominators) < int(args.m):
+            #print "Node with name {} added to CDS".format(self.name)
+            if self.name not in connected_dominating_set.keys():
+                connected_dominating_set[self.name] = 1
+            else:
+                connected_dominating_set[self.name] += 1
+
+    def find_number_of_dominatees(self):
+        """
+        Description: Find the number of dominateesof every node
+
+        Args:
+            args (obj): An object with all arguments of user
+
+        Returns:
+            -
+        """
+        for neighbor in self.N_of_u:
+            if neighbor not in connected_dominating_set.keys():
+                self.number_of_dominatees += 1
 
     def find_dominator(self,dict_of_objects):
         """
@@ -503,19 +647,26 @@ class Node:
             -
         """
         dominator = self.check_for_dominator(dict_of_objects)
-        if self.Nu_xPCIs_list[0][0] in connected_dominating_set: 
+        self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
+        if self.Nu_xPCIs_list[0][0] in connected_dominating_set:
             connected_dominating_set[self.Nu_xPCIs_list[0][0]] += 1
+            if dict_of_objects[self.Nu_xPCIs_list[0][0]] not in self.dominators:
+                self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[0][0]])
         else:
             has_dominator = False
             for node in connected_dominating_set:
                 node_obj = dict_of_objects[node]
                 if self.name in node_obj.get_N_of_u():
-                    has_dominator = True
-                    break
+                    if node_obj not in self.dominators:
+                        self.dominators.append(node_obj)
+                        has_dominator = True
+                        break
             
             if not has_dominator:
                 connected_dominating_set[self.Nu_xPCIs_list[0][0]] = 1
-    
+                if dict_of_objects[self.Nu_xPCIs_list[0][0]] not in self.dominators:
+                    self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[0][0]])
+        #print "Dominators for node with name {} are {}".format(self.name,[a.get_name() for a in self.dominators])
     def add_node_in_CDS(self,algorithm):
         """
         Description: Check if exists node of N2 of u without dominator as neighbor
@@ -528,49 +679,61 @@ class Node:
         Returns:
             -
         """
-        if algorithm == 1:
-            # A list with all nodes which doesn't connect with some dominator node
-            temp_nodes_list = []
+        self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
+        for node in self.Nu_xPCIs_list:
+            nodeObj = dict_of_objects[node[0]]
+            for _2_hop_neighbor in nodeObj.get_N_of_u():
+                if _2_hop_neighbor in self.N2_of_u and nodeObj.get_name() not in connected_dominating_set.keys():
+                    if nodeObj not in self.dominators:
+                        connected_dominating_set[nodeObj.get_name()] = 1
+                        self.dominators.append(nodeObj)
+                        break
+        # has_dominator = False
+        # for item in self.N2_of_u:
+        #     has_dominator = False
+        #     node_obj = dict_of_objects[item]
+        #     for neighbor in node_obj.get_N_of_u():
+        #         if neighbor in connected_dominating_set and dict_of_objects[neighbor] not in self.dominators:
+        #             self.dominators.append(dict_of_objects[neighbor])
+        #             has_dominator = True
+        #             break
+        #         else:
+        #             self.Nu_xPCIs_list.sort(key=lambda x: x[0],reverse=True)
+        #             for node in self.Nu_xPCIs_list:
+        #                 nodeObj = dict_of_objects[node[0]]
+        #                 if node_obj.get_name() in nodeObj.get_N_of_u():
+        #                     if nodeObj.get_name() not in connected_dominating_set:
+        #                         connected_dominating_set[nodeObj.get_name()] = 1
+        #                         if dict_of_objects[nodeObj.get_name()] not in self.dominators:
+        #                             self.dominators.append(dict_of_objects[nodeObj.get_name()])
+        #                     else:
+        #                         connected_dominating_set[nodeObj.get_name()] += 1
+        #                         if dict_of_objects[nodeObj.get_name()] not in self.dominators:
+        #                             self.dominators.append(dict_of_objects[nodeObj.get_name()])
 
-            has_dominator = False
-            for item in self.N2_of_u:
-                has_dominator = False
-                node_obj = dict_of_objects[item]
-                for neighbor in node_obj.N_of_u:
-                   if neighbor in connected_dominating_set:
-                       has_dominator = True
-                       break
-                if not has_dominator:
-                    temp_nodes_list.append(item)
-                    break
-            
-            for node in self.Nu_xPCIs_list:
-                node_obj = dict_of_objects[node[0]]
-                if list(set(node_obj.get_N_of_u()) & set(temp_nodes_list)):
-                    connected_dominating_set[node_obj.get_name()] = 1
-                    break
-        else:
-            if self.Nu_xPCIs_list[0][0] in connected_dominating_set:
-                connected_dominating_set[self.Nu_xPCIs_list[0][0]] += 1
-            else:
-                has_dominator = False
-                for node in connected_dominating_set:
-                    node_obj = dict_of_objects[node]
-                    if self.name in node_obj.get_N_of_u():
-                        has_dominator = True
-                        break        
-                if not has_dominator:
-                    connected_dominating_set[self.Nu_xPCIs_list[0][0]] = 1
-
-    def __str__(self):
+    def print_number_of_dominators(self):
         """
-        Description: Change str representation of node object
+        Description: Print the number of dominators for specific node
 
         Args:
             -
 
         Returns:
-            New representation of str
+            -
         """
-        string_obj = "Name of node is: " + str(self.name) + "\n" + "Layer of node is: " + str(self.layer) + "\n" + "Intra-layer links are: " + str(self.intralinks) + "\n" + "Inter-layer links are: " + str(self.interlinks) + "\n" + "N(u) is: " + str(self.N_of_u) + "\n" + "N2(u) is: " + str(self.N2_of_u) + "\n" + "xPCI is: " + str(self.xPCI_value) + "\n" + "Unique links are: " + str(self.unique_links) + "\n"
-        return string_obj
+        if self.name not in connected_dominating_set.keys():
+            print "Number of dominators for node with name {} is {}".format(self.name,len(self.dominators)) + " and list of names is: [%s]"%", ".join([a.get_name() for a in self.dominators])
+        else:
+            print "Node with name {} is dominator and number of dominators for this node is {}".format(self.name,len(self.dominators)) + " and list of names is: [%s]"%", ".join([a.get_name() for a in self.dominators])
+    # def __str__(self):
+    #     """
+    #     Description: Change str representation of node object
+
+    #     Args:
+    #         -
+
+    #     Returns:
+    #         New representation of str
+    #     """
+    #     string_obj = "Name of node is: " + str(self.name) + "\n" + "Layer of node is: " + str(self.layer) + "\n" + "Intra-layer links are: " + str(self.intralinks) + "\n" + "Inter-layer links are: " + str(self.interlinks) + "\n" + "N(u) is: " + str(self.N_of_u) + "\n" + "N2(u) is: " + str(self.N2_of_u) + "\n" + "xPCI is: " + str(self.xPCI_value) + "\n" + "Unique links are: " + str(self.unique_links) + "\n"
+    #     return string_obj

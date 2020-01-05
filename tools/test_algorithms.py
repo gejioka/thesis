@@ -12,8 +12,5 @@ for (dirpath, dirnames, filenames) in os.walk(_root_folder):
 # Run MILCOM and NEW algorithms for same input
 counter = 0
 for filename in listOfFiles:
-    os.system('python ../create_ml.py "%s" "%s" "%s"' % (filename,"1","testing"))
-    os.system('python ../create_ml.py "%s" "%s" "%s"' % (filename,"2","testing"))
-    counter += 1
-    if counter == 4:
-        break
+    os.system('python ../main.py -fp "%s" -a "%s" --testing --mcds' % (filename,"1"))
+    os.system('python ../main.py -fp "%s" -a "%s" --testing --mcds' % (filename,"2"))
