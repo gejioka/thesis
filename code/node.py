@@ -24,6 +24,7 @@ class Node:
         self.dominators = []
         self.dominatees = []
         self.number_of_dominatees = 0
+
         self.Ns_of_u_dict = {1:self.N_of_u,2:self.N2_of_u,3:self.N3_of_u}
        
     def get_name(self):
@@ -292,7 +293,7 @@ class Node:
             alPCI
         """
         return self.alPCI
-    
+
     def set_mlPCI(self,mlPCI):
         """
         Description: Set mlPCI for this node.
@@ -553,6 +554,7 @@ class Node:
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_laPCI()))
                 elif pci == "al":
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_alPCI()))
+
                 elif pci == "ml":
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_mlPCI()))
                 elif pci == "x":
@@ -648,6 +650,7 @@ class Node:
         """
         dominator = self.check_for_dominator(dict_of_objects)
         self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
+
         if self.Nu_xPCIs_list[0][0] in connected_dominating_set:
             connected_dominating_set[self.Nu_xPCIs_list[0][0]] += 1
             if dict_of_objects[self.Nu_xPCIs_list[0][0]] not in self.dominators:
@@ -666,7 +669,7 @@ class Node:
                 connected_dominating_set[self.Nu_xPCIs_list[0][0]] = 1
                 if dict_of_objects[self.Nu_xPCIs_list[0][0]] not in self.dominators:
                     self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[0][0]])
-        #print "Dominators for node with name {} are {}".format(self.name,[a.get_name() for a in self.dominators])
+
     def add_node_in_CDS(self,algorithm):
         """
         Description: Check if exists node of N2 of u without dominator as neighbor

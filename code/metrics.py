@@ -62,6 +62,28 @@ def find_neighbors_per_layer(nodes,node,neighbor):
     
     return neighbors_per_layer 
 
+def find_total_degree(nodes,key):
+    """
+    Description: Find total degree of node
+
+    Args:
+        nodes (dictionary): A dictionary with all informations of all nodes
+        key (String): The key of specific node
+
+    Returns:
+        Size of total links of specific node
+    """
+    all_neighbors=[]
+    if "interlinks" in nodes[key].keys():
+        all_neighbors=nodes[key]["intralinks"]
+        for layer in nodes[key]["interlinks"]:
+            for neighbor in nodes[key]["interlinks"][layer]:
+                all_neighbors.append(neighbor)
+    else:
+        all_neighbors=nodes[key]["intralinks"]
+    
+    return len(all_neighbors)
+    
 def different_layers_node_reach(nodes,key):
     """
     Description: Find how many layers specific node reach
@@ -148,6 +170,7 @@ def decice_pci_algorithm(args,nodes,node,node_obj,all_layers):
         node_obj.set_mlPCI(find_mlPCI(nodes,node))
     elif args.pci == "sl":
         node_obj.set_localPCI(single_layer_pci(nodes,node)[0])
+
 
 def single_layer_pci(nodes,node):
     """
