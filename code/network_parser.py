@@ -39,7 +39,10 @@ def parser(user_input,args):
                 elif line_number == 2:
                     write_message(args,"Names of columns are: " + str(item[0]) + " " + str(item[1]) + " " + str(item[2]) + " " + str(item[3]) + " " + str(item[4]) + " " + str(item[5]) + " ","INFO")
                     if args.time:
-                        write_message(args,"Process 1 of 3","INFO")
+                        if args.mcds:
+                            write_process_message(args,1,True)
+                        else:
+                            write_process_message(args,1,False)
                 else:
                     if item[2] not in nodes:
                         nodes[item[2]] = {}
@@ -59,14 +62,17 @@ def parser(user_input,args):
                 line_number += 1
             if args.time:
                 end_time = time.time()
-                write_message(args,"Time running process 1: {}".format(end_time-start_time),"INFO")
+                write_message(args,"Time running process 1: {}".format(end_time-start_time),"INFO",True)
             if args.time:
-                write_message(args,"Process 2 of 3","INFO")
+                if args.mcds:
+                    write_process_message(args,2,True)
+                else:
+                    write_process_message(args,2,False)
                 start_time = time.time()
             dict_of_objects = structures.create_objects_of_nodes(nodes,user_input,args)
             if args.time:
                 end_time = time.time()
-                write_message(args,"Time running process 1: {}".format(end_time-start_time),"INFO")
+                write_message(args,"Time running process 2: {}".format(end_time-start_time),"INFO",True)
             
             # Release nodes dictionary
             nodes = None

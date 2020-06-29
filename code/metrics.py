@@ -62,27 +62,28 @@ def find_neighbors_per_layer(nodes,node,neighbor):
     
     return neighbors_per_layer 
 
-def find_total_degree(nodes,key):
+def dominators_per_layer(connected_dominating_set):
     """
-    Description: Find total degree of node
+    Description: Find dominators per layer and add them to list
 
     Args:
-        nodes (dictionary): A dictionary with all informations of all nodes
-        key (String): The key of specific node
-
+        connected_dominating_set (dictionary): A dictionary with all nodes in CDS
     Returns:
-        Size of total links of specific node
+        A list with all dominators per layer
     """
-    all_neighbors=[]
-    if "interlinks" in nodes[key].keys():
-        all_neighbors=nodes[key]["intralinks"]
-        for layer in nodes[key]["interlinks"]:
-            for neighbor in nodes[key]["interlinks"][layer]:
-                all_neighbors.append(neighbor)
-    else:
-        all_neighbors=nodes[key]["intralinks"]
+    list_of_layers = []
+    number_of_layers = 0
     
-    return len(all_neighbors)
+    for key in connected_dominating_set:
+        if int(dict_of_objects[key].get_layer()) not in list_of_layers:
+            list_of_layers.append(int(dict_of_objects[key].get_layer()))
+            number_of_layers += 1
+    list_of_layers = [0]*number_of_layers
+    
+    for key in connected_dominating_set:
+        list_of_layers[int(dict_of_objects[key].get_layer())-1] += 1
+
+    return list_of_layers
     
 def different_layers_node_reach(nodes,key):
     """
@@ -163,11 +164,13 @@ def decice_pci_algorithm(args,nodes,node,node_obj,all_layers):
         node_obj.set_newPCI(mlPCI)
         node_obj.find_weight()
     elif args.pci == "la":
-        node_obj.set_laPCI(find_laPCI(nodes,node))
+        node_obj.set_laPCI(find_laPCI(nodes,node)[0])
     elif args.pci == "al":
         node_obj.set_alPCI(find_alPCI(nodes,node,all_layers))
     elif args.pci == "ml":
         node_obj.set_mlPCI(find_mlPCI(nodes,node))
+    elif args.pci == "ls":
+        node_obj.set_lsPCI(find_lsPCI(nodes,node))
     elif args.pci == "sl":
         node_obj.set_localPCI(single_layer_pci(nodes,node)[0])
 
@@ -264,36 +267,33 @@ def find_laPCI(nodes,node):
     Returns:
         laPCI value
     """
-    degrees = []
+    la_degrees = []
     laPCI = 0
     number_of_neighbors = 1
     
     # Add all internal neighbors to list
     for neighbor in nodes[node]["intralinks"]:
         degree = find_total_degree(nodes,neighbor)
-        if (neighbor,degree) not in degrees:
-            degrees.append((neighbor,degree))
-    print "Intra-layer nodes degree:", degrees
+        if neighbor not in [i[0] for i in la_degrees]:
+            la_degrees.append((neighbor,degree))
 
     # Add all external neighbors to list
     for layer in nodes[node]["interlinks"]:
         for neighbor in nodes[node]["interlinks"][layer]:
             degree = find_total_degree(nodes,neighbor)
-            if (neighbor,degree) not in degrees:
-                degrees.append((neighbor,degree))
-    print "Inter-layer nodes degree:", degrees
+            if neighbor not in [i[0] for i in la_degrees]:
+                la_degrees.append((neighbor,degree))
 
     while True:
-        if sum(i[1] >= number_of_neighbors for i in degrees) >= number_of_neighbors:
-            degrees = [i for i in degrees if i[1] >= number_of_neighbors]
+        if sum(i[1] >= number_of_neighbors for i in la_degrees) >= number_of_neighbors:
+            la_degrees = [i for i in la_degrees if i[1] >= number_of_neighbors]
             number_of_neighbors += 1
         else:
             laPCI = number_of_neighbors - 1
             break
     
-    degrees.sort(key=lambda tup: tup[1],reverse=True)
-    list_of_nodes = degrees[:laPCI]
-    print "List with all Layer-Agnostic PCIs is:", list_of_nodes
+    la_degrees.sort(key=lambda tup: tup[1],reverse=True)
+    list_of_nodes = la_degrees[:laPCI]
     
     return (laPCI,list_of_nodes)
 
@@ -333,8 +333,12 @@ def has_atleast_k_neighbors(k,list_of_neighbors,all_layers=None):
     """
     neighbors=0
     for neighbor in list_of_neighbors:
-        if neighbor["intralinks"] >= k and all(i >= k for i in neighbor["interlinks"].values()) and len(neighbor["interlinks"])+1 == all_layers:
-            neighbors += 1
+        if "intralinks" in neighbor:
+            if neighbor["intralinks"] >= k and all(i >= k for i in neighbor["interlinks"].values()) and len(neighbor["interlinks"])+1 == all_layers:
+                neighbors += 1
+        else:
+            if all(i >= k for i in neighbor["interlinks"].values()) and len(neighbor["interlinks"]) == all_layers:
+                neighbors += 1
     if neighbors >= k:
         return True
     return False
@@ -447,9 +451,31 @@ def find_mlPCI(nodes,node):
             mlPCI.append(k)
         else:
             break
-    print "All PCIs are:", mlPCI
-    print "mlPCI value for node with name {} is: {}".format(node,sum(mlPCI))
     return sum(mlPCI)
+
+def find_lsPCI(nodes,node):
+    """
+    Description: Calculate mlPCI value for specific node
+
+    Args:
+        nodes (dictionary): A dictionary with all informations of all nodes
+        node (String): The specific node
+    
+    Returns:
+        mlPCI value
+    """
+    number_of_layers = 1
+    mlPCI = []
+
+    list_of_neighbors = create_list_of_neighbors(nodes,node)
+    while True:
+        k = k_neighbors_to_n_layers(number_of_layers,list_of_neighbors)
+        if k >= number_of_layers:
+            number_of_layers += 1
+            mlPCI.append(k)
+        else:
+            break
+    return len(mlPCI)
 
 def find_newPCI(nodes,node,mlPCI):
     """

@@ -34,9 +34,13 @@ apt-get install -y python-scipy;
 
 apt-get install python-setuptools;
 
+# Install dill
+echo "Install dill..."
+pip install dill
+
 # Download multi-layer networks library
 echo "Clone multi-layer networks library..."
-#hg clone https://bitbucket.org/bolozna/multilayer-networks-library
+hg clone https://bitbucket.org/bolozna/multilayer-networks-library
 
 echo "Install multi-layer networks library..."
 #mv multilayer-networks-library/* .

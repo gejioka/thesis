@@ -15,52 +15,82 @@ def last_step(algorithm,args):
     Returns:
         -
     """
-    if args.time:
-        write_message(args,"Process 4 of 6","INFO")
-        start = time.time()
     # Check if DS is connected
-    connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
-    if args.time:
-        end = time.time()
-        write_message(args,"Time running process 4: {}".format(end-start),"INFO")
-    is_connected = False
-    if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
-        write_message(args,"Dominating set (DS) is connected.","INFO")
-        is_connected = True
-    else:
-        write_message(args,"Dominating set (DS) is not connected.","INFO")
-    if algorithm == 2:
+    if args.algorithm == "1" or args.algorithm == "2":
         if args.time:
-            write_message(args,"Process 5 of 6","INFO")
+            if args.mcds:
+                write_process_message(args,4,True)
+            else:
+                write_process_message(args,4,False)
             start = time.time()
-        results = poll_nodes_for_dominators({},args)
-        non_significant_nodes = [k for k,v in results[0].iteritems() if int(v) == 0]
-        write_message(args,"[+] Create list with non significant nodes","INFO")
-        write_message(args,"List of non significant list created. Nodes induced to list are [%s]"%", ".join(non_significant_nodes),"DEBUG")
-        if not is_connected:
-            add_next_dominators(results[1],args)
-            remove_non_significant_nodes(non_significant_nodes,args)
-        else:
-            add_next_dominators(results[1],args)
-            remove_non_significant_nodes(non_significant_nodes,args)
+
+        connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
         if args.time:
             end = time.time()
-            write_message(args,"Time running process 5: {}".format(end-start),"INFO")
+            write_message(args,"Time running process 4: {}".format(end-start),"INFO",True)
+        is_connected = False
+        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
+            write_message(args,"Dominating set (DS) is connected.","INFO")
+            is_connected = True
+        else:
+            write_message(args,"Dominating set (DS) is not connected.","INFO")
+        
+        if algorithm == 2:
+            if args.time:
+                if args.mcds:
+                    write_process_message(args,5,True)
+                else:
+                    write_process_message(args,5,False)
+                start = time.time()
+            results = poll_nodes_for_dominators({},args)
+            non_significant_nodes = [k for k,v in results[0].iteritems() if int(v) == 0]
+            write_message(args,"[+] Create list with non significant nodes","INFO")
+            write_message(args,"List of non significant list created. Nodes induced to list are [%s]"%", ".join(non_significant_nodes),"DEBUG")
+            if not is_connected:
+                add_next_dominators(results[1],args)
+                remove_non_significant_nodes(non_significant_nodes,args)
+            else:
+                add_next_dominators(results[1],args)
+                remove_non_significant_nodes(non_significant_nodes,args)
+            if args.time:
+                end = time.time()
+                write_message(args,"Time running process 5: {}".format(end-start),"INFO",True)
             
     # Find Minimum Connected Dominating Set (MCDS)
     if args.mcds:
         if args.time:
-            write_message(args,"Process 6 of 6","INFO")
+            if args.algorithm == "1":
+                if args.mcds:
+                    write_process_message(args,5,True)
+                else:
+                    write_process_message(args,5,False)
+            elif args.algorithm == "2":
+                if args.mcds:
+                    write_process_message(args,6,True)
+                else:
+                    write_process_message(args,6,False)
+            else:
+                if args.mcds:
+                    write_process_message(args,4,True)
+                else:
+                    write_process_message(args,4,False)
             start = time.time()
         find_MCDS(args)
         if args.time:
             end = time.time()
-            write_message(args,"Time running process 6: {}".format(end-start),"INFO")
-    connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
-    if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
-        write_message(args,"Dominating set (DS) is connected.","INFO")
-    else:
-        write_message(args,"Dominating set (DS) is not connected.","INFO")
+            if args.algorithm == "1":
+                write_message(args,"Time running process 5: {}".format(end-start),"INFO",True)
+            elif args.algorithm == "2":
+                write_message(args,"Time running process 6: {}".format(end-start),"INFO",True)
+            else:
+                write_message(args,"Time running process 4: {}".format(end-start),"INFO",True)
+    
+    if args.algorithm == "1" or args.algorithm == "2":
+        connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
+        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
+            write_message(args,"Dominating set (DS) is connected.","INFO")
+        else:
+            write_message(args,"Dominating set (DS) is not connected.","INFO")
 
     plotting(args,True)
     all_dominees_have_dominators()
@@ -108,7 +138,10 @@ def milcom_algorithm(pci,user_input,args):
     if args.log:
         write_message(args,"[!] Start running milcom algorithm","INFO")
     if args.time:
-        write_message(args,"Process 3 of 6","INFO")
+        if args.mcds:
+            write_process_message(args,3,True)
+        else:
+            write_process_message(args,3,False)
         start = time.time()
     # Create Dominating Set (DS) of network
     for name, node in dict_of_objects.iteritems():
@@ -116,7 +149,7 @@ def milcom_algorithm(pci,user_input,args):
             node.set_unique_links_between_nodes(find_links_between_neighbors(node.get_xPCI_nodes()))
             node.find_clPCI()
         node.find_Nu_PCIs(dict_of_objects,args.pci)
-        node.find_dominator(dict_of_objects)
+        node.find_dominator(dict_of_objects,args)
         message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([a.get_name() for a in node.get_node_dominators()])
         message = message.format(node.get_name(),len(node.get_node_dominators()))
         write_message(args,message,"DEBUG")
@@ -127,14 +160,11 @@ def milcom_algorithm(pci,user_input,args):
         write_message(args,message,"DEBUG")
     if args.time:
         end = time.time()
-        write_message(args,"Time running process 3: {}".format(end-start),"INFO")
+        write_message(args,"Time running process 3: {}".format(end-start),"INFO",True)
     
     plotting(args)
     
     last_step(1,args)
-
-    # for name, node in dict_of_objects.iteritems():
-    #     node.print_number_of_dominators()
 
 def new_algorithm(user_input,args):
     """
@@ -149,7 +179,10 @@ def new_algorithm(user_input,args):
     if args.log:
         write_message(args,"[!] Start running new algorithm","INFO")
     if args.time:
-        write_message(args,"Process 3 of 6","INFO")
+        if args.mcds:
+            write_process_message(args,3,True)
+        else:
+            write_process_message(args,3,False)
         start = time.time()
     # Create Dominating Set (DS) of network
     for name, node in dict_of_objects.iteritems():
@@ -157,7 +190,7 @@ def new_algorithm(user_input,args):
             node.set_unique_links_between_nodes(find_links_between_neighbors(node.get_xPCI_nodes()))
             node.find_clPCI()
         node.find_Nu_PCIs(dict_of_objects,args.pci)
-        node.find_dominator(dict_of_objects)
+        node.find_dominator(dict_of_objects,args)
     for name, node in dict_of_objects.iteritems():
         node.add_node_in_CDS(user_input)
         message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([a.get_name() for a in node.get_node_dominators()])
@@ -165,14 +198,27 @@ def new_algorithm(user_input,args):
         write_message(args,message,"DEBUG")
     if args.time:
         end = time.time()
-        write_message(args,"Time running process 3: {}".format(end-start),"INFO")
+        write_message(args,"Time running process 3: {}".format(end-start),"INFO",True)
 
     plotting(args)
 
     last_step(2,args)
 
-    # for name, node in dict_of_objects.iteritems():
-    #     node.print_number_of_dominators()
+def is_k_connected(args):
+    """
+    Description: Check if network is k-connected
+
+    Args:
+        args(obj): An object with all user arguments
+
+    Returns:
+        -
+    """
+    network_connectivity = int(find_node_connectivity())
+    if network_connectivity < max(int(args.m),int(args.k)):
+        write_message(args,"This network is not {}-connected.".format(args.m),"ERROR",args.testing)
+        write_message(args,"This network is {}-connected.".format(network_connectivity),"INFO",args.testing)
+        exit(1)
 
 def robust_algorithm(user_input,args):
     """
@@ -184,10 +230,15 @@ def robust_algorithm(user_input,args):
     Returns:
         -
     """
+    is_k_connected(args)
+
     if args.log:
         write_message(args,"[!] Start running robust algorithm","INFO")
     if args.time:
-        write_message(args,"Process 3 of 6","INFO")
+        if args.mcds:
+            write_process_message(args,3,True)
+        else:
+            write_process_message(args,3,False)
         start = time.time()
     
     # Assign a very large number to k(G') for first time
@@ -199,36 +250,26 @@ def robust_algorithm(user_input,args):
             node.set_unique_links_between_nodes(find_links_between_neighbors(node.get_xPCI_nodes()))
             node.find_clPCI()
         node.find_Nu_PCIs(dict_of_objects,args.pci)
-        node.find_dominator(dict_of_objects)
-    for name, node in dict_of_objects.iteritems():
-        node.add_node_in_CDS(user_input)
+        node.find_dominator(dict_of_objects,args)
+
     for name, node in dict_of_objects.iteritems():
         node.node_decision(args)
+
     construct_new_graph()
     vertex_connectivity = remain_on_DS(args,vertex_connectivity)
+    list_of_dominatees.sort(key=lambda tup: tup[1],reverse=True)
+    counter=0
     while vertex_connectivity < int(args.k):
-        construct_new_graph()
-        vertex_connectivity = remain_on_DS(args,vertex_connectivity)
+        if counter < int(args.m) and list_of_dominatees:
+            connected_dominating_set[list_of_dominatees[counter][0]] = 1
+            construct_new_graph()
+            vertex_connectivity = remain_on_DS(args,vertex_connectivity)
+            counter += 1
+        else:
+            break
     
-    results = poll_nodes_for_dominators({},args)
-    non_significant_nodes = [k for k,v in results[0].iteritems() if int(v) == 0]
-    add_next_dominators(results[1],args)
-    remove_non_significant_nodes(non_significant_nodes,args)
-
-    print_CDS(args)
-    plot_input_graph(True)
-    plotting(args)
-    
-    connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
     if args.time:
         end = time.time()
-        write_message(args,"Time running process 4: {}".format(end-start),"INFO")
-    is_connected = False
-    if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
-        write_message(args,"Dominating set (DS) is connected.","INFO")
-        is_connected = True
-    else:
-        write_message(args,"Dominating set (DS) is not connected.","INFO")
-
-    # for name, node in dict_of_objects.iteritems():
-    #     node.print_number_of_dominators()
+        write_message(args,"Time running process 3: {}".format(end-start),"INFO",True)
+    
+    last_step(3,args)

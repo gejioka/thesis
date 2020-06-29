@@ -1,0 +1,11 @@
+[Unit]
+Description=My Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/bin/stat_client.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

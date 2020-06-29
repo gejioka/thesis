@@ -1,10 +1,27 @@
 *.txt
 code/networks/*
 code/*.pyc
+code/*.back
+code/outputs/
 code/build
 code/dist
 code/logs
 code/root
+code/generator
+code/k_connected_m_dominating_set.py
+code/k_connected_network_generator.py
 code/pymnet*
 code/new_algorithm.py
 papers/*
+tools/test_algorithm_back1.py
+tools/test_algorithms_back.py
+network_examples/
+analyze_data_tool_back/
+analyze_data_tool/client/*.pyc
+analyze_data_tool/client/client.py.back
+analyze_data_tool/client/Experiment\ Networks/
+analyze_data_tool/client/Experiment\ Networks1/
+analyze_data_tool/client/EXPERIMENT_NETWORKS_L-CSS/
+analyze_data_tool/server/server1.py
+analyze_data_tool/server/*.pyc
+analyze_data_tool/server/*.back*

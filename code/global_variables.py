@@ -20,6 +20,7 @@ HIGHCONNECTIVITY    = 20
 
 connected_dominating_set = {}   # A dictionary with all node in CDS
 dict_of_objects = {}            # A dictionary with all objects represent nodes
+list_of_dominatees = []         # A list with all dominaties
 central_nodes = []              # A list of nodes with most neighbors
 all_neighbors = []              # A list with all neighbors of all nodes
 all_pairs = []                  # A list with all pairs of nodes in CDS

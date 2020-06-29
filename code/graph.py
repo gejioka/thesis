@@ -3,6 +3,8 @@ from global_variables import *
 from network_tools import *
 from log import *
 import networkx as nx
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 G = None
@@ -69,6 +71,9 @@ def construct_new_graph():
     initialize_graph(True)
     add_nodes(True)
 
+def remove_node(node):
+    new_G.remove_node(node)
+
 def check_k_connectivity(source,destination):
     """
     Description: Check if network is k-connected
@@ -101,7 +106,7 @@ def check_k_connectivity(source,destination):
     
     return len(maximum_disjoint_paths)
 
-def find_node_connectivity():
+def find_node_connectivity(new=False):
     """
     Description: Find connectivity of network
 
@@ -112,25 +117,30 @@ def find_node_connectivity():
     """
     global G
 
-    node_connectivity = nx.node_connectivity(G)
+    node_connectivity = 0
+    if new:
+        node_connectivity = nx.node_connectivity(new_G)
+    else:
+        node_connectivity = nx.node_connectivity(G)
+    
     return node_connectivity
 
-# def find_minimum_vertex_cut(s,t,new=False):
-#     """
-#     Description: Find minimum vertex cut
+def find_minimum_vertex_cut(s,t,new=False):
+    """
+    Description: Find minimum vertex cut
 
-#     Args:
-#         new (bool): A variable to decide which graph to use. Default value <False>
-#     Returns:
-#         minimum_node_cut
-#     """
-#     global G
-#     global new_G
+    Args:
+        new (bool): A variable to decide which graph to use. Default value <False>
+    Returns:
+        minimum_node_cut
+    """
+    global G
+    global new_G
 
-#     if not new:
-#         return minimum_st_node_cut(G,s,t)
-#     else:
-#         return minimum_st_node_cut(new_G,s,t)
+    if not new:
+        return minimum_st_node_cut(G,s,t)
+    else:
+        return minimum_st_node_cut(new_G,s,t)
 
 def find_minimum_vertex_cut(new=False):
     """
@@ -149,6 +159,9 @@ def find_minimum_vertex_cut(new=False):
     else:
         return nx.minimum_node_cut(new_G)
 
+def _is_k_connected(args):
+    return nx.is_k_edge_connected(new_G, k=int(args.k))
+
 def remain_on_DS(args,vertex_connectivity):
     """
     Description: Decide which nodes will remain in CDS
@@ -159,97 +172,15 @@ def remain_on_DS(args,vertex_connectivity):
         -
     """
     global new_G
-    plot_input_graph(True)
+    
     to_remove=[]
+    K = vertex_connectivity
     vertex_connectivity = find_minimum_vertex_cut(True)
-    # print vertex_connectivity
-    # print len(vertex_connectivity)
-    for node in new_G.edges():
-        for node1 in list(vertex_connectivity):
-            if node1 in node:
-                if node[0] not in to_remove:
-                    to_remove.append(node[0])
-                if node[1] not in to_remove:
-                    to_remove.append(node[1])
-    remove_non_significant_nodes(to_remove,args)
 
-    return len(vertex_connectivity)
-#     # for node in to_remove:
-#     #     new_G.remove_node(node)
-#     #     del connected_dominating_set[node]
-#     # for node in connected_dominating_set.keys():
-#     #     if new_G.degree(node) == 0:
-#     #         new_G.remove_node(node)
-#     #         del connected_dominating_set[node]
-    
-#     # for node in list(vertex_connectivity):
-#     #     print "Node name is:", node
-#     #     del connected_dominating_set[node]
-    # for node in connected_dominating_set.keys():
-    #     for node1 in list(vertex_connectivity):
-    #         if node1 in connected_dominating_set[node]:
-    #             del connected_dominating_set[node]
+    if len(vertex_connectivity) < K:
+        K = len(vertex_connectivity)
 
-    #del connected_dominating_set[list(vertex_connectivity[])]
-    # for s in connected_dominating_set.keys():
-    #     s_obj = dict_of_objects[s]
-    #     for t in connected_dominating_set.keys():
-    #         t_obj = dict_of_objects[t]
-    #         if t_obj.get_name() not in s_obj.get_N_of_u():
-    #             minimum_st_cut = len(find_minimum_vertex_cut(s,t,True))
-    #             print connected_dominating_set
-    #             if minimum_st_cut < min(int(args.k),int(args.m)):
-    #                 del connected_dominating_set[s]
-    #                 break
-    #                 # if s > t and (s,t) not in to_remove:
-    #                 #     to_remove.append((s,t))
-    #                 # else:
-    #                 #     if (t,s) not in to_remove:
-    #                 #         to_remove.append((t,s))
-    #             elif minimum_st_cut < vertex_connectivity:
-    #                 vertex_connectivity = minimum_st_cut
-    
-    # #print "HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",to_remove
-    # return vertex_connectivity
-
-# def remain_on_DS(args,vertex_connectivity):
-#     """
-#     Description: Decide which nodes will remain in CDS
-
-#     Args:
-#         vertex_connectivity (float): The vertex connectivity of network
-#     Returns:
-#         -
-#     """
-#     global new_G
-#     plot_input_graph(True)
-#     to_remove=[]
-
-#     # Assign a very large number to k(G') for first time
-#     vertex_connectivity = float("inf")
-#     for i in range(len(connected_dominating_set)):
-#         #node1_obj = dict_of_objects[connected_dominating_set.keys()[i]]
-#         for j in range(i,len(connected_dominating_set)):
-#             node2_obj = dict_of_objects[connected_dominating_set.keys()[j]]
-#             if connected_dominating_set.keys()[i] != connected_dominating_set.keys()[j] and connected_dominating_set.keys()[i] not in node2_obj.get_N_of_u():
-#                 minimum_cut = find_minimum_vertex_cut(connected_dominating_set.keys()[i],connected_dominating_set.keys()[j],True)
-#                 if len(minimum_cut) < vertex_connectivity:
-#                     if len(minimum_cut) >= int(args.k):
-#                         vertex_connectivity = len(minimum_cut)
-#                     else:
-#                         to_remove.append(connected_dominating_set.keys()[i])
-#                 if len(minimum_cut) < min(int(args.k),int(args.m)):
-#                     to_remove.append(connected_dominating_set.keys()[i])
-#                 # for node in new_G.edges():
-#                 #     for node1 in list(vertex_connectivity):
-#                 #         if node1 in node:
-#                 #             if node[0] not in to_remove:
-#                 #                 to_remove.append(node[0])
-#                 #             if node[1] not in to_remove:
-#                 #                 to_remove.append(node[1])
-#                 remove_non_significant_nodes(to_remove,args)
-
-#     return vertex_connectivity
+    return K
 
 def poll_nodes_for_dominators(dict_of_next_dominators,args):
     """

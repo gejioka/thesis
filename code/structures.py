@@ -81,20 +81,27 @@ def create_structures(user_input,args):
     # Choose parser depends on network file format
     if parser == 1:
         if args.time:
-            write_message(args,"Process 1 of 6","INFO")
+            if args.mcds:
+                write_process_message(args,1,True)
+            else:
+                write_process_message(args,1,False)
             start = time.time()
         links = create_dict_of_nodes(args)
         if args.time:
             end = time.time()
-            write_message(args,"Time running process 1: {}".format(end-start),"INFO")
-            write_message(args,"Process 2 of 6","INFO")
+            write_message(args,"Time running process 1: {}".format(end-start),"INFO",True)
+            if args.mcds:
+                write_process_message(args,2,True)
+            else:
+                write_process_message(args,2,False)
             start = time.time()
         dict_of_objects = create_objects_of_nodes(links,user_input,args)
+        
         # Release links
         links = None
         if args.time:
             end = time.time()
-            write_message(args,"Time running process 2: {}".format(end-start),"INFO")
+            write_message(args,"Time running process 2: {}".format(end-start),"INFO",True)
     else:
         try:
             np.parser(user_input,args)

@@ -17,7 +17,7 @@ def configure_logging(args):
 
     logger = logging.getLogger('Backbone for multi-layer ad hoc network')
     if args.store_log:
-        handler = logging.FileHandler(args.log_file)
+        handler = logging.FileHandler(args.log_file+args.file_id)
     else:
         handler = logging.StreamHandler()
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -28,7 +28,33 @@ def configure_logging(args):
     else:
         logger.setLevel(level=LEVELS.get("debug",logging.NOTSET))
 
-def write_message(args,message,message_type):
+def write_process_message(args,process_number,mcds):
+    """
+    Description: Write log message for algorithm process
+
+    Args:
+        args(object): A variable with all arguments of user
+        process_number(int): A variable which contains process number
+    Returns:
+        -
+    """
+    if args.algorithm == "1":
+        if mcds:
+            write_message(args,"Process "+str(process_number)+" of 5","INFO",True)
+        else:
+            write_message(args,"Process "+str(process_number)+" of 4","INFO",True)
+    elif args.algorithm == "2":
+        if mcds:
+            write_message(args,"Process "+str(process_number)+" of 6","INFO",True)
+        else:
+            write_message(args,"Process "+str(process_number)+" of 5","INFO",True)
+    else:
+        if mcds:
+            write_message(args,"Process "+str(process_number)+" of 4","INFO",True)
+        else:
+            write_message(args,"Process "+str(process_number)+" of 3","INFO",True)
+
+def write_message(args,message,message_type,time_flag=False):
     """
     Description: Write log message to console
 
@@ -40,7 +66,7 @@ def write_message(args,message,message_type):
     """
     global logger 
 
-    if args.log or args.time:
+    if args.log:
         if message_type.upper() == "DEBUG":
             logger.debug(message)
         elif message_type.upper() == "INFO":
@@ -49,3 +75,13 @@ def write_message(args,message,message_type):
             logger.warning(message)
         elif message_type.upper() == "ERROR":
             logger.error(message)
+    elif args.time:
+        if time_flag:
+            if message_type.upper() == "DEBUG":
+                logger.debug(message)
+            elif message_type.upper() == "INFO":
+                logger.info(message)
+            elif message_type.upper() == "WARNING":
+                logger.warning(message)
+            elif message_type.upper() == "ERROR":
+                logger.error(message)

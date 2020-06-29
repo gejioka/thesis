@@ -17,6 +17,14 @@ class Node:
         """
         self.name = name
         self.clPCI = 0.0
+        self.xPCI_value = 0
+        self.newPCI = 0.0
+        self.laPCI = 0
+        self.alPCI = 0
+        self.mlPCI = 0
+        self.node_degree = 0
+        self.localPCI = 0
+        self.lsPCI = 0
         self.weight = 0.0
         self.N_of_u = []
         self.N2_of_u = []
@@ -101,6 +109,7 @@ class Node:
         self.N_of_u = intralinks
         for neighbor in interlinks:
             self.N_of_u = self.N_of_u + interlinks[neighbor]
+        self.N_of_u = self.remove_duplicate(self.N_of_u)
         self.Ns_of_u_dict[1] = self.N_of_u
 
     def set_N_of_u(self,N_of_u):
@@ -299,7 +308,7 @@ class Node:
         Description: Set mlPCI for this node.
 
         Args:
-            mlPCI (int): Number which tell us that, node has at least n neighbors in n layers
+            mlPCI (int): Number which tell us that, node has at least k neighbors in n layers
 
         Returns:
             -
@@ -317,6 +326,30 @@ class Node:
             mlPCI
         """
         return self.mlPCI
+
+    def set_lsPCI(self,lsPCI):
+        """
+        Description: Set lsPCI for this node.
+
+        Args:
+            lsPCI (int): Number which tell us that, node has at least n neighbors in n layers
+
+        Returns:
+            -
+        """
+        self.lsPCI = lsPCI
+
+    def get_lsPCI(self):
+        """
+        Description: Return lsPCI for this node
+
+        Args:
+            -
+
+        Returns:
+            lsPCI
+        """
+        return self.lsPCI
 
     def set_newPCI(self,newPCI):
         """
@@ -532,6 +565,9 @@ class Node:
         """
         return self.all_3hop_nodes
 
+    def get_dominators(self):
+        return self.dominators
+
     def find_Nu_PCIs(self,dict_of_objects,pci):
         """
         Description: Add all xPCI values of neighbors to a list and sort it
@@ -554,9 +590,10 @@ class Node:
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_laPCI()))
                 elif pci == "al":
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_alPCI()))
-
                 elif pci == "ml":
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_mlPCI()))
+                elif pci == "ls":
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_lsPCI()))
                 elif pci == "x":
                     self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_xPCI()))
                 elif pci == "cl":
@@ -610,19 +647,32 @@ class Node:
         Returns:
             -
         """
-        #print "Node name is:", self.name
-        for neighbor in self.N_of_u:
-            if neighbor in connected_dominating_set.keys():
-                if dict_of_objects[neighbor] not in self.dominators:
-                    #print "Dominator is:", dict_of_objects[neighbor].get_name()
-                    self.dominators.append(dict_of_objects[neighbor])
-        #print "CDS is:", connected_dominating_set
+        # A dictionary with all PCI metrics
+        metrics_dict = {"degree"    : self.node_degree,
+                        "cl"        : self.clPCI,
+                        "x"         : self.xPCI_value,
+                        "new"       : self.newPCI,
+                        "la"        : self.laPCI,
+                        "al"        : self.alPCI,
+                        "ml"        : self.mlPCI,
+                        "ls"        : self.lsPCI,
+                        "sl"        : self.localPCI}
+
         if len(self.dominators) < int(args.m):
-            #print "Node with name {} added to CDS".format(self.name)
-            if self.name not in connected_dominating_set.keys():
-                connected_dominating_set[self.name] = 1
+            for neighbor in self.N_of_u:
+                if neighbor in connected_dominating_set.keys():
+                    if dict_of_objects[neighbor] not in self.dominators:
+                        self.dominators.append(dict_of_objects[neighbor])
+            if len(self.dominators) < int(args.m):
+                if self.name not in connected_dominating_set.keys():
+                    connected_dominating_set[self.name] = 1
+                else:
+                    connected_dominating_set[self.name] += 1
             else:
-                connected_dominating_set[self.name] += 1
+                if args.pci:
+                    list_of_dominatees.append((self.name,metrics_dict[args.pci]))
+                else:
+                    list_of_dominatees.append((self.name,metrics_dict["cl"]))
 
     def find_number_of_dominatees(self):
         """
@@ -638,7 +688,15 @@ class Node:
             if neighbor not in connected_dominating_set.keys():
                 self.number_of_dominatees += 1
 
-    def find_dominator(self,dict_of_objects):
+    def construct_m_value(self,args):
+        m = 0
+        if args.m:
+            m = int(args.m)
+        else:
+            m = 1
+        return m
+
+    def find_dominator(self,dict_of_objects,args):
         """
         Description: Find dominator of node
 
@@ -648,14 +706,9 @@ class Node:
         Returns:
             -
         """
-        dominator = self.check_for_dominator(dict_of_objects)
-        self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
+        m = self.construct_m_value(args)
 
-        if self.Nu_xPCIs_list[0][0] in connected_dominating_set:
-            connected_dominating_set[self.Nu_xPCIs_list[0][0]] += 1
-            if dict_of_objects[self.Nu_xPCIs_list[0][0]] not in self.dominators:
-                self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[0][0]])
-        else:
+        for i in range(m):
             has_dominator = False
             for node in connected_dominating_set:
                 node_obj = dict_of_objects[node]
@@ -664,11 +717,35 @@ class Node:
                         self.dominators.append(node_obj)
                         has_dominator = True
                         break
-            
+
+            self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
+            if self.Nu_xPCIs_list[i][0] in connected_dominating_set.keys():
+                connected_dominating_set[self.Nu_xPCIs_list[i][0]] += 1
+            else:
+                connected_dominating_set[self.Nu_xPCIs_list[i][0]] = 1
+
+            if dict_of_objects[self.Nu_xPCIs_list[i][0]] not in self.dominators:
+                self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[i][0]])
+
+    def all_2_hop_has_dominator(self):
+        """
+        Description: Check if all 2 hop neighbors have dominator
+
+        Args:
+            -
+
+        Returns:
+            boolean
+        """
+        for _2_hop_neighbor in self.N2_of_u:
+            nodeObj = dict_of_objects[_2_hop_neighbor]
+            has_dominator = False
+            for neighbor in nodeObj.get_N_of_u():
+                if neighbor in connected_dominating_set.keys() and neighbor in self.N_of_u:
+                    has_dominator = True
             if not has_dominator:
-                connected_dominating_set[self.Nu_xPCIs_list[0][0]] = 1
-                if dict_of_objects[self.Nu_xPCIs_list[0][0]] not in self.dominators:
-                    self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[0][0]])
+                return False
+        return True
 
     def add_node_in_CDS(self,algorithm):
         """
@@ -683,36 +760,23 @@ class Node:
             -
         """
         self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
-        for node in self.Nu_xPCIs_list:
-            nodeObj = dict_of_objects[node[0]]
-            for _2_hop_neighbor in nodeObj.get_N_of_u():
-                if _2_hop_neighbor in self.N2_of_u and nodeObj.get_name() not in connected_dominating_set.keys():
-                    if nodeObj not in self.dominators:
-                        connected_dominating_set[nodeObj.get_name()] = 1
-                        self.dominators.append(nodeObj)
-                        break
-        # has_dominator = False
-        # for item in self.N2_of_u:
-        #     has_dominator = False
-        #     node_obj = dict_of_objects[item]
-        #     for neighbor in node_obj.get_N_of_u():
-        #         if neighbor in connected_dominating_set and dict_of_objects[neighbor] not in self.dominators:
-        #             self.dominators.append(dict_of_objects[neighbor])
-        #             has_dominator = True
-        #             break
-        #         else:
-        #             self.Nu_xPCIs_list.sort(key=lambda x: x[0],reverse=True)
-        #             for node in self.Nu_xPCIs_list:
-        #                 nodeObj = dict_of_objects[node[0]]
-        #                 if node_obj.get_name() in nodeObj.get_N_of_u():
-        #                     if nodeObj.get_name() not in connected_dominating_set:
-        #                         connected_dominating_set[nodeObj.get_name()] = 1
-        #                         if dict_of_objects[nodeObj.get_name()] not in self.dominators:
-        #                             self.dominators.append(dict_of_objects[nodeObj.get_name()])
-        #                     else:
-        #                         connected_dominating_set[nodeObj.get_name()] += 1
-        #                         if dict_of_objects[nodeObj.get_name()] not in self.dominators:
-        #                             self.dominators.append(dict_of_objects[nodeObj.get_name()])
+        if not self.all_2_hop_has_dominator():
+            for node in self.Nu_xPCIs_list:
+                nodeObj = dict_of_objects[node[0]]
+                if self.all_2_hop_has_dominator():
+                    break
+                for _2_hop_neighbor in nodeObj.get_N_of_u():
+                    if _2_hop_neighbor in self.N2_of_u:
+                        _2_hop_neighborObj = dict_of_objects[_2_hop_neighbor]
+                        if nodeObj.get_name() not in connected_dominating_set.keys():
+                            connected_dominating_set[nodeObj.get_name()] = 1
+                        else:
+                            connected_dominating_set[nodeObj.get_name()] += 1
+                        if nodeObj not in _2_hop_neighborObj.dominators:
+                            _2_hop_neighborObj.dominators.append(nodeObj)
+                            if nodeObj not in self.dominators:
+                                self.dominators.append(nodeObj)
+                            break
 
     def print_number_of_dominators(self):
         """
@@ -728,15 +792,16 @@ class Node:
             print "Number of dominators for node with name {} is {}".format(self.name,len(self.dominators)) + " and list of names is: [%s]"%", ".join([a.get_name() for a in self.dominators])
         else:
             print "Node with name {} is dominator and number of dominators for this node is {}".format(self.name,len(self.dominators)) + " and list of names is: [%s]"%", ".join([a.get_name() for a in self.dominators])
-    # def __str__(self):
-    #     """
-    #     Description: Change str representation of node object
+    
+    def __str__(self):
+        """
+        Description: Change str representation of node object
 
-    #     Args:
-    #         -
+        Args:
+            -
 
-    #     Returns:
-    #         New representation of str
-    #     """
-    #     string_obj = "Name of node is: " + str(self.name) + "\n" + "Layer of node is: " + str(self.layer) + "\n" + "Intra-layer links are: " + str(self.intralinks) + "\n" + "Inter-layer links are: " + str(self.interlinks) + "\n" + "N(u) is: " + str(self.N_of_u) + "\n" + "N2(u) is: " + str(self.N2_of_u) + "\n" + "xPCI is: " + str(self.xPCI_value) + "\n" + "Unique links are: " + str(self.unique_links) + "\n"
-    #     return string_obj
+        Returns:
+            New representation of str
+        """
+        string_obj = "Name of node is: " + str(self.name) + "\n" + "Layer of node is: " + str(self.layer) + "\n" + "Intra-layer links are: " + str(self.intralinks) + "\n" + "Inter-layer links are: " + str(self.interlinks) + "\n" + "N(u) is: " + str(self.N_of_u) + "\n" + "N2(u) is: " + str(self.N2_of_u) + "\n" + "xPCI is: " + str(self.xPCI_value) + "\n" + "Unique links are: " + str(self.unique_links) + "\n"
+        return string_obj

@@ -1,6 +1,8 @@
 from pymnet import *
 from global_variables import *
 from metrics import *
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 mnet = MultilayerNetwork(aspects=1)

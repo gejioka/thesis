@@ -40,7 +40,7 @@ def check_arguments(parser,args):
         sys.exit(1)
     else:
         if not os.path.isfile(args.path):
-            parser.error("Invalid input network. This file doesn't exist")
+            parser.error("Invalid input network. This file doesn't exist "+args.path+" "+os.getcwd())
             sys.exit(1)
     if not args.algorithm:
         parser.error("Need to give an input algorithm")
@@ -49,18 +49,19 @@ def check_arguments(parser,args):
         if not (args.algorithm == "1" or args.algorithm == "2" or args.algorithm == "3"):
             parser.error("Invalid input algorithm. This algorithm doesn't exist.\n\t\t1.MILCOM\n\t\t2.NEW\n\t\t3.ROBUST")
             sys.exit(1)
-    if args.pci not in ["cl","x","new","la","al","ml","sl","degree"]:
+    if args.pci not in ["cl","x","new","la","al","ml","ls","sl","degree"]:
         parser.error("Invalid PCI. This PCI code doesn't exist.\n\t\tcl:\tCross-Layer PCI\n\t\tx:\tExhaustive PCI\
-                        \n\t\tnew:\tNew PCI\n\t\tla:\tLayer-agnostic PCI\n\t\tal:\tAll-Layer PCI\n\t\tml:\tMinimal-Layer PCI\n\t\tsl:\tSingle Layer PCI\
+                        \n\t\tnew:\tNew PCI\n\t\tla:\tLayer-agnostic PCI\n\t\tal:\tAll-Layer PCI\n\t\tml:\tMinimal-Layer PCI\n\t\tls:\tLayer-Symetric\n\t\tsl:\tSingle-Layer PCI\
                             \n\t\tdegree:\tDegree of node")
         sys.exit(1)
     if args.store_log and not args.log_file:
         parser.error("Need to define a filename to store log messages.")
         sys.exit(1)
     if args.log:
-        if args.logLevel.upper() not in [a.upper() for a in LEVELS.keys()]:
-            parser.error("There in no log level {}. The list with all log levels is {}".format(args.logLevel.upper(),[name.upper() for name,obj in LEVELS.iteritems()]))
-            sys.exit(1)
+        if args.logLevel:
+            if args.logLevel.upper() not in [a.upper() for a in LEVELS.keys()]:
+                parser.error("There in no log level {}. The list with all log levels is {}".format(args.logLevel.upper(),[name.upper() for name,obj in LEVELS.iteritems()]))
+                sys.exit(1)
     else:
         if args.logLevel:
             parser.error("Cannot pass level argument without enable logging.")
@@ -91,6 +92,12 @@ def get_args():
         action="store", dest="k", default=False)
     parser.add_argument("-m", help="One of two numbers which represent network", \
         action="store", dest="m", default=False)
+    parser.add_argument("-i", "--fid", help="An increament integer which append to filename", \
+        action="store", dest="file_id", default=False)
+    parser.add_argument("-n", "--noc", help="An integer tells us the number of logical cores needed to solve input graphs", \
+        action="store", dest="cores_num", default=False)
+    parser.add_argument("--merge", help="Merge threads files to main file", \
+        action="store_true", dest="merge", default=False)
     parser.add_argument("--cds", help="Create a connected dominating set for backbone in network", \
         action="store_true", dest="cds", default=False)
     parser.add_argument("--mcds", help="Create a minimum connected dominating set for backbone in network", \
@@ -147,11 +154,25 @@ def check_input_algorithm(user_input):
         write_message(args,"Wrong input. Type 1 for milcom, 2 for new or 3 for robust algorithm.","ERROR")
         sys.exit(1)
 
+def check_log():
+    """
+    Description: Check if out.txt exists and remove it
+
+    Args:
+        -
+    Returns:
+        -
+    """
+    try:
+        os.remove("../code/out.txt")
+    except Exception as err:
+        print "An error occured: " + str(err)
+
 if __name__=="__main__":
     args = get_args()
     testing = is_testing(args)
     
-    if args.log:
+    if args.log or args.time:
         configure_logging(args)
     
     if args.log:
@@ -175,6 +196,9 @@ if __name__=="__main__":
     elif user_input == 3:
         robust_algorithm(user_input,args)
 
+    print dominators_per_layer(connected_dominating_set)
+
     # Write results to file
     if testing:
         testing_function(args)
+    
