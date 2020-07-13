@@ -9,13 +9,13 @@ import dill
 import os
 
 # Root folder of all input networks
-_root_folder = "/root/Experiment Networks"
+_root_folder = "/root/Experiment_Networks1"
 
-### Global variables ###
+# Global variables
 BUFFER_SIZE = 10000
 MAX_SIZE = 1024
-MAX_K = 3
-MAX_M = 3
+MAX_K = 4
+MAX_M = 4
 server_IP = "172.104.249.240"
 server_port = 10000
 backlog = 5
@@ -36,14 +36,6 @@ incomplete_fds_list = []
 lock = threading.Lock()
 
 def init_server():
-    """
-    Description: Method that use server to create a TCP/IP socket
-
-    Args:
-        -
-    Returns:
-        sock(Obj): A socket object which use to communicate with server
-    """
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
@@ -57,14 +49,6 @@ def init_server():
     return sock
 
 def accept_clients(sock):
-    """
-    Description: Method that use server to accept clients
-
-    Args:
-        sock(Obj): A socket object which use to communicate with server
-    Returns:
-        -
-    """
     global list_of_connections
     global list_of_clients
     global user_interrupt
@@ -76,7 +60,6 @@ def accept_clients(sock):
     print "Waiting for connection..."
     while not user_interrupt:
         try:
-            # Accept client and add it to client list
             connection, client_address = sock.accept()
             list_of_connections.append((connection,client_address))
 
@@ -87,13 +70,11 @@ def accept_clients(sock):
                 packet = connection.recv(MAX_SIZE)
             number_of_cores = recognize_client_message(packet,0)
 
-            # Create client thead and add it to list
             client_thread = threading.Thread(target=client_thread_f,args=(connection,client_address,number_of_cores[0]))
             client_thread.start()
 
             list_of_clients.append(client_thread)
         except socket.timeout:
-            # Every 2 seconds on socket timeout check if all clients are up
             if len(list_of_clients) > 0:
                 for i in range(len(list_of_clients)):
                     if not list_of_clients[i].isAlive():
@@ -101,14 +82,6 @@ def accept_clients(sock):
                 list_of_clients = [client for client in list_of_clients if client != None]
 
 def split_list_to_packets(listOfFiles):
-    """
-    Description: Split list of files to packets.
-
-    Args:
-        listOfFiles(list): A list that contains all input files
-    Returns:
-        packed_list
-    """
     packed_list = []
     
     sl.write_log("[!] Server split list of files to packets.","info")
@@ -125,19 +98,10 @@ def split_list_to_packets(listOfFiles):
     return packed_list
 
 def send_list_to_client(connection):
-    """
-    Description: Method that use server to send list of files to client
-
-    Args:
-        connection(Obj): A socket object which use to communicate with specific client
-    Returns:
-        -
-    """
     global listOfFiles
     global lock
 
     with lock:
-        # Split list of input files
         sl.write_log("[+] Server send list of files to client.","info")
         packed_list = split_list_to_packets(listOfFiles)
 
@@ -157,14 +121,6 @@ def send_list_to_client(connection):
         sl.write_log("[!] Server send successfully all files to client","info")
         
 def create_list_of_files(_root_folder):
-    """
-    Description: Method that use server create a list with all input files that clients needs to process
-
-    Args:
-        _root_folder(string): The root path where exist all input files server side
-    Returns:
-        listOfFiles
-    """
     # Create all different paths exists under root folder
     sl.write_log("[!] Server create a list with all input files for clients.","info")
 
@@ -174,17 +130,6 @@ def create_list_of_files(_root_folder):
     return listOfFiles
 
 def create_next_packet(offset,number_of_cores,fileID,message_id):
-    """
-    Description: Method that use server to create next packet for client
-
-    Args:
-        offset(int): An integer that tells client where to find the next set of input files in list
-        number_of_cores(int): An integer that tell the client the end of the next set of input files
-        fileID(int): An integer that tell server where to store the results of specific client in list
-        message_id(int): An integer which server decide the type of client message
-    Returns:
-        packed_message
-    """
     if message_id == 2:
         sl.write_log("[+] Server create next packet for client.","info")
         sl.write_log("Message ID is 2. Next group of files is from {}-{}. File ID for this group is {}.".format(offset,offset+int(number_of_cores),fileID),"debug")
@@ -205,15 +150,6 @@ def create_next_packet(offset,number_of_cores,fileID,message_id):
     return None
 
 def recognize_client_message(packed_message,number_of_cores):
-    """
-    Description: Method that use server recognize client message
-
-    Args:
-        packed_message(string): A string with packet message of client
-        number_of_cores(int): An integer that tells server how many cores this client offer
-    Returns:
-        packed_message
-    """
     global last_packets
     global listOfFiles
     global _is_over
@@ -222,7 +158,7 @@ def recognize_client_message(packed_message,number_of_cores):
 
     sl.write_log("[+] Server receive new packet from client.","info")
     message_id = unpack("i",packed_message[0:4])
-    
+   
     # Message id for number of cores
     if message_id[0] == 1: 
         message_size = unpack("i", packed_message[4:8])      
@@ -233,11 +169,10 @@ def recognize_client_message(packed_message,number_of_cores):
         return number_of_cores
     # Message id for request next chunk of files
     elif message_id[0] == 2:
-        if offset+number_of_cores <= len(listOfFiles)*9*(2+MAX_K*MAX_M)*2:
+        if offset+number_of_cores <= len(listOfFiles)*9*(2+(MAX_K-1)*(MAX_M-1))*2:
             if incomplete_fds_list:
                 info = incomplete_fds_list.pop(0)
                 packed_message = create_next_packet(info[1],number_of_cores,info[0],2)
-                # offset += number_of_cores
             else:
                 packed_message = create_next_packet(offset,number_of_cores,fileID,2)
                 offset += number_of_cores
@@ -245,11 +180,10 @@ def recognize_client_message(packed_message,number_of_cores):
         else:
             if incomplete_fds_list:
                 info = incomplete_fds_list.pop(0)
-                packed_message = create_next_packet(info[1],len(listOfFiles)*9*(2+MAX_K*MAX_M)*2-offset,info[0],2)
-                # offset += len(listOfFiles)-offset
+                packed_message = create_next_packet(info[1],len(listOfFiles)*9*(2+(MAX_K-1)*(MAX_M-1))*2-offset,info[0],2)
             else:
-                packed_message = create_next_packet(offset,len(listOfFiles)*9*(2+MAX_K*MAX_M)*2-offset,fileID,2)
-                offset += len(listOfFiles)*9*(2+MAX_K*MAX_M)*2-offset
+                packed_message = create_next_packet(offset,len(listOfFiles)*9*(2+(MAX_K-1)*(MAX_M-1))*2-offset,fileID,2)
+                offset += len(listOfFiles)*9*(2+(MAX_K-1)*(MAX_M-1))*2-offset
                 fileID += 1
 
         return packed_message
@@ -271,7 +205,7 @@ def recognize_client_message(packed_message,number_of_cores):
         
         sl.write_log("List of contents after new data is: {}".format("".join([i for i in list_of_files if i != ""])),"debug")
 
-        if offset >= len(listOfFiles)*9*(2+MAX_K*MAX_M)*2:
+        if offset >= len(listOfFiles)*9*(2+(MAX_K-1)*(MAX_M-1))*2:
             _is_over = True
     # Message id for closing session with client because is offline
     elif message_id[0] == 4:
@@ -283,14 +217,6 @@ def recognize_client_message(packed_message,number_of_cores):
     return None
 
 def close_session_with_all_clients():
-    """
-    Description: Close session with all clients
-
-    Args:
-        -
-    Returns:
-        -
-    """
     global list_of_connections
 
     sl.write_log("Server try to close session with all clients...","info")
@@ -305,15 +231,6 @@ def close_session_with_all_clients():
     sl.write_log("Server successfully close all sessions with clients.","info")
 
 def wait_threads(accept_thread,list_of_clients):
-    """
-    Description: Wait all threads end their jobs
-
-    Args:
-        accept_thread(obj): An thread object for accept thread function
-        list_of_client(list): A list with all client threads
-    Returns:
-        -
-    """
     sl.write_log("Server wait all client threads to join before terminate.","info")
     accept_thread.join()
     for client in list_of_clients:
@@ -321,15 +238,6 @@ def wait_threads(accept_thread,list_of_clients):
             client.join()
 
 def client_thread_f(connection,client_address,number_of_cores):
-    """
-    Description: A thread method for client threads
-    Args:
-        connection(socket): A socket to communicate server with specific client
-        client_address(tuple): A tuple with IP and port for specific client
-        number_of_cores(int): An integer that tells server how many cores this client offer
-    Returns:
-        -
-    """
     global list_of_connections
     global user_interrupt
     global offset
@@ -351,7 +259,6 @@ def client_thread_f(connection,client_address,number_of_cores):
         with lock:
             try:
                 packed_message = recognize_client_message(packet,int(number_of_cores))
-                
                 if packed_message != None:
                     if packed_message == "close_session":
                         try:
@@ -385,20 +292,16 @@ def main():
     global _is_over
     global sock
 
-    # Create list of files
     listOfFiles = create_list_of_files(_root_folder)
 
-    # Bind IP and port for server
     sock = init_server()
     sock.settimeout(2)
 
-    # Create accept thread
     accept_thread = threading.Thread(target=accept_clients,args=(sock,))
     accept_thread.start()
 
     try:
         while not user_interrupt:
-            # Check if all clients have end their jobs
             if _is_over == True:
                 close_session_with_all_clients()
 
@@ -419,7 +322,6 @@ def main():
         wait_threads(accept_thread,list_of_clients)
     sock.close()
     
-    # Write results to file
     filename = "results.txt"
     with open(filename,"w") as f:
         for line in list_of_files:
