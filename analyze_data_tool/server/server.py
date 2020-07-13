@@ -14,6 +14,8 @@ _root_folder = "/root/Experiment Networks"
 ### Global variables ###
 BUFFER_SIZE = 10000
 MAX_SIZE = 1024
+MAX_K = 3
+MAX_M = 3
 server_IP = "172.104.249.240"
 server_port = 10000
 backlog = 5
@@ -97,8 +99,6 @@ def accept_clients(sock):
                     if not list_of_clients[i].isAlive():
                         list_of_clients[i] = None
                 list_of_clients = [client for client in list_of_clients if client != None]
-                # for client in list_of_clients:
-                #     print client
 
 def split_list_to_packets(listOfFiles):
     """
@@ -121,7 +121,6 @@ def split_list_to_packets(listOfFiles):
             temp_list = []
     if temp_list:
         packed_list.append(temp_list)
-    print packed_list
     
     return packed_list
 
@@ -223,8 +222,7 @@ def recognize_client_message(packed_message,number_of_cores):
 
     sl.write_log("[+] Server receive new packet from client.","info")
     message_id = unpack("i",packed_message[0:4])
-    print message_id[0]
-   
+    
     # Message id for number of cores
     if message_id[0] == 1: 
         message_size = unpack("i", packed_message[4:8])      
@@ -235,7 +233,7 @@ def recognize_client_message(packed_message,number_of_cores):
         return number_of_cores
     # Message id for request next chunk of files
     elif message_id[0] == 2:
-        if offset+number_of_cores <= len(listOfFiles)*9*2:
+        if offset+number_of_cores <= len(listOfFiles)*9*(2+MAX_K*MAX_M)*2:
             if incomplete_fds_list:
                 info = incomplete_fds_list.pop(0)
                 packed_message = create_next_packet(info[1],number_of_cores,info[0],2)
@@ -247,11 +245,11 @@ def recognize_client_message(packed_message,number_of_cores):
         else:
             if incomplete_fds_list:
                 info = incomplete_fds_list.pop(0)
-                packed_message = create_next_packet(info[1],len(listOfFiles)*9*2-offset,info[0],2)
+                packed_message = create_next_packet(info[1],len(listOfFiles)*9*(2+MAX_K*MAX_M)*2-offset,info[0],2)
                 # offset += len(listOfFiles)-offset
             else:
-                packed_message = create_next_packet(offset,len(listOfFiles)*9*2-offset,fileID,2)
-                offset += len(listOfFiles)*9*2-offset
+                packed_message = create_next_packet(offset,len(listOfFiles)*9*(2+MAX_K*MAX_M)*2-offset,fileID,2)
+                offset += len(listOfFiles)*9*(2+MAX_K*MAX_M)*2-offset
                 fileID += 1
 
         return packed_message
@@ -273,7 +271,7 @@ def recognize_client_message(packed_message,number_of_cores):
         
         sl.write_log("List of contents after new data is: {}".format("".join([i for i in list_of_files if i != ""])),"debug")
 
-        if offset >= len(listOfFiles)*9*2:
+        if offset >= len(listOfFiles)*9*(2+MAX_K*MAX_M)*2:
             _is_over = True
     # Message id for closing session with client because is offline
     elif message_id[0] == 4:
@@ -352,7 +350,6 @@ def client_thread_f(connection,client_address,number_of_cores):
         packed_message = ""
         with lock:
             try:
-                print packet
                 packed_message = recognize_client_message(packet,int(number_of_cores))
                 
                 if packed_message != None:

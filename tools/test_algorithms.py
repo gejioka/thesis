@@ -30,14 +30,14 @@ def execute_command(filename,metric,algorithm,backbone,pool,counter,k,m,number_o
 
     if k == 0 and m == 0:
         if merge:
-            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--clock", "--testing", backbone, "--merge"])
+            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--testing", backbone, "--merge"])
         else:
-            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--clock", "--testing", backbone])
+            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--testing", backbone])
     else:
         if merge:
-            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-k", str(k), "-m", str(m), "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--clock", "--testing", backbone, "--merge"])
+            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-k", str(k), "-m", str(m), "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--testing", backbone, "--merge"])
         else:
-            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-k", str(k), "-m", str(m), "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--clock", "--testing", backbone])
+            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-k", str(k), "-m", str(m), "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--testing", backbone])
     pool.append(proc)
     pid  = proc.pid
 
@@ -67,10 +67,21 @@ def create_list_of_arguments(filename,metric,pool,counter,list_of_arguments):
     Returns:
         counter,list_of_arguments
     """
+    list_of_arguments.append([filename,metric,"1","--cds",None,counter,0,0])
+    counter += 1
+    list_of_arguments.append([filename,metric,"1","--mcds",None,counter,0,0])
+    counter += 1
     list_of_arguments.append([filename,metric,"2","--cds",None,counter,0,0])
     counter += 1
     list_of_arguments.append([filename,metric,"2","--mcds",None,counter,0,0])
     counter += 1
+
+    for k in range(1,MAX_K):
+        for m in range(1,MAX_M):
+            list_of_arguments.append([filename,metric,"3","--cds",None,counter,k,m])
+            counter += 1
+            list_of_arguments.append([filename,metric,"3","--mcds",None,counter,k,m])
+            counter += 1
     
     return counter,list_of_arguments
 
@@ -189,11 +200,17 @@ def run_tests(list_of_arguments,offset,number_of_cores,list_of_metrics):
     """
     try:
         pool=[]
-        for i in range(int(offset),int(offset)+int(number_of_cores)-1):
-            pool = execute_command(list_of_arguments[i][0],list_of_arguments[i][1],list_of_arguments[i][2],list_of_arguments[i][3],pool,list_of_arguments[i][5],list_of_arguments[i][6],list_of_arguments[i][7],number_of_cores)
-        pool = execute_command(list_of_arguments[int(offset)+int(number_of_cores)-1][0],list_of_arguments[int(offset)+int(number_of_cores)-1][1],list_of_arguments[int(offset)+int(number_of_cores)-1][2],list_of_arguments[int(offset)+int(number_of_cores)-1][3],pool,list_of_arguments[int(offset)+int(number_of_cores)-1][5],list_of_arguments[int(offset)+int(number_of_cores)-1][6],list_of_arguments[int(offset)+int(number_of_cores)-1][7],number_of_cores,True)
-        wait_processes(pool)
+        if int(offset)+int(number_of_cores) < len(list_of_arguments):
+            for i in range(int(offset),int(offset)+int(number_of_cores)-1):
+                pool = execute_command(list_of_arguments[i][0],list_of_arguments[i][1],list_of_arguments[i][2],list_of_arguments[i][3],pool,list_of_arguments[i][5],list_of_arguments[i][6],list_of_arguments[i][7],number_of_cores)
+            pool = execute_command(list_of_arguments[int(offset)+int(number_of_cores)-1][0],list_of_arguments[int(offset)+int(number_of_cores)-1][1],list_of_arguments[int(offset)+int(number_of_cores)-1][2],list_of_arguments[int(offset)+int(number_of_cores)-1][3],pool,list_of_arguments[int(offset)+int(number_of_cores)-1][5],list_of_arguments[int(offset)+int(number_of_cores)-1][6],list_of_arguments[int(offset)+int(number_of_cores)-1][7],number_of_cores,True)
+            # wait_processes(pool)
+        else:
+            for i in range(int(offset),len(list_of_arguments)):
+                pool = execute_command(list_of_arguments[i][0],list_of_arguments[i][1],list_of_arguments[i][2],list_of_arguments[i][3],pool,list_of_arguments[i][5],list_of_arguments[i][6],list_of_arguments[i][7],number_of_cores)
+            pool = execute_command(list_of_arguments[len(list_of_arguments)-1][0],list_of_arguments[len(list_of_arguments)-1][1],list_of_arguments[len(list_of_arguments)-1][2],list_of_arguments[len(list_of_arguments)-1][3],pool,list_of_arguments[len(list_of_arguments)-1][5],list_of_arguments[len(list_of_arguments)-1][6],list_of_arguments[len(list_of_arguments)-1][7],len(list_of_arguments)-offset,True)    
         
+        wait_processes(pool)
         merge_files(number_of_cores,offset)
     except KeyboardInterrupt:
         print "An Ctrl+C interrupt occured!!! Program terminated!!!"

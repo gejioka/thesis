@@ -69,7 +69,7 @@ for result in newalg_results:
 	string_to_print += " "
 string_to_print += "\n"
 
-print string_to_print
+# print string_to_print
 
 # Calculate some statistic stuff related to results of algorithms
 avg_mil = sum(milcom_results)/len(milcom_results)

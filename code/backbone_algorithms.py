@@ -255,14 +255,14 @@ def robust_algorithm(user_input,args):
     for name, node in dict_of_objects.iteritems():
         node.node_decision(args)
 
-    construct_new_graph()
+    construct_new_graph(args)
     vertex_connectivity = remain_on_DS(args,vertex_connectivity)
     list_of_dominatees.sort(key=lambda tup: tup[1],reverse=True)
     counter=0
     while vertex_connectivity < int(args.k):
         if counter < int(args.m) and list_of_dominatees:
             connected_dominating_set[list_of_dominatees[counter][0]] = 1
-            construct_new_graph()
+            construct_new_graph(args)
             vertex_connectivity = remain_on_DS(args,vertex_connectivity)
             counter += 1
         else:

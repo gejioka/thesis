@@ -143,7 +143,7 @@ def create_relative_paths():
     global list_of_files
 
     for i in range(len(list_of_files)):
-        list_of_files[i] = list_of_files[i][list_of_files[i].find("Experiment Networks"):]
+        list_of_files[i] = list_of_files[i][list_of_files[i].find("Experiment_Networks1"):]
     return list_of_files
 
 def send_message(sock):

@@ -121,7 +121,7 @@ def find_MCDS(args):
                 #if len(node_obj.get_dominators()) < int(args.m) or not graph._is_k_connected(args): 
                 if len(set(node_obj.get_N_of_u())&set(connected_dominating_set.keys())) < int(args.m) or not graph._is_k_connected(args):
                     connected_dominating_set[key] = value
-                    graph.construct_new_graph()
+                    graph.construct_new_graph(args)
                     write_message(args,"[!] Node with name {} cannot be removed because CDS will disconnected".format(key),"INFO")
                     counter += 1
                     m_dominators=False
@@ -224,6 +224,26 @@ def all_dominees_have_m_dominators(m):
             if neighbor in connected_dominating_set.keys():
                 number_of_dominators += 1
         if number_of_dominators < m:
+            return False
+    return True
+
+def all_dominators_have_k_dominators(k):
+    """
+    Description: Check if all dominators have at least k dominators as neighbors
+
+    Args:
+        k (int): The minimum number of dominators need to have every dominator as neighbor
+
+    Returns:
+        boolean
+    """
+    for key in connected_dominating_set.keys():
+        number_of_dominators = 0
+        dominator = dict_of_objects[key]
+        for neighbor in dominator.get_N_of_u():
+            if neighbor in connected_dominating_set.keys():
+                number_of_dominators += 1
+        if number_of_dominators < k:
             return False
     return True
 

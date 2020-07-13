@@ -2,9 +2,10 @@ from networkx.algorithms.connectivity import minimum_st_node_cut
 from global_variables import *
 from network_tools import *
 from log import *
+import random
 import networkx as nx
-import matplotlib
-matplotlib.use('Agg')
+# import matplotlib
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 G = None
@@ -27,8 +28,8 @@ def initialize_graph(new=False):
         G = nx.Graph()
     else:
         new_G = nx.Graph()
-    
-def add_nodes(new=False):
+
+def add_nodes(new=False,args=None):
     """
     Description: Add nodes to graph
 
@@ -52,11 +53,30 @@ def add_nodes(new=False):
                     edges.append((node.get_name(),neighbor))
     else:
         for edge in G.edges():
-            if edge[0] in connected_dominating_set.keys() and edge[1] in connected_dominating_set.keys():
-                edges.append(edge)
-    G.add_edges_from(edges) if not new else new_G.add_edges_from(edges)
+            _edge_added = False
 
-def construct_new_graph():
+            if args != None:
+                write_message(args,"[+] Try to add edge in edges...","INFO")
+            if edge[0] in connected_dominating_set.keys() and edge[1] in connected_dominating_set.keys():
+                _edge_added = True
+                edges.append(edge)
+                if args != None:
+                    write_message(args,"[+] Edge {}<-->{} added to edges.".format(edge[0],edge[1]),"DEBUG")
+            else:
+                if (not all_dominees_have_m_dominators(args.m)) or (not all_dominators_have_k_dominators(args.k)):
+                    _edge_added = True
+                    edges.append(edge)
+                    if args != None:
+                        write_message(args,"[+] Edge {}<-->{} added to edges.".format(edge[0],edge[1]),"DEBUG")
+            if not _edge_added:
+                write_message(args,"[-] Edge {}<-->{} removed from edges.".format(edge[0],edge[1]),"DEBUG")
+    if args != None:
+        write_message(args,"[+] Add all edges in list to graph.","INFO")
+    G.add_edges_from(edges) if not new else new_G.add_edges_from(edges)
+    if args != None:
+        write_message(args,"[+] All edges added to graph.","INFO")
+
+def construct_new_graph(args=None):
     """
     Description: Construct new graph only with nodes of CDS
 
@@ -69,12 +89,23 @@ def construct_new_graph():
     global new_G
     
     initialize_graph(True)
-    add_nodes(True)
+    add_nodes(True,args)
 
 def remove_node(node):
+    """
+    Description: Remove node from network
+
+    Args:
+        node(string):  Name of node to be removed
+
+    Returns:
+        -
+    """
+    global new_G
+
     new_G.remove_node(node)
 
-def check_k_connectivity(source,destination):
+def check_k_connectivity(args,source,destination):
     """
     Description: Check if network is k-connected
 
@@ -85,6 +116,7 @@ def check_k_connectivity(source,destination):
         -
     """
     global G
+
     maximum_disjoint_paths = []
     sorted_paths = []
     all_paths = nx.all_simple_paths(G,source,destination)
@@ -125,23 +157,6 @@ def find_node_connectivity(new=False):
     
     return node_connectivity
 
-def find_minimum_vertex_cut(s,t,new=False):
-    """
-    Description: Find minimum vertex cut
-
-    Args:
-        new (bool): A variable to decide which graph to use. Default value <False>
-    Returns:
-        minimum_node_cut
-    """
-    global G
-    global new_G
-
-    if not new:
-        return minimum_st_node_cut(G,s,t)
-    else:
-        return minimum_st_node_cut(new_G,s,t)
-
 def find_minimum_vertex_cut(new=False):
     """
     Description: Find minimum vertex cut
@@ -173,10 +188,11 @@ def remain_on_DS(args,vertex_connectivity):
     """
     global new_G
     
-    to_remove=[]
+    write_message(args,"[!] Try to find minimum vertex cut in backbone...","INFO")
     K = vertex_connectivity
     vertex_connectivity = find_minimum_vertex_cut(True)
 
+    write_message(args,"[!] Minimum vertex cut for backbone is: {}".format(vertex_connectivity),"INFO")
     if len(vertex_connectivity) < K:
         K = len(vertex_connectivity)
 
@@ -232,6 +248,39 @@ def poll_nodes_for_dominators(dict_of_next_dominators,args):
     
     return (dict_of_significant_nodes,dict_of_next_dominators) 
 
+def nodes_to_remove(connected_dominating_set,percentage):
+    """
+    Description: Reutn the number of node to be removed from network
+
+    Args:
+        connected_dominating_set(dict): A dictionary with all nodes in backbone
+        percentage(int): The percentage of nodes to be removed
+    Returns:
+        number_of_nodes
+    """
+    return int(round((len(connected_dominating_set)*percentage)/100.0))
+
+
+def check_robustness(connected_dominating_set):
+    """
+    Description: Check the robustness of the backbone
+
+    Args:
+        connected_dominating_set(dict): A dictionary with all nodes in backbone
+    Returns:
+        -
+    """
+    global G
+
+    number_of_nodes = nodes_to_remove(connected_dominating_set,20)
+    for i in range(number_of_nodes):
+        connected_dominating_set.pop(random.choice(connected_dominating_set.keys()))
+        if all_dominees_have_dominators():
+            print "Have removed " + str(i+1) + " nodes"
+        else:
+            print "Network disconnected"
+            break
+
 def plot_local_graph(network):
     """
     Description: Create and plot local network
@@ -257,10 +306,15 @@ def plot_input_graph(new=False):
     """
     global G
     global new_G
-
+    
     if not new:
-        nx.draw(G,with_labels = True)
-        plt.show()
+        try:
+            nx.draw(G, with_labels = True)
+        except Exception as err:
+            print err
     else:
-        nx.draw(new_G,with_labels = True)
-        plt.show()
+        try:
+            nx.draw(new_G,with_labels = True)
+        except Exception as err:
+            print err
+    plt.show()
