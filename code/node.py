@@ -31,6 +31,7 @@ class Node:
         self.N3_of_u = []
         self.dominators = []
         self.dominatees = []
+        self.temp_dominators = []
         self.number_of_dominatees = 0
 
         self.Ns_of_u_dict = {1:self.N_of_u,2:self.N2_of_u,3:self.N3_of_u}
@@ -528,9 +529,9 @@ class Node:
         """
         return self.N3_of_u
     
-    def get_node_dominators(self):
+    def get_dominators(self):
         """
-        Description: Return dominators of specific node
+        Description: Return a list with all dominators for this node
 
         Args:
             -
@@ -539,6 +540,48 @@ class Node:
             dominators
         """
         return self.dominators
+    
+    def add_temp_dominator(self,temp_dominator):
+        """
+        Description: Add a temporary dominator to list
+
+        Args:
+            temp_dominator(String): The name of temporary dominator
+
+        Returns:
+            dominators
+        """
+        self.temp_dominators.append(temp_dominator)
+    
+    def delete_temp_dominator(self,temp_dominator):
+        """
+        Description: Delete a temporary dominator frmo list
+
+        Args:
+            temp_dominator(String): The name of temporary dominator
+
+        Returns:
+            -
+        """
+        try:
+            self.temp_dominators.remove(temp_dominator)
+        except Exception:
+            pass
+    
+    def clear_temp_dominators(self):
+        self.temp_dominators = []
+
+    def get_temp_dominators(self):
+        """
+        Description: Return temporary dominators of this node
+
+        Args:
+            -
+
+        Returns:
+            temp_dominators
+        """
+        return self.temp_dominators
     
     def find_all_nodes_to_3hops(self):
         """
@@ -564,9 +607,6 @@ class Node:
             all_3hop_nodes
         """
         return self.all_3hop_nodes
-
-    def get_dominators(self):
-        return self.dominators
 
     def find_Nu_PCIs(self,dict_of_objects,pci):
         """

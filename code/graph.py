@@ -3,6 +3,7 @@ from global_variables import *
 from network_tools import *
 from log import *
 import random
+import operator
 import networkx as nx
 # import matplotlib
 # matplotlib.use('Agg')
@@ -52,29 +53,45 @@ def add_nodes(new=False,args=None):
                 except:
                     edges.append((node.get_name(),neighbor))
     else:
-        for edge in G.edges():
-            _edge_added = False
+    #     for edge in G.edges():
+    #         _edge_added = False
 
-            if args != None:
-                write_message(args,"[+] Try to add edge in edges...","INFO")
-            if edge[0] in connected_dominating_set.keys() and edge[1] in connected_dominating_set.keys():
-                _edge_added = True
-                edges.append(edge)
-                if args != None:
-                    write_message(args,"[+] Edge {}<-->{} added to edges.".format(edge[0],edge[1]),"DEBUG")
-            else:
-                if (not all_dominees_have_m_dominators(args.m)) or (not all_dominators_have_k_dominators(args.k)):
-                    _edge_added = True
-                    edges.append(edge)
-                    if args != None:
-                        write_message(args,"[+] Edge {}<-->{} added to edges.".format(edge[0],edge[1]),"DEBUG")
-            if not _edge_added:
-                write_message(args,"[-] Edge {}<-->{} removed from edges.".format(edge[0],edge[1]),"DEBUG")
+    #         if args != None:
+    #             write_message(args,"[+] Try to add edge in edges...","INFO")
+    #         if edge[0] in connected_dominating_set.keys() and edge[1] in connected_dominating_set.keys():
+    #             _edge_added = True
+    #             edges.append(edge)
+    #             if args != None:
+    #                 write_message(args,"[+] Edge {}<-->{} added to edges.".format(edge[0],edge[1]),"DEBUG")
+    #         else:
+    #             if (not all_dominees_have_m_dominators(args.m)) or (not all_dominators_have_k_dominators(args.k)):
+    #                 _edge_added = True
+    #                 edges.append(edge)
+    #                 if args != None:
+    #                     write_message(args,"[+] Edge {}<-->{} added to edges.".format(edge[0],edge[1]),"DEBUG")
+    #         if not _edge_added:
+    #             write_message(args,"[-] Edge {}<-->{} removed from edges.".format(edge[0],edge[1]),"DEBUG")
+    # if args != None:
+    #     write_message(args,"[+] Add all edges in list to graph.","INFO")
+    # G.add_edges_from(edges) if not new else new_G.add_edges_from(edges)
+    # if args != None:
+    #     write_message(args,"[+] All edges added to graph.","INFO")
+        for node in connected_dominating_set:
+            for neighbor in dict_of_objects[node].get_N_of_u():
+                # if neighbor in connected_dominating_set or not (all_dominees_have_dominators() and all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m))):
+                edges.append((node,neighbor))
     if args != None:
         write_message(args,"[+] Add all edges in list to graph.","INFO")
     G.add_edges_from(edges) if not new else new_G.add_edges_from(edges)
     if args != None:
         write_message(args,"[+] All edges added to graph.","INFO")
+    
+    # # TODO: If network is not connected after adding nodes test this case
+    if args:
+        if all_dominees_have_dominators() and all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)):
+            print "Network is connected!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        else:
+            print "Network is not connected!!!!!!!!!!!!!!!!!!!!!"
 
 def construct_new_graph(args=None):
     """
@@ -157,7 +174,7 @@ def find_node_connectivity(new=False):
     
     return node_connectivity
 
-def find_minimum_vertex_cut(new=False):
+def find_minimum_vertex_cut(new=False,s=None,t=None):
     """
     Description: Find minimum vertex cut
 
@@ -172,10 +189,80 @@ def find_minimum_vertex_cut(new=False):
     if not new:
         return nx.minimum_node_cut(G)
     else:
+        if s != None and t != None:
+            return minimum_st_node_cut(new_G,s,t)
         return nx.minimum_node_cut(new_G)
+    return None
 
 def _is_k_connected(args):
+    """
+    Description: Check if network is k-connected
+
+    Args:
+        args (obj): An object with all user arguments
+    Returns:
+        boolean
+    """
     return nx.is_k_edge_connected(new_G, k=int(args.k))
+
+def check_dominators_connectivity(args,n,node_type):
+    """
+    Description: Check if all dominators are k-connected
+
+    Args:
+        k (int): An integer with k value
+    Returns:
+        boolean
+    """
+    candidate_dominators = {}
+
+    results = None
+    if node_type == "dominator":
+        results = all_dominators_have_k_dominators(n,return_list=True)
+    elif node_type == "dominatee":
+        results = all_dominees_have_m_dominators(n,return_list=True)
+    else:
+        write_message(args,"There is no node type with name {}".format(node_type),"WARNING")
+        return -1
+
+    if isinstance(results,list):
+        for node in results:
+            node_obj = dict_of_objects[node]
+            for neighbor in node_obj.get_N_of_u():
+                if neighbor not in connected_dominating_set.keys():
+                    if neighbor not in candidate_dominators.keys():
+                        candidate_dominators[neighbor] = 1
+                    else:
+                        candidate_dominators[neighbor] += 1
+        candidate_dominators = dict(sorted(candidate_dominators.items(), key=operator.itemgetter(1)))
+        connected_dominating_set[candidate_dominators.keys()[0]]
+
+def check_constraint5(args):
+    """
+    Description: Check if constraint 5 is satisfied
+
+    Args:
+        args (obj): An object which contains all user arguments
+        k (int): An integer with k value
+        m (int): An integer with m value
+    Returns:
+        boolean
+    """
+    CDS_before = {}
+    CDS_after = {}
+
+    if int(args.k) > 0 and int(args.m) > 0:
+        while CDS_before != CDS_after:
+            CDS_before = connected_dominating_set.copy()
+
+            check_dominators_connectivity(args,int(args.k),"dominator")
+            check_dominators_connectivity(args,int(args.m),"dominatee")
+
+            CDS_after = connected_dominating_set.copy()
+    else:
+        write_message(args,"k and m values must be bigger than zero","ERROR")
+        return -1
+    
 
 def remain_on_DS(args,vertex_connectivity):
     """
@@ -186,13 +273,65 @@ def remain_on_DS(args,vertex_connectivity):
     Returns:
         -
     """
+    # global new_G
+
+    # K = 0
+    # try:
+    #     K = len(vertex_connectivity)
+    # except Exception:
+    #     K = vertex_connectivity
+
+    # temp_dominators = []
+    # for i in range(len(connected_dominating_set.keys())):
+    #     s = connected_dominating_set.keys()[i]
+    #     for j in range(i+1,len(connected_dominating_set.keys())):
+    #         t = connected_dominating_set.keys()[j]
+    #         if connected_dominating_set.keys()[i] not in dict_of_objects[connected_dominating_set.keys()[j]].get_N_of_u():
+    #             vertex_connectivity = find_minimum_vertex_cut(True,s,t)
+    #             if len(vertex_connectivity) < K:
+    #                 K = len(vertex_connectivity)
+    #             else:
+    #                 if s not in temp_dominators:
+    #                     temp_dominators.append(s)
+                
+    #             if len(vertex_connectivity) < min(int(args.k),int(args.m)):
+    #                 if s not in temp_dominators:
+    #                     temp_dominators.append(s)
+    #     temp_dominators = []
+
+    # for dominator in temp_dominators:
+    #     value = connected_dominating_set.pop(dominator)
+    #     for node in dict_of_objects.keys():
+    #         node_obj = dict_of_objects[node]
+    #         try:
+    #             node_obj.add_temp_dominator(dominator)
+    #             node_obj.get_dominators().remove(dominator)
+    #         except Exception:
+    #             pass
+        
+    #     if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)):
+    #         for node in dict_of_objects.keys():
+    #             node_obj = dict_of_objects[node]
+    #             node_obj.clear_temp_dominators()
+    #     else:
+    #         connected_dominating_set[dominator] = value
+    #         for node in dict_of_objects.keys():
+    #             node_obj = dict_of_objects[node]
+    #             if node in node_obj.get_temp_dominators():
+    #                 node_obj.get_dominators().append(node)
+    #                 node_obj.delete_temp_dominator(node)
+    #             node_obj.clear_temp_dominators()
+
+    #         write_message(args,"[!] Node with name {} cannot be removed because CDS will disconnected".format(node),"INFO")
+    # return K
+
     global new_G
     
     write_message(args,"[!] Try to find minimum vertex cut in backbone...","INFO")
     K = vertex_connectivity
     vertex_connectivity = find_minimum_vertex_cut(True)
 
-    write_message(args,"[!] Minimum vertex cut for backbone is: {}".format(vertex_connectivity),"INFO")
+    write_message(args,"[!] Minimum vertex cut for backbone is: [%s]"%", ".join(list(vertex_connectivity)),"INFO")
     if len(vertex_connectivity) < K:
         K = len(vertex_connectivity)
 

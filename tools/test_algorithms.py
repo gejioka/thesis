@@ -5,6 +5,10 @@ import ast
 import os
 import re
 
+### Global variables ###
+MILCOM_ALG = True
+NEW_ALG = False
+ROBUST_ALG = True
 MAX_K = 4
 MAX_M = 4
 
@@ -54,6 +58,64 @@ def wait_processes(pool):
     """
     exit_codes = [p.wait() for p in pool]
 
+def append_milcom_arguments(filename,metric,list_of_arguments,counter):
+    """
+    Description: A method that appends to list of arguments all arguments needed for MILCOM algorithm to run
+
+    Args:
+        filename(String): The name of specific file
+        metric(string): metric(string): The name of PCI metric
+        counter(int): A counter which for processes
+        list_of_arguments(list): A list with all arguments
+    Returns:
+        list_of_arguments,counter
+    """
+    list_of_arguments.append([filename,metric,"1","--cds",None,counter,0,0])
+    counter += 1
+    list_of_arguments.append([filename,metric,"1","--mcds",None,counter,0,0])
+    counter += 1
+
+    return list_of_arguments,counter
+
+def append_new_arguments(filename,metric,list_of_arguments,counter):
+    """
+    Description: A method that appends to list of arguments all arguments needed for NEW algorithm to run
+
+    Args:
+        filename(String): The name of specific file
+        metric(string): metric(string): The name of PCI metric
+        counter(int): A counter which for processes
+        list_of_arguments(list): A list with all arguments
+    Returns:
+        list_of_arguments,counter
+    """
+    list_of_arguments.append([filename,metric,"2","--cds",None,counter,0,0])
+    counter += 1
+    list_of_arguments.append([filename,metric,"2","--mcds",None,counter,0,0])
+    counter += 1
+
+    return list_of_arguments,counter
+
+def append_robust_arguments(filename,metric,list_of_arguments,counter):
+    """
+    Description: A method that appends to list of arguments all arguments needed for ROBUST algorithm to run
+
+    Args:
+        filename(String): The name of specific file
+        metric(string): metric(string): The name of PCI metric
+        counter(int): A counter which for processes
+        list_of_arguments(list): A list with all arguments
+    Returns:
+        list_of_arguments,counter
+    """
+    for k in range(1,MAX_K):
+        for m in range(1,MAX_M):
+            list_of_arguments.append([filename,metric,"3","--cds",None,counter,k,m])
+            counter += 1
+            list_of_arguments.append([filename,metric,"3","--mcds",None,counter,k,m])
+            counter += 1
+    return list_of_arguments,counter
+
 def create_list_of_arguments(filename,metric,pool,counter,list_of_arguments):
     """
     Description: Create a list with all arguments which processes needs
@@ -67,22 +129,26 @@ def create_list_of_arguments(filename,metric,pool,counter,list_of_arguments):
     Returns:
         counter,list_of_arguments
     """
-    list_of_arguments.append([filename,metric,"1","--cds",None,counter,0,0])
-    counter += 1
-    list_of_arguments.append([filename,metric,"1","--mcds",None,counter,0,0])
-    counter += 1
-    list_of_arguments.append([filename,metric,"2","--cds",None,counter,0,0])
-    counter += 1
-    list_of_arguments.append([filename,metric,"2","--mcds",None,counter,0,0])
-    counter += 1
+    if MILCOM_ALG and NEW_ALG and ROBUST_ALG:
+        list_of_arguments,counter = append_milcom_arguments(filename,metric,list_of_arguments,counter)
+        list_of_arguments,counter = append_new_arguments(filename,metric,list_of_arguments,counter)
+        list_of_arguments,counter = append_robust_arguments(filename,metric,list_of_arguments,counter)
+    elif MILCOM_ALG and NEW_ALG:
+        list_of_arguments,counter = append_milcom_arguments(filename,metric,list_of_arguments,counter)
+        list_of_arguments,counter = append_new_arguments(filename,metric,list_of_arguments,counter)
+    elif MILCOM_ALG and ROBUST_ALG:
+        list_of_arguments,counter = append_milcom_arguments(filename,metric,list_of_arguments,counter)
+        list_of_arguments,counter = append_robust_arguments(filename,metric,list_of_arguments,counter)
+    elif NEW_ALG and ROBUST_ALG:
+        list_of_arguments,counter = append_new_arguments(filename,metric,list_of_arguments,counter)
+        list_of_arguments,counter = append_robust_arguments(filename,metric,list_of_arguments,counter)
+    elif MILCOM_ALG:
+        list_of_arguments,counter = append_milcom_arguments(filename,metric,list_of_arguments,counter)
+    elif NEW_ALG:
+        list_of_arguments,counter = append_new_arguments(filename,metric,list_of_arguments,counter)
+    elif ROBUST_ALG:
+        list_of_arguments,counter = append_robust_arguments(filename,metric,list_of_arguments,counter)
 
-    for k in range(1,MAX_K):
-        for m in range(1,MAX_M):
-            list_of_arguments.append([filename,metric,"3","--cds",None,counter,k,m])
-            counter += 1
-            list_of_arguments.append([filename,metric,"3","--mcds",None,counter,k,m])
-            counter += 1
-    
     return counter,list_of_arguments
 
 def add_merge_field(list_of_arguments,number_of_cores):
@@ -229,7 +295,7 @@ def main():
     chunk_end = sys.argv[3]
     argument = sys.argv[4].replace("\"","")
     listOfFiles = ast.literal_eval(argument)
-
+    
     for i in range(len(listOfFiles)):
         for metric in list_of_metrics:
             counter,list_of_arguments = create_list_of_arguments(listOfFiles[i],metric,[],counter,list_of_arguments)

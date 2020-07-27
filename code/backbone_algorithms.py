@@ -3,7 +3,10 @@ from metrics import *
 from graph import *
 import ml_visualization as mlv
 import time
+import sys
 
+### Global variables ###
+ERROR_CODE = -1
 
 def last_step(algorithm,args):
     """
@@ -150,13 +153,13 @@ def milcom_algorithm(pci,user_input,args):
             node.find_clPCI()
         node.find_Nu_PCIs(dict_of_objects,args.pci)
         node.find_dominator(dict_of_objects,args)
-        message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([a.get_name() for a in node.get_node_dominators()])
-        message = message.format(node.get_name(),len(node.get_node_dominators()))
+        message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([a.get_name() for a in node.get_dominators()])
+        message = message.format(node.get_name(),len(node.get_dominators()))
         write_message(args,message,"DEBUG")
     for name, node in dict_of_objects.iteritems():
         node.add_node_in_CDS(user_input)
-        message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([a.get_name() for a in node.get_node_dominators()])
-        message = message.format(node.get_name(),len(node.get_node_dominators()))
+        message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([a.get_name() for a in node.get_dominators()])
+        message = message.format(node.get_name(),len(node.get_dominators()))
         write_message(args,message,"DEBUG")
     if args.time:
         end = time.time()
@@ -193,8 +196,8 @@ def new_algorithm(user_input,args):
         node.find_dominator(dict_of_objects,args)
     for name, node in dict_of_objects.iteritems():
         node.add_node_in_CDS(user_input)
-        message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([a.get_name() for a in node.get_node_dominators()])
-        message = message.format(node.get_name(),len(node.get_node_dominators()))
+        message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([a.get_name() for a in node.get_dominators()])
+        message = message.format(node.get_name(),len(node.get_dominators()))
         write_message(args,message,"DEBUG")
     if args.time:
         end = time.time()
@@ -230,8 +233,10 @@ def robust_algorithm(user_input,args):
     Returns:
         -
     """
+    # Check if input network is k-connected
     is_k_connected(args)
 
+    # Write log messages
     if args.log:
         write_message(args,"[!] Start running robust algorithm","INFO")
     if args.time:
@@ -241,10 +246,8 @@ def robust_algorithm(user_input,args):
             write_process_message(args,3,False)
         start = time.time()
     
-    # Assign a very large number to k(G') for first time
-    vertex_connectivity = float("inf")
-    
     # Create Dominating Set (DS) of network
+    write_message(args,"Start phase 1","INFO")
     for name, node in dict_of_objects.iteritems():
         if args.pci == "cl":
             node.set_unique_links_between_nodes(find_links_between_neighbors(node.get_xPCI_nodes()))
@@ -252,24 +255,59 @@ def robust_algorithm(user_input,args):
         node.find_Nu_PCIs(dict_of_objects,args.pci)
         node.find_dominator(dict_of_objects,args)
 
+    # Every node decides whether it is dominator or dominatee
+    write_message(args,"Start phase 2","INFO")
     for name, node in dict_of_objects.iteritems():
         node.node_decision(args)
+    
+    # Assign a very large number to k(G') for first time
+    vertex_connectivity = float("inf")
 
-    construct_new_graph(args)
-    vertex_connectivity = remain_on_DS(args,vertex_connectivity)
+    counter = 0
     list_of_dominatees.sort(key=lambda tup: tup[1],reverse=True)
-    counter=0
-    while vertex_connectivity < int(args.k):
-        if counter < int(args.m) and list_of_dominatees:
-            connected_dominating_set[list_of_dominatees[counter][0]] = 1
-            construct_new_graph(args)
-            vertex_connectivity = remain_on_DS(args,vertex_connectivity)
-            counter += 1
-        else:
+    while True:
+        # Stop running algorithm when vertex_connectivity become smaller than k
+        if vertex_connectivity >= int(args.k) and vertex_connectivity != float("inf") and all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) :
             break
+        
+        if check_constraint5(args) == ERROR_CODE:
+            sys.exit(1)
+
+        # Construct new graph
+        write_message(args,"Start phase 3","INFO")
+        construct_new_graph(args)
+
+        # Run algorithm
+        write_message(args,"Start phase 4","INFO")
+        vertex_connectivity = remain_on_DS(args,vertex_connectivity)
+
+        # try:
+        #     write_message(args,"Add dominatee to list of dominators","INFO")
+        #     connected_dominating_set[list_of_dominatees[counter][0]] = 1
+        #     counter += 1
+        # except Exception:
+        #     pass
+    
+    # write_message(args,"Start phase 3","INFO")
+    # construct_new_graph(args)
+    # write_message(args,"Start phase 4","INFO")
+    # vertex_connectivity = remain_on_DS(args,vertex_connectivity)
+    # write_message(args,"Start phase 5","INFO")
+    # list_of_dominatees.sort(key=lambda tup: tup[1],reverse=True)
+    # counter=0
+    # while vertex_connectivity < int(args.k):
+    #     write_message(args,"Repeat phase 6","INFO")
+    #     if counter < int(args.m) and list_of_dominatees:
+    #         connected_dominating_set[list_of_dominatees[counter][0]] = 1
+    #         construct_new_graph(args)
+    #         write_message(args,"start phase 6.1","INFO")
+    #         vertex_connectivity = remain_on_DS(args,vertex_connectivity)
+    #         counter += 1
+    #     else:
+    #         break
     
     if args.time:
         end = time.time()
         write_message(args,"Time running process 3: {}".format(end-start),"INFO",True)
-    
+    # print_CDS(args)
     last_step(3,args)

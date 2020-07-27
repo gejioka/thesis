@@ -85,6 +85,9 @@ def create_message(message_id,number_of_cores,file_id,file_text,offset):
         packed_message = pack("iii",4,last_fd,offset)
 
         return packed_message
+    # Send NACK packet to server
+    elif message_id == 5:
+        packed_message = pack("iii",5,last_fd+1,offset+number_of_cores)
     return None
 
 def recognize_server_packet(packed_message):
@@ -101,8 +104,11 @@ def recognize_server_packet(packed_message):
     global offset
     global last_fd
 
-    # Unpack message ID that server sends
-    message_id = unpack("i", packed_message[0:4])[0]
+    try:
+        # Unpack message ID that server sends
+        message_id = unpack("i", packed_message[0:4])[0]
+    except Exception:
+        create_message(5,0,last_fd,0,offset)
 
     # Server message with new chunk of files and file ID
     if message_id == 2:
@@ -161,56 +167,57 @@ def send_message(sock):
     global list_of_files
 
     while not server_interrupt and not user_interrupt:
-        try:
-            # Receive packet from server
-            packet = sock.recv(MAX_SIZE)
-            message = recognize_server_packet(packet)
-            
-            if message != None:
-                # Close session with server
-                if message == "close_session":
-                    server_interrupt = True
-                    sock.close()
-                # Receive list of files from server
-                elif message == "list_of_files":
-                    packet = sock.recv(MAX_SIZE)
-                    packet = dill.loads(packet)
+        # try:
+        # Receive packet from server
+        packet = sock.recv(MAX_SIZE)
+        message = recognize_server_packet(packet)
+        
+        if message != None:
+            # Close session with server
+            if message == "close_session":
+                server_interrupt = True
+                sock.close()
+            # Receive list of files from server
+            elif message == "list_of_files":
+                packet = sock.recv(MAX_SIZE)
+                packet = dill.loads(packet)
 
-                    list_of_files += packet
-                    sock.sendall("OK")
-                    while "OK" not in packet:
-                        try:
-                            packet = sock.recv(MAX_SIZE)
+                list_of_files += packet
+                sock.sendall("OK")
+                while "OK" not in packet:
+                    try:
+                        packet = sock.recv(MAX_SIZE)
 
-                            if "OK" in packet:
-                                if packet != "OK":
-                                    packet = dill.loads(packet.rstrip())
-                                    
-                                    packet = packet[:len(packet)-2]
-                                    list_of_files += packet
-                                    sock.sendall("OK")
-                                    break
-                                else:
-                                    break
-                            else:
+                        if "OK" in packet:
+                            if packet != "OK":
                                 packet = dill.loads(packet.rstrip())
+                                
+                                packet = packet[:len(packet)-2]
+                                list_of_files += packet
                                 sock.sendall("OK")
-                            list_of_files += packet
-                        except Exception as err:
-                            print "First error"
-                            print err
-                    list_of_files = create_relative_paths()
-                    
-                    message = create_message(2,0,0,0,0)
-                    sock.sendall(message)
-                else:
-                    sock.sendall(message)
-                    message = create_message(2,0,0,0,0)
-                    sock.sendall(message)
-            time.sleep(1)
-        except Exception as err:
-            server_interrupt = True
-            user_interrupt = True
+                                break
+                            else:
+                                break
+                        else:
+                            packet = dill.loads(packet.rstrip())
+                            sock.sendall("OK")
+                        list_of_files += packet
+                    except Exception as err:
+                        print "First error"
+                        print err
+                list_of_files = create_relative_paths()
+                
+                message = create_message(2,0,0,0,0)
+                sock.sendall(message)
+            else:
+                sock.sendall(message)
+                message = create_message(2,0,0,0,0)
+                sock.sendall(message)
+        time.sleep(1)
+        # except Exception as err:
+        #     print err
+        #     server_interrupt = True
+        #     user_interrupt = True
             
 
 def close_session_with_server(sock):
@@ -248,7 +255,8 @@ def main():
         try:
             time.sleep(0.1)
             # number_of_cores = raw_input("Give number of cores: ")
-        except KeyboardInterrupt:
+        except KeyboardInterrupt as err:
+            print err
             close_session_with_server(sock)
     print "Server is closed!!!"
 

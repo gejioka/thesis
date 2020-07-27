@@ -1,0 +1,4 @@
+The metric that algorithms use to decide which nodes will be dominators is: Single-Layer PCI
+0 13
+1 4
+2 5

@@ -1,0 +1,648 @@
+2020-07-15 22:16:20,396 - Backbone for multi-layer ad hoc network - INFO - [!] Start running robust algorithm to create MCDS as backbone and path for input file is /home/giorgos/Documents/thesis/static_network.txt
+
+2020-07-15 22:16:20,398 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h8 added to network and is in layer 2
+2020-07-15 22:16:20,398 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h8 has 2 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,399 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [1]
+
+2020-07-15 22:16:20,399 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h9 added to network and is in layer 2
+2020-07-15 22:16:20,399 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h9 has 2 neighbors in its layer and 2 in other layers
+2020-07-15 22:16:20,399 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 2 and are the following [1, 3]
+
+2020-07-15 22:16:20,399 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h2 added to network and is in layer 2
+2020-07-15 22:16:20,399 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h2 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,399 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,399 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h3 added to network and is in layer 2
+2020-07-15 22:16:20,399 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h3 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,399 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h1 added to network and is in layer 2
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h1 has 2 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [3]
+
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h6 added to network and is in layer 2
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h6 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h7 added to network and is in layer 2
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h7 has 4 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [3]
+
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h4 added to network and is in layer 2
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h4 has 4 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [1]
+
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h5 added to network and is in layer 2
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h5 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,400 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d8 added to network and is in layer 3
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d8 has 2 neighbors in its layer and 2 in other layers
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 2 and are the following [1, 2]
+
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d6 added to network and is in layer 3
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d6 has 4 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d7 added to network and is in layer 3
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d7 has 2 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d4 added to network and is in layer 3
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d4 has 5 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [1]
+
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d5 added to network and is in layer 3
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d5 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d2 added to network and is in layer 3
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d2 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,401 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,402 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d3 added to network and is in layer 3
+2020-07-15 22:16:20,402 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d3 has 2 neighbors in its layer and 2 in other layers
+2020-07-15 22:16:20,402 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 2 and are the following [1, 2]
+
+2020-07-15 22:16:20,402 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d1 added to network and is in layer 3
+2020-07-15 22:16:20,402 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d1 has 2 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,402 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:16:20,402 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s9 added to network and is in layer 1
+2020-07-15 22:16:20,402 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s9 has 3 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,402 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:16:20,402 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s8 added to network and is in layer 1
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s8 has 5 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s3 added to network and is in layer 1
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s3 has 2 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [3]
+
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s2 added to network and is in layer 1
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s2 has 4 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s1 added to network and is in layer 1
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s1 has 1 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s7 added to network and is in layer 1
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s7 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s6 added to network and is in layer 1
+2020-07-15 22:16:20,403 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s6 has 1 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s5 added to network and is in layer 1
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s5 has 6 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s4 added to network and is in layer 1
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s4 has 5 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s19 added to network and is in layer 1
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s19 has 2 neighbors in its layer and 2 in other layers
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 2 and are the following [2, 3]
+
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s18 added to network and is in layer 1
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s18 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s13 added to network and is in layer 1
+2020-07-15 22:16:20,404 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s13 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s12 added to network and is in layer 1
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s12 has 5 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s11 added to network and is in layer 1
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s11 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s10 added to network and is in layer 1
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s10 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s17 added to network and is in layer 1
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s17 has 5 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s16 added to network and is in layer 1
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s16 has 5 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,405 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s15 added to network and is in layer 1
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s15 has 4 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s14 added to network and is in layer 1
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s14 has 3 neighbors in its layer and 1 in other layers
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s22 added to network and is in layer 1
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s22 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s23 added to network and is in layer 1
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s23 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s20 added to network and is in layer 1
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s20 has 5 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s21 added to network and is in layer 1
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s21 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,406 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,407 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s24 added to network and is in layer 1
+2020-07-15 22:16:20,407 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s24 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:16:20,407 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:16:20,425 - Backbone for multi-layer ad hoc network - INFO - [!] Start running robust algorithm
+2020-07-15 22:16:20,426 - Backbone for multi-layer ad hoc network - INFO - Start phase 1
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - INFO - Start phase 2
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - INFO - Start phase 3
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h8<-->s19 added to edges.
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h8<-->h9 added to edges.
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h8<-->h7 added to edges.
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h8<-->s14 removed from edges.
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,427 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h9<-->d7 removed from edges.
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h9<-->h7 added to edges.
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h9<-->s15 removed from edges.
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h2<-->h3 removed from edges.
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h2<-->h1 added to edges.
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h2<-->h4 added to edges.
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h2<-->s4 removed from edges.
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h3<-->h4 removed from edges.
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h1<-->d3 added to edges.
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h1<-->h4 added to edges.
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h1<-->d1 added to edges.
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,428 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h6<-->h7 removed from edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h6<-->h5 removed from edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h7<-->d8 added to edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h7<-->h5 added to edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h4<-->s9 added to edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h4<-->h5 added to edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge d8<-->d6 added to edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d8<-->d7 removed from edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge d8<-->s19 added to edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d6<-->d7 removed from edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge d6<-->d4 added to edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d6<-->d5 removed from edges.
+2020-07-15 22:16:20,429 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge d4<-->s3 added to edges.
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d4<-->d5 removed from edges.
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d4<-->d2 removed from edges.
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge d4<-->d3 added to edges.
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge d4<-->d1 added to edges.
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d5<-->d3 removed from edges.
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d2<-->d1 removed from edges.
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge d3<-->s3 added to edges.
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s9<-->s8 added to edges.
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s9<-->s5 added to edges.
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s9<-->s4 removed from edges.
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,430 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s8<-->s7 added to edges.
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s8<-->s11 removed from edges.
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s8<-->s5 added to edges.
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s8<-->s4 removed from edges.
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s3<-->s2 added to edges.
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s3<-->s4 removed from edges.
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s2<-->s1 removed from edges.
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s2<-->s5 added to edges.
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,431 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s2<-->s4 removed from edges.
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s7<-->s10 added to edges.
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s7<-->s5 added to edges.
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s6<-->s5 removed from edges.
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s5<-->s4 removed from edges.
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s19<-->s18 added to edges.
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s19<-->s17 removed from edges.
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s18<-->s17 removed from edges.
+2020-07-15 22:16:20,432 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s18<-->s24 removed from edges.
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s13<-->s12 added to edges.
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s13<-->s16 added to edges.
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s12<-->s11 removed from edges.
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s12<-->s10 added to edges.
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s12<-->s15 removed from edges.
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s12<-->s14 removed from edges.
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s11<-->s10 removed from edges.
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s17<-->s16 removed from edges.
+2020-07-15 22:16:20,433 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s17<-->s15 removed from edges.
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s17<-->s14 removed from edges.
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s16<-->s20 added to edges.
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s16<-->s21 removed from edges.
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s16<-->s15 removed from edges.
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s15<-->s14 removed from edges.
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s22<-->s23 removed from edges.
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s22<-->s20 removed from edges.
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,434 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s23<-->s20 removed from edges.
+2020-07-15 22:16:20,435 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,435 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s23<-->s24 removed from edges.
+2020-07-15 22:16:20,435 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,435 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s20<-->s21 removed from edges.
+2020-07-15 22:16:20,435 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:16:20,435 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s20<-->s24 removed from edges.
+2020-07-15 22:16:20,435 - Backbone for multi-layer ad hoc network - INFO - [+] Add all edges in list to graph.
+2020-07-15 22:16:20,435 - Backbone for multi-layer ad hoc network - INFO - [+] All edges added to graph.
+2020-07-15 22:16:20,435 - Backbone for multi-layer ad hoc network - INFO - Start phase 4
+2020-07-15 22:16:20,807 - Backbone for multi-layer ad hoc network - INFO - Add dominatee to list of dominators
+2020-07-15 22:21:01,436 - Backbone for multi-layer ad hoc network - INFO - [!] Start running robust algorithm to create MCDS as backbone and path for input file is /home/giorgos/Documents/thesis/static_network.txt
+
+2020-07-15 22:21:01,438 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h8 added to network and is in layer 2
+2020-07-15 22:21:01,438 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h8 has 2 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,438 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [1]
+
+2020-07-15 22:21:01,438 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h9 added to network and is in layer 2
+2020-07-15 22:21:01,438 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h9 has 2 neighbors in its layer and 2 in other layers
+2020-07-15 22:21:01,438 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 2 and are the following [1, 3]
+
+2020-07-15 22:21:01,438 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h2 added to network and is in layer 2
+2020-07-15 22:21:01,438 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h2 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,438 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,438 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h3 added to network and is in layer 2
+2020-07-15 22:21:01,438 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h3 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h1 added to network and is in layer 2
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h1 has 2 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [3]
+
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h6 added to network and is in layer 2
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h6 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h7 added to network and is in layer 2
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h7 has 4 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [3]
+
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h4 added to network and is in layer 2
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h4 has 4 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [1]
+
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name h5 added to network and is in layer 2
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - DEBUG - Node with name h5 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,439 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d8 added to network and is in layer 3
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d8 has 2 neighbors in its layer and 2 in other layers
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 2 and are the following [1, 2]
+
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d6 added to network and is in layer 3
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d6 has 4 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d7 added to network and is in layer 3
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d7 has 2 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d4 added to network and is in layer 3
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d4 has 5 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [1]
+
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d5 added to network and is in layer 3
+2020-07-15 22:21:01,440 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d5 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,441 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,441 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d2 added to network and is in layer 3
+2020-07-15 22:21:01,441 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d2 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,441 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,441 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d3 added to network and is in layer 3
+2020-07-15 22:21:01,441 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d3 has 2 neighbors in its layer and 2 in other layers
+2020-07-15 22:21:01,441 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 2 and are the following [1, 2]
+
+2020-07-15 22:21:01,441 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name d1 added to network and is in layer 3
+2020-07-15 22:21:01,441 - Backbone for multi-layer ad hoc network - DEBUG - Node with name d1 has 2 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,442 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:21:01,442 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s9 added to network and is in layer 1
+2020-07-15 22:21:01,442 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s9 has 3 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,442 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:21:01,442 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s8 added to network and is in layer 1
+2020-07-15 22:21:01,442 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s8 has 5 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,442 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,442 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s3 added to network and is in layer 1
+2020-07-15 22:21:01,442 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s3 has 2 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,442 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [3]
+
+2020-07-15 22:21:01,443 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s2 added to network and is in layer 1
+2020-07-15 22:21:01,443 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s2 has 4 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,443 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,443 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s1 added to network and is in layer 1
+2020-07-15 22:21:01,443 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s1 has 1 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,443 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,443 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s7 added to network and is in layer 1
+2020-07-15 22:21:01,444 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s7 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,444 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,444 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s6 added to network and is in layer 1
+2020-07-15 22:21:01,444 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s6 has 1 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,444 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,444 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s5 added to network and is in layer 1
+2020-07-15 22:21:01,444 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s5 has 6 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,444 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,444 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s4 added to network and is in layer 1
+2020-07-15 22:21:01,444 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s4 has 5 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,444 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s19 added to network and is in layer 1
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s19 has 2 neighbors in its layer and 2 in other layers
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 2 and are the following [2, 3]
+
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s18 added to network and is in layer 1
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s18 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s13 added to network and is in layer 1
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s13 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s12 added to network and is in layer 1
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s12 has 5 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s11 added to network and is in layer 1
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s11 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,445 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s10 added to network and is in layer 1
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s10 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s17 added to network and is in layer 1
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s17 has 5 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s16 added to network and is in layer 1
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s16 has 5 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s15 added to network and is in layer 1
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s15 has 4 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s14 added to network and is in layer 1
+2020-07-15 22:21:01,446 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s14 has 3 neighbors in its layer and 1 in other layers
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 1 and are the following [2]
+
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s22 added to network and is in layer 1
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s22 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s23 added to network and is in layer 1
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s23 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s20 added to network and is in layer 1
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s20 has 5 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s21 added to network and is in layer 1
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s21 has 2 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - INFO - [+] A new node with name s24 added to network and is in layer 1
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - DEBUG - Node with name s24 has 3 neighbors in its layer and 0 in other layers
+2020-07-15 22:21:01,447 - Backbone for multi-layer ad hoc network - DEBUG - The number of layers which node has neighbors is 0 and are the following []
+
+2020-07-15 22:21:01,469 - Backbone for multi-layer ad hoc network - INFO - [!] Start running robust algorithm
+2020-07-15 22:21:01,469 - Backbone for multi-layer ad hoc network - INFO - Start phase 1
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - INFO - Start phase 2
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - INFO - Start phase 3
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h8<-->s19 added to edges.
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h8<-->h9 added to edges.
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h8<-->h7 added to edges.
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h8<-->s14 removed from edges.
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h9<-->d7 removed from edges.
+2020-07-15 22:21:01,471 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h9<-->h7 added to edges.
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h9<-->s15 removed from edges.
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h2<-->h3 removed from edges.
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h2<-->h1 added to edges.
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h2<-->h4 added to edges.
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h2<-->s4 removed from edges.
+2020-07-15 22:21:01,472 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h3<-->h4 removed from edges.
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h1<-->d3 added to edges.
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h1<-->h4 added to edges.
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h1<-->d1 added to edges.
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h6<-->h7 removed from edges.
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge h6<-->h5 removed from edges.
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h7<-->d8 added to edges.
+2020-07-15 22:21:01,473 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,474 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h7<-->h5 added to edges.
+2020-07-15 22:21:01,474 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,474 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h4<-->s9 added to edges.
+2020-07-15 22:21:01,474 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,474 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge h4<-->h5 added to edges.
+2020-07-15 22:21:01,474 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,474 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d8<-->d6 removed from edges.
+2020-07-15 22:21:01,474 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,475 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d8<-->d7 removed from edges.
+2020-07-15 22:21:01,475 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,475 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge d8<-->s19 added to edges.
+2020-07-15 22:21:01,475 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,475 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d6<-->d7 removed from edges.
+2020-07-15 22:21:01,475 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,476 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d6<-->d4 removed from edges.
+2020-07-15 22:21:01,476 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,476 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d6<-->d5 removed from edges.
+2020-07-15 22:21:01,476 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,476 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d4<-->s3 removed from edges.
+2020-07-15 22:21:01,476 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,476 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d4<-->d5 removed from edges.
+2020-07-15 22:21:01,476 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,476 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d4<-->d2 removed from edges.
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d4<-->d3 removed from edges.
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d4<-->d1 removed from edges.
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d5<-->d3 removed from edges.
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge d2<-->d1 removed from edges.
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge d3<-->s3 added to edges.
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s9<-->s8 added to edges.
+2020-07-15 22:21:01,477 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s9<-->s5 added to edges.
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s9<-->s4 removed from edges.
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s8<-->s7 added to edges.
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s8<-->s11 removed from edges.
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s8<-->s5 added to edges.
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s8<-->s4 removed from edges.
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s3<-->s2 added to edges.
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s3<-->s4 removed from edges.
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s2<-->s1 removed from edges.
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,478 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s2<-->s5 added to edges.
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s2<-->s4 removed from edges.
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s7<-->s10 added to edges.
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s7<-->s5 added to edges.
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s6<-->s5 removed from edges.
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s5<-->s4 removed from edges.
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s19<-->s18 added to edges.
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s19<-->s17 removed from edges.
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s18<-->s17 removed from edges.
+2020-07-15 22:21:01,479 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s18<-->s24 removed from edges.
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s13<-->s12 added to edges.
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s13<-->s16 added to edges.
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s12<-->s11 removed from edges.
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s12<-->s10 added to edges.
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s12<-->s15 removed from edges.
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s12<-->s14 removed from edges.
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s11<-->s10 removed from edges.
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s17<-->s16 removed from edges.
+2020-07-15 22:21:01,480 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s17<-->s15 removed from edges.
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s17<-->s14 removed from edges.
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - DEBUG - [+] Edge s16<-->s20 added to edges.
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s16<-->s21 removed from edges.
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s16<-->s15 removed from edges.
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s15<-->s14 removed from edges.
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s22<-->s23 removed from edges.
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s22<-->s20 removed from edges.
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,481 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s23<-->s20 removed from edges.
+2020-07-15 22:21:01,482 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,482 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s23<-->s24 removed from edges.
+2020-07-15 22:21:01,482 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,482 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s20<-->s21 removed from edges.
+2020-07-15 22:21:01,482 - Backbone for multi-layer ad hoc network - INFO - [+] Try to add edge in edges...
+2020-07-15 22:21:01,482 - Backbone for multi-layer ad hoc network - DEBUG - [-] Edge s20<-->s24 removed from edges.
+2020-07-15 22:21:01,482 - Backbone for multi-layer ad hoc network - INFO - [+] Add all edges in list to graph.
+2020-07-15 22:21:01,482 - Backbone for multi-layer ad hoc network - INFO - [+] All edges added to graph.
+2020-07-15 22:21:01,482 - Backbone for multi-layer ad hoc network - INFO - Start phase 4
+2020-07-15 22:21:01,774 - Backbone for multi-layer ad hoc network - INFO - Add dominatee to list of dominators
