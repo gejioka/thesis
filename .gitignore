@@ -23,5 +23,6 @@ analyze_data_tool/client/Experiment\ Networks/
 analyze_data_tool/client/Experiment\ Networks1/
 analyze_data_tool/client/EXPERIMENT_NETWORKS_L-CSS/
 analyze_data_tool/server/server1.py
+analyze_data_tool/client/Experiment_Networks1/
 analyze_data_tool/server/*.pyc
 analyze_data_tool/server/*.back*
