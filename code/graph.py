@@ -53,47 +53,15 @@ def add_nodes(new=False,args=None):
                 except:
                     edges.append((node.get_name(),neighbor))
     else:
-    #     for edge in G.edges():
-    #         _edge_added = False
-
-    #         if args != None:
-    #             write_message(args,"[+] Try to add edge in edges...","INFO")
-    #         if edge[0] in connected_dominating_set.keys() and edge[1] in connected_dominating_set.keys():
-    #             _edge_added = True
-    #             edges.append(edge)
-    #             if args != None:
-    #                 write_message(args,"[+] Edge {}<-->{} added to edges.".format(edge[0],edge[1]),"DEBUG")
-    #         else:
-    #             if (not all_dominees_have_m_dominators(args.m)) or (not all_dominators_have_k_dominators(args.k)):
-    #                 _edge_added = True
-    #                 edges.append(edge)
-    #                 if args != None:
-    #                     write_message(args,"[+] Edge {}<-->{} added to edges.".format(edge[0],edge[1]),"DEBUG")
-    #         if not _edge_added:
-    #             write_message(args,"[-] Edge {}<-->{} removed from edges.".format(edge[0],edge[1]),"DEBUG")
-    # if args != None:
-    #     write_message(args,"[+] Add all edges in list to graph.","INFO")
-    # G.add_edges_from(edges) if not new else new_G.add_edges_from(edges)
-    # if args != None:
-    #     write_message(args,"[+] All edges added to graph.","INFO")
-        for node in connected_dominating_set:
-            for neighbor in dict_of_objects[node].get_N_of_u():
-                # if neighbor in connected_dominating_set or not (all_dominees_have_dominators() and all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m))):
-                edges.append((node,neighbor))
+        edges = create_edges(connected_dominating_set)
+    
     if args != None:
         write_message(args,"[+] Add all edges in list to graph.","INFO")
     G.add_edges_from(edges) if not new else new_G.add_edges_from(edges)
     if args != None:
         write_message(args,"[+] All edges added to graph.","INFO")
     
-    # # TODO: If network is not connected after adding nodes test this case
-    if args:
-        if all_dominees_have_dominators() and all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)):
-            print "Network is connected!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        else:
-            print "Network is not connected!!!!!!!!!!!!!!!!!!!!!"
-
-def construct_new_graph(args=None):
+def construct_new_graph(edges,first_time,args=None):
     """
     Description: Construct new graph only with nodes of CDS
 
@@ -105,10 +73,38 @@ def construct_new_graph(args=None):
     """
     global new_G
     
-    initialize_graph(True)
-    add_nodes(True,args)
 
-def remove_node(node):
+    if first_time:
+        initialize_graph(True)
+        add_nodes(True,args)
+    else:
+        new_G.add_edges_from(edges)
+
+def add_node(node,new=True):
+    """
+    Description: Add node to network
+
+    Args:
+        node(string):  Name of node to be added
+
+    Returns:
+        -
+    """
+    global new_G
+    global G
+
+    edges = []
+    if isinstance(node,list):
+        edges = create_edges(node)
+    else:
+        edges = create_edges([node])
+
+    if new:
+        new_G.add_edges_from(edges)
+    else:
+        G.add_edges_from(edges)
+
+def remove_node(node,new=True):
     """
     Description: Remove node from network
 
@@ -119,8 +115,28 @@ def remove_node(node):
         -
     """
     global new_G
+    global G
 
-    new_G.remove_node(node)
+    if new:
+        new_G.remove_node(node)
+    else:
+        G.remove_node(node)
+
+def remove_nodes_from_graph(nodes,new=True):
+    """
+    Description: Remove nodes from graph.
+
+    Args:
+        nodes(list): A list with nodes to be removed
+        new(boolean): A variable that define which graph is.
+    Returns:
+        -
+    """
+    for dominator in nodes:
+        if new:
+            remove_node(dominator)
+        else:
+            remove_node(dominator,False)
 
 def check_k_connectivity(args,source,destination):
     """
@@ -203,6 +219,8 @@ def _is_k_connected(args):
     Returns:
         boolean
     """
+    if args == None:
+        return nx.is_k_edge_connected(new_G, k=3)
     return nx.is_k_edge_connected(new_G, k=int(args.k))
 
 def check_dominators_connectivity(args,n,node_type):
@@ -224,7 +242,7 @@ def check_dominators_connectivity(args,n,node_type):
     else:
         write_message(args,"There is no node type with name {}".format(node_type),"WARNING")
         return -1
-
+    
     if isinstance(results,list):
         for node in results:
             node_obj = dict_of_objects[node]
@@ -235,7 +253,23 @@ def check_dominators_connectivity(args,n,node_type):
                     else:
                         candidate_dominators[neighbor] += 1
         candidate_dominators = dict(sorted(candidate_dominators.items(), key=operator.itemgetter(1)))
-        connected_dominating_set[candidate_dominators.keys()[0]]
+
+        cdominators = []
+        for candidate_dominator in candidate_dominators.keys():
+            dominator_obj = dict_of_objects[candidate_dominator]
+            counter = 0
+            for neighbor in dominator_obj.get_N_of_u():
+                if neighbor in connected_dominating_set.keys():
+                    counter += 1
+            
+            if counter >= int(args.k):
+                connected_dominating_set[candidate_dominator] = 1
+                add_dominator_to_all_nodes(candidate_dominator)
+                cdominators.append(candidate_dominator)
+                
+                break
+        
+        return cdominators
 
 def check_constraint5(args):
     """
@@ -248,23 +282,23 @@ def check_constraint5(args):
     Returns:
         boolean
     """
-    CDS_before = {}
-    CDS_after = {}
-
+    
+    dominators = []
     if int(args.k) > 0 and int(args.m) > 0:
-        while CDS_before != CDS_after:
-            CDS_before = connected_dominating_set.copy()
-
-            check_dominators_connectivity(args,int(args.k),"dominator")
-            check_dominators_connectivity(args,int(args.m),"dominatee")
-
-            CDS_after = connected_dominating_set.copy()
+        result = check_dominators_connectivity(args,int(args.k),"dominator")
+        if result != None: 
+            dominators += result
+        
+        result = check_dominators_connectivity(args,int(args.m),"dominatee")
+        if result != None:
+            dominators += result
     else:
         write_message(args,"k and m values must be bigger than zero","ERROR")
         return -1
     
+    return dominators
 
-def remain_on_DS(args,vertex_connectivity):
+def remain_on_DS(args,vertex_connectivity,first_time,new_nodes):
     """
     Description: Decide which nodes will remain in CDS
 
@@ -273,67 +307,46 @@ def remain_on_DS(args,vertex_connectivity):
     Returns:
         -
     """
-    # global new_G
-
-    # K = 0
-    # try:
-    #     K = len(vertex_connectivity)
-    # except Exception:
-    #     K = vertex_connectivity
-
-    # temp_dominators = []
-    # for i in range(len(connected_dominating_set.keys())):
-    #     s = connected_dominating_set.keys()[i]
-    #     for j in range(i+1,len(connected_dominating_set.keys())):
-    #         t = connected_dominating_set.keys()[j]
-    #         if connected_dominating_set.keys()[i] not in dict_of_objects[connected_dominating_set.keys()[j]].get_N_of_u():
-    #             vertex_connectivity = find_minimum_vertex_cut(True,s,t)
-    #             if len(vertex_connectivity) < K:
-    #                 K = len(vertex_connectivity)
-    #             else:
-    #                 if s not in temp_dominators:
-    #                     temp_dominators.append(s)
-                
-    #             if len(vertex_connectivity) < min(int(args.k),int(args.m)):
-    #                 if s not in temp_dominators:
-    #                     temp_dominators.append(s)
-    #     temp_dominators = []
-
-    # for dominator in temp_dominators:
-    #     value = connected_dominating_set.pop(dominator)
-    #     for node in dict_of_objects.keys():
-    #         node_obj = dict_of_objects[node]
-    #         try:
-    #             node_obj.add_temp_dominator(dominator)
-    #             node_obj.get_dominators().remove(dominator)
-    #         except Exception:
-    #             pass
-        
-    #     if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)):
-    #         for node in dict_of_objects.keys():
-    #             node_obj = dict_of_objects[node]
-    #             node_obj.clear_temp_dominators()
-    #     else:
-    #         connected_dominating_set[dominator] = value
-    #         for node in dict_of_objects.keys():
-    #             node_obj = dict_of_objects[node]
-    #             if node in node_obj.get_temp_dominators():
-    #                 node_obj.get_dominators().append(node)
-    #                 node_obj.delete_temp_dominator(node)
-    #             node_obj.clear_temp_dominators()
-
-    #         write_message(args,"[!] Node with name {} cannot be removed because CDS will disconnected".format(node),"INFO")
-    # return K
-
+    
     global new_G
     
     write_message(args,"[!] Try to find minimum vertex cut in backbone...","INFO")
     K = vertex_connectivity
-    vertex_connectivity = find_minimum_vertex_cut(True)
 
-    write_message(args,"[!] Minimum vertex cut for backbone is: [%s]"%", ".join(list(vertex_connectivity)),"INFO")
-    if len(vertex_connectivity) < K:
-        K = len(vertex_connectivity)
+    nodes_to_remove = []
+    if first_time:
+        vertex_connectivity = find_minimum_vertex_cut(True)
+
+        for node in new_nodes:
+            for dominator in connected_dominating_set.keys():
+                if dominator not in dict_of_objects[node].get_N_of_u():
+                    vertex_connectivity = find_minimum_vertex_cut(True,node,dominator)
+                    
+                    message = "[!] Minimum vertex cut {}--->{} is: [%s]"%", ".join(vertex_connectivity)
+                    message = message.format(node,dominator)
+                    write_message(args,message,"DEBUG")
+
+                if len(vertex_connectivity) < int(args.k):
+                    for vertex in vertex_connectivity:
+                        if vertex not in nodes_to_remove:
+                            nodes_to_remove.append(vertex)
+
+                if len(vertex_connectivity) < K:
+                    K = len(vertex_connectivity)
+
+        remove_dominators_from_all_nodes(vertex_connectivity)
+        remove_nodes_from_DS(vertex_connectivity)
+        remove_nodes_from_graph(vertex_connectivity)
+
+        write_message(args,"[!] Minimum vertex cut for backbone is: [%s]"%", ".join(list(vertex_connectivity)),"INFO")
+        if len(vertex_connectivity) < K:
+            K = len(vertex_connectivity)
+    else:
+        for node in new_nodes:
+            node_obj = dict_of_objects[node]
+            if len(node_obj.get_dominators()) >= int(args.k):
+                connected_dominating_set[node] = 1
+                add_dominator_to_all_nodes(node)
 
     return K
 
@@ -357,26 +370,27 @@ def poll_nodes_for_dominators(dict_of_next_dominators,args):
         for j in range(counter+1,len(connected_dominating_set)):
             node_obj = dict_of_objects[connected_dominating_set.keys()[i]]
             if connected_dominating_set.keys()[j] not in node_obj.get_N_of_u():
-                paths = list(nx.shortest_path(G,connected_dominating_set.keys()[i],connected_dominating_set.keys()[j]))
-                message = "Sortest path from {} --> {} is [%s]"%", ".join(paths)
-                message = message.format(dict_of_objects[connected_dominating_set.keys()[i]].get_name(),dict_of_objects[connected_dominating_set.keys()[j]].get_name())
-                write_message(args,message,"DEBUG")
-                for node in paths[1:len(paths)-1]:
-                    write_message(args,"[!] Check significance of node with name {}".format(node),"INFO")
-                    if node not in dict_of_next_dominators:
-                        if node not in connected_dominating_set:
-                            write_message(args,"[+] Node with name {} added to list with next dominators".format(node),"INFO")
-                            dict_of_next_dominators[node] = 1
-                        else:
-                            if node not in dict_of_significant_nodes:
-                                write_message(args,"[+] Node with name {} added to list with significant nodes".format(node),"INFO")
-                                dict_of_significant_nodes[node] = 1
+                paths = list(nx.all_shortest_paths(G,connected_dominating_set.keys()[i],connected_dominating_set.keys()[j]))
+                for path in paths:
+                    message = "Sortest path from {} --> {} is [%s]"%", ".join(path)
+                    message = message.format(dict_of_objects[connected_dominating_set.keys()[i]].get_name(),dict_of_objects[connected_dominating_set.keys()[j]].get_name())
+                    write_message(args,message,"DEBUG")
+                    for node in path[1:len(path)-1]:
+                        write_message(args,"[!] Check significance of node with name {}".format(node),"INFO")
+                        if node not in dict_of_next_dominators:
+                            if node not in connected_dominating_set:
+                                write_message(args,"[+] Node with name {} added to list with next dominators".format(node),"INFO")
+                                dict_of_next_dominators[node] = 1
                             else:
-                                write_message(args,"[-] Node with name {} already exist in list with significant nodes".format(node),"INFO")
-                                dict_of_significant_nodes[node] += 1
-                    else:
-                        write_message(args,"[-] Node with name {} already exist in list with next dominators".format(node),"INFO")
-                        dict_of_next_dominators[node] += 1
+                                if node not in dict_of_significant_nodes:
+                                    write_message(args,"[+] Node with name {} added to list with significant nodes".format(node),"INFO")
+                                    dict_of_significant_nodes[node] = 1
+                                else:
+                                    write_message(args,"[-] Node with name {} already exist in list with significant nodes".format(node),"INFO")
+                                    dict_of_significant_nodes[node] += 1
+                        else:
+                            write_message(args,"[-] Node with name {} already exist in list with next dominators".format(node),"INFO")
+                            dict_of_next_dominators[node] += 1
                 else:
                     break
         counter += 1

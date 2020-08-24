@@ -6,7 +6,7 @@ import os
 import re
 
 ### Global variables ###
-MILCOM_ALG = True
+MILCOM_ALG = False
 NEW_ALG = False
 ROBUST_ALG = True
 MAX_K = 4
@@ -34,14 +34,14 @@ def execute_command(filename,metric,algorithm,backbone,pool,counter,k,m,number_o
 
     if k == 0 and m == 0:
         if merge:
-            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--testing", backbone, "--merge"])
+            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-i", str(counter), "-n", str(number_of_cores), "--testing", backbone, "--merge"])
         else:
-            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--testing", backbone])
+            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-i", str(counter), "-n", str(number_of_cores), "--testing", backbone])
     else:
         if merge:
-            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-k", str(k), "-m", str(m), "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--testing", backbone, "--merge"])
+            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-k", str(k), "-m", str(m), "-i", str(counter), "-n", str(number_of_cores), "--testing", backbone, "--merge"])
         else:
-            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-k", str(k), "-m", str(m), "-lf", "../../code/out.txt", "-i", str(counter), "-n", str(number_of_cores), "--store_log", "--testing", backbone])
+            proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-k", str(k), "-m", str(m), "-i", str(counter), "-n", str(number_of_cores), "--testing", backbone])
     pool.append(proc)
     pid  = proc.pid
 
@@ -270,7 +270,6 @@ def run_tests(list_of_arguments,offset,number_of_cores,list_of_metrics):
             for i in range(int(offset),int(offset)+int(number_of_cores)-1):
                 pool = execute_command(list_of_arguments[i][0],list_of_arguments[i][1],list_of_arguments[i][2],list_of_arguments[i][3],pool,list_of_arguments[i][5],list_of_arguments[i][6],list_of_arguments[i][7],number_of_cores)
             pool = execute_command(list_of_arguments[int(offset)+int(number_of_cores)-1][0],list_of_arguments[int(offset)+int(number_of_cores)-1][1],list_of_arguments[int(offset)+int(number_of_cores)-1][2],list_of_arguments[int(offset)+int(number_of_cores)-1][3],pool,list_of_arguments[int(offset)+int(number_of_cores)-1][5],list_of_arguments[int(offset)+int(number_of_cores)-1][6],list_of_arguments[int(offset)+int(number_of_cores)-1][7],number_of_cores,True)
-            # wait_processes(pool)
         else:
             for i in range(int(offset),len(list_of_arguments)):
                 pool = execute_command(list_of_arguments[i][0],list_of_arguments[i][1],list_of_arguments[i][2],list_of_arguments[i][3],pool,list_of_arguments[i][5],list_of_arguments[i][6],list_of_arguments[i][7],number_of_cores)

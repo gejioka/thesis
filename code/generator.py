@@ -116,10 +116,7 @@ def check_arguments(args):
             print "\tenormous:\tCreate a network with 10000 nodes, maximum 5000 neighbors and 1000 layers"
         elif argv[1] == "small":
             gv.set_number_of_nodes(gv.SMALL)
-            #gv.set_number_of_neighbors(int(gv.SMALL/5))
             gv.set_number_of_neighbors(6)
-            #gv.set_number_of_central_nodes(int(gv.SMALL/10))
-            #gv.set_number_of_neighbors_for_central_nodes(argv[1])
             gv.set_number_of_layers(1)
         elif argv[1] == "medium":
             gv.set_number_of_nodes(gv.MEDIUM)

@@ -174,7 +174,6 @@ def decice_pci_algorithm(args,nodes,node,node_obj,all_layers):
     elif args.pci == "sl":
         node_obj.set_localPCI(single_layer_pci(nodes,node)[0])
 
-
 def single_layer_pci(nodes,node):
     """
     Description: Find pci value for node
@@ -484,8 +483,7 @@ def find_newPCI(nodes,node,mlPCI):
     Args:
         nodes (dictionary): A dictionary with all nodes of network
         node (String):      The name of specific node
-        k (int):            The number of minimun neighbors has node per layer
-        n ()
+        mlPCI(float):       The value of metric mlPCI
 
     Returns:
         layers, min_nodes

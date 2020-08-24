@@ -56,6 +56,26 @@ def remove_duplicates(input_list):
             final_list.append(item) 
     return final_list
 
+def create_edges(nodes):
+    """
+    Description: Create new edges between new nodes and dominators
+
+    Args:
+        nodes (list): A list with nodes to be added to graph
+
+    Returns:
+        edges
+    """
+    edges = []
+
+    for node in nodes:
+        for neighbor in dict_of_objects[node].get_N_of_u():
+            if neighbor in connected_dominating_set.keys():
+                edges.append((node,neighbor))
+
+    return edges
+
+
 def check_connectivity(node_obj,connectivity_list,current_connected_dominating_set):
     """
     Description: Check if dominating set is connected
@@ -89,7 +109,6 @@ def find_MCDS(args):
     counter = 0
     while counter < len(connected_dominating_set) and len(connected_dominating_set) > 1:
         # Remove dominator from DS to find out if it needs
-        # print "HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE", list(connected_dominating_set.iteritems())[counter][0]
         key = list(connected_dominating_set.iteritems())[counter][0]
         value = connected_dominating_set.pop(key)
         write_message(args,"[!] Try to remove node with name {}".format(key),"INFO")
@@ -129,23 +148,25 @@ def find_MCDS(args):
                             node_obj.delete_temp_dominator(key)
                         node_obj.clear_temp_dominators()
         else:
-            # m_dominators=True
-            # graph.remove_node(key)
+            import graph as g
+
+            g.remove_node(key)
             write_message(args,"Try to remove dominator from neighbor for all nodes...","INFO")
             for node in dict_of_objects:
                 node_obj = dict_of_objects[node]
                 try:
-                    node_obj.add_temp_dominator(key)
                     node_obj.get_dominators().remove(key)
+                    node_obj.add_temp_dominator(key)
                 except Exception:
                     pass
             write_message(args,"Check if network is connected without node {}".format(key),"INFO")
-                
-            if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and len(set(check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)) & set(dict_of_objects.keys())) == len(connected_dominating_set):
+            
+            # if all_dominators_have_k_dominators(min(int(args.k),int(args.m))) and all_dominees_have_m_dominators(min(int(args.k),int(args.m))) and g._is_k_connected(args):
+            if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
                 for node in dict_of_objects:
                     node_obj = dict_of_objects[node]
                     node_obj.clear_temp_dominators()
-
+                    
                 write_message(args,"[-] Node with name {} removed from CDS".format(key),"INFO")
             else:
                 connected_dominating_set[key] = value
@@ -153,35 +174,13 @@ def find_MCDS(args):
                     node_obj = dict_of_objects[node]
                     if key in node_obj.get_temp_dominators():
                         node_obj.get_dominators().append(key)
-                        # node_obj.clear_temp_dominators()
                         node_obj.delete_temp_dominator(key)
                     node_obj.clear_temp_dominators()
-                # graph.construct_new_graph(args)
+                g.add_node(key)
+                add_dominator_to_all_nodes(key)
                 write_message(args,"[!] Node with name {} cannot be removed because CDS will disconnected".format(key),"INFO")
                 counter += 1
-                # m_dominators=False
-                # break
-            # for node in dict_of_objects:
-            #     node_obj = dict_of_objects[node]
-            #     # if len(node_obj.get_dominators()) < int(args.m) or not graph._is_k_connected(args):
-            #     # print len(set(node_obj.get_N_of_u())&set(connected_dominating_set.keys())) 
-            #     if len(set(node_obj.get_N_of_u())&set(connected_dominating_set.keys())) < int(args.m) or not all_dominators_have_k_dominators(int(args.k)):
-            #         connected_dominating_set[key] = value
-            #         # graph.construct_new_graph(args)
-            #         write_message(args,"[!] Node with name {} cannot be removed because CDS will disconnected".format(key),"INFO")
-            #         counter += 1
-            #         m_dominators=False
-            #         break
-
-            # if m_dominators:
-            #     dominator_obj = dict_of_objects[key]
-            #     for neighbor in dominator_obj.get_N_of_u():
-            #         try:
-            #             dict_of_objects[neighbor].get_dominators().remove(dominator_obj)
-            #         except Exception:
-            #             pass
-            #     write_message(args,"[-] Node with name {} removed from CDS".format(key),"INFO")
-
+                
 def add_next_dominators(list_of_next_dominators,args):
     """
     Description: Add next dominators to connected dominating set
@@ -192,12 +191,16 @@ def add_next_dominators(list_of_next_dominators,args):
     Returns:
         -
     """
+    import graph as g
+
     # Sort list of next dominators by how important are
     sorted_list_of_next_dominators = sorted(list_of_next_dominators.items(), key=operator.itemgetter(1))  
     
     # Add next dominators until DS be connected
     for node in sorted_list_of_next_dominators:
         connected_dominating_set[node[0]] = node[1]
+        g.add_node(node[0],False)
+        add_dominator_to_all_nodes(node[0])
         write_message(args,"[+] Add to DS node with name {}".format(node[0]),"INFO")
         connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
         if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set) and all_dominees_have_dominators():
@@ -225,6 +228,7 @@ def remove_non_significant_nodes(non_significant_nodes,args):
         is_connected = False
         if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
             if int(args.algorithm) == 3:
+                # if not all_dominees_have_m_dominators(min(int(args.m),int(args.k))):
                 if not all_dominees_have_m_dominators(int(args.m)):
                     connected_dominating_set[node] = value
             else: 
@@ -250,7 +254,6 @@ def find_number_of_dominatees(node):
         number_of_dominatees = 0
         for neighbor in node.get_N_of_u():
             if neighbor not in connected_dominating_set.keys():
-            #if dict_of_objects[neighbor] not in node.dominators:
                 number_of_dominatees += 1
         return number_of_dominatees
 
@@ -264,11 +267,40 @@ def add_dominator_to_all_nodes(dominator):
     Returns:
         -
     """
+    
     for node in dict_of_objects.keys():
         node_obj = dict_of_objects[node]
         if dominator in node_obj.get_N_of_u():
             if dominator not in node_obj.get_dominators():
                 node_obj.get_dominators().append(dominator)
+
+def remove_dominators_from_all_nodes(dominators):
+    """
+    Description: Remove dominators from all nodes in graph.
+
+    Args:
+        dominator (string): A string with name of specific dominator
+
+    Returns:
+        -
+    """
+    for node in dict_of_objects.keys():
+        node_obj = dict_of_objects[node]
+        for dominator in dominators:
+            node_obj.remove_dominator(dominator)
+
+def remove_nodes_from_DS(dominators):
+    """
+    Description: Remove dominators from dominating set.
+
+    Args:
+        dominators (list): A list with dominators to be removed
+
+    Returns:
+        -
+    """
+    for dominator in dominators:
+        connected_dominating_set.pop(dominator)
 
 def all_dominees_have_m_dominators(m,return_list=False):
     """

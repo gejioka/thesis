@@ -199,4 +199,4 @@ if __name__=="__main__":
     # Write results to file
     if testing:
         testing_function(args)
-    
+    print dominators_per_layer(connected_dominating_set)

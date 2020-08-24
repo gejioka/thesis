@@ -3,6 +3,7 @@ import subprocess
 import threading
 import pickle
 import socket
+import errno
 import time
 import dill
 import ast
@@ -10,7 +11,6 @@ import sys
 
 ### Global variables ### 
 MAX_SIZE = 4096
-
 MAX_K = 4
 MAX_M = 4
 
@@ -21,13 +21,12 @@ server_interrupt = False
 user_interrupt = False
 
 number_of_cores = 0
-
+last_fd = 0
 offset = 0
 
 global_list = [i for i in range(MAX_SIZE)]
 list_of_files = []
-
-last_fd = 0
+##########################
 
 def connect_to_server(number_of_cores):
     """
@@ -87,7 +86,9 @@ def create_message(message_id,number_of_cores,file_id,file_text,offset):
         return packed_message
     # Send NACK packet to server
     elif message_id == 5:
-        packed_message = pack("iii",5,last_fd+1,offset+number_of_cores)
+        packed_message = pack("iii",5,last_fd,offset)
+        
+        return packed_message
     return None
 
 def recognize_server_packet(packed_message):
@@ -107,34 +108,35 @@ def recognize_server_packet(packed_message):
     try:
         # Unpack message ID that server sends
         message_id = unpack("i", packed_message[0:4])[0]
+
+        # Server message with new chunk of files and file ID
+        if message_id == 2:
+            offset = unpack("i", packed_message[4:8])[0]
+            chunk_end = unpack("i", packed_message[8:12])[0]
+            file_id = unpack("i", packed_message[12:16])[0]
+            last_fd = file_id
+            
+            print "Start point in list is:", offset
+            print "End point in list is:", chunk_end
+            print "File ID is:", file_id
+
+            proc = subprocess.Popen(["python", "../../tools/test_algorithms.py", str(number_of_cores), str(offset), str(chunk_end), str(list_of_files)],stdout=subprocess.PIPE)
+            proc.wait()
+            result = proc.communicate()[0]
+            
+            packed_message = create_message(3,0,file_id,result,0)
+        
+            return packed_message
+        
+        # Close session with server and terminate client
+        if message_id == 4:
+            return "close_session"
+        # Server want to send list of files to client
+        if message_id == 5:
+            return "list_of_files"
     except Exception:
-        create_message(5,0,last_fd,0,offset)
+        return create_message(5,0,0,0,0)
 
-    # Server message with new chunk of files and file ID
-    if message_id == 2:
-        offset = unpack("i", packed_message[4:8])[0]
-        chunk_end = unpack("i", packed_message[8:12])[0]
-        file_id = unpack("i", packed_message[12:16])[0]
-        last_fd = file_id
-        
-        print "Start point in list is:", offset
-        print "End point in list is:", chunk_end
-        print "File ID is:", file_id
-
-        proc = subprocess.Popen(["python", "../../tools/test_algorithms.py", str(number_of_cores), str(offset), str(chunk_end), str(list_of_files)],stdout=subprocess.PIPE)
-        proc.wait()
-        result = proc.communicate()[0]
-        
-        packed_message = create_message(3,0,file_id,result,0)
-    
-        return packed_message
-    
-    # Close session with server and terminate client
-    if message_id == 4:
-        return "close_session"
-    # Server want to send list of files to client
-    if message_id == 5:
-        return "list_of_files"
     return None
 
 def create_relative_paths():
@@ -149,7 +151,7 @@ def create_relative_paths():
     global list_of_files
 
     for i in range(len(list_of_files)):
-        list_of_files[i] = list_of_files[i][list_of_files[i].find("Experiment_Networks1"):]
+        list_of_files[i] = list_of_files[i][list_of_files[i].find("Experiment Networks"):]
     return list_of_files
 
 def send_message(sock):
@@ -167,58 +169,66 @@ def send_message(sock):
     global list_of_files
 
     while not server_interrupt and not user_interrupt:
-        # try:
         # Receive packet from server
-        packet = sock.recv(MAX_SIZE)
-        message = recognize_server_packet(packet)
-        
-        if message != None:
-            # Close session with server
-            if message == "close_session":
-                server_interrupt = True
-                sock.close()
-            # Receive list of files from server
-            elif message == "list_of_files":
-                packet = sock.recv(MAX_SIZE)
-                packet = dill.loads(packet)
-
-                list_of_files += packet
-                sock.sendall("OK")
-                while "OK" not in packet:
-                    try:
-                        packet = sock.recv(MAX_SIZE)
-
-                        if "OK" in packet:
-                            if packet != "OK":
-                                packet = dill.loads(packet.rstrip())
-                                
-                                packet = packet[:len(packet)-2]
-                                list_of_files += packet
-                                sock.sendall("OK")
-                                break
-                            else:
-                                break
-                        else:
-                            packet = dill.loads(packet.rstrip())
-                            sock.sendall("OK")
-                        list_of_files += packet
-                    except Exception as err:
-                        print "First error"
-                        print err
-                list_of_files = create_relative_paths()
-                
-                message = create_message(2,0,0,0,0)
-                sock.sendall(message)
-            else:
-                sock.sendall(message)
-                message = create_message(2,0,0,0,0)
-                sock.sendall(message)
-        time.sleep(1)
-        # except Exception as err:
-        #     print err
-        #     server_interrupt = True
-        #     user_interrupt = True
+        try:
+            packet = sock.recv(MAX_SIZE)
+            message = recognize_server_packet(packet)
             
+            if message != None:
+                # Close session with server
+                if message == "close_session":
+                    server_interrupt = True
+                    sock.close()
+                # Receive list of files from server
+                elif message == "list_of_files":
+                    packet = sock.recv(MAX_SIZE)
+                    packet = dill.loads(packet)
+
+                    list_of_files += packet
+                    sock.sendall("OK")
+                    while "OK" not in packet:
+                        try:
+                            packet = sock.recv(MAX_SIZE)
+
+                            if "OK" in packet:
+                                if packet != "OK":
+                                    packet = dill.loads(packet.rstrip())
+                                    
+                                    packet = packet[:len(packet)-2]
+                                    list_of_files += packet
+                                    sock.sendall("OK")
+                                    break
+                                else:
+                                    break
+                            else:
+                                packet = dill.loads(packet.rstrip())
+                                sock.sendall("OK")
+                            list_of_files += packet
+                        except Exception as err:
+                            print "First error"
+                            print err
+                    list_of_files = create_relative_paths()
+                    
+                    message = create_message(2,0,0,0,0)
+                    sock.sendall(message)
+                else:
+                    if unpack("i",message[:4])[0] != 5:
+                        sock.sendall(message)
+                        message = create_message(2,0,0,0,0)
+                        sock.sendall(message)
+                    else:
+                        sock.sendall(message)
+            time.sleep(1)
+        except socket.error as err:
+            print err
+            sys.exit(1)
+        except IOError as err:
+            print err
+            
+            if err.errno == errno.EPIPE:
+                sys.exit(1)
+            else:
+                sys.exit(1)            
 
 def close_session_with_server(sock):
     """

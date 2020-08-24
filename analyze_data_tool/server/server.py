@@ -11,23 +11,27 @@ import os
 # Root folder of all input networks
 _root_folder = "/root/Experiment_Networks1"
 
-# Global variables
+### Global variables ###
 BUFFER_SIZE = 10000
 MAX_SIZE = 1024
-MAX_K = 4
-MAX_M = 4
+
 MILCOM_ALG = True
 NEW_ALG = True
 ROBUST_ALG = True
+
+MAX_K = 4
+MAX_M = 4
+
 server_IP = "172.104.249.240"
 server_port = 10000
-max_size = 0
 backlog = 5
+
+max_size = 0
 offset = 0
 fileID = 0
-_is_over = False
 last_packets = 0
 
+_is_over = False
 user_interrupt = False
 sock = None
 
@@ -38,6 +42,7 @@ list_of_files = [""]*BUFFER_SIZE
 incomplete_fds_list = []
 
 lock = threading.Lock()
+#############################
 
 def init_server():
     """
@@ -317,7 +322,10 @@ def recognize_client_message(packed_message,number_of_cores):
     elif message_id[0] == 5:
         sl.write_log("NACK packet from client. Server need to resend packet to client.","info")
         unpacked_message = unpack("ii",packed_message[4:])
-        packed_message = create_next_packet(unpacked_message[1],number_of_cores,unpacked_message[0],6)
+        if list_of_files[int(unpacked_message[0])] == "":
+            packed_message = create_next_packet(unpacked_message[1],number_of_cores,unpacked_message[0],6)
+        else:
+            packed_message = create_next_packet(offset,number_of_cores,fileID,6)
 
         return packed_message
     return None

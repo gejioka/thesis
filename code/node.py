@@ -2,6 +2,7 @@ from __future__ import division
 import math
 import networkx as nx
 import metrics as mt
+from graph import *
 from global_variables import *
 
 class Node:
@@ -467,6 +468,19 @@ class Node:
                 final_list.append(item) 
         return final_list
     
+    def remove_dominator(self,dominator):
+        """
+        Description: Remove dominator of list
+
+        Args:
+            dominator (string): The name of dominator
+
+        Returns:
+            -
+        """ 
+        if dominator in self.dominators:
+            self.dominators.remove(dominator)
+    
     def find_N2_or_N3_of_u(self,nodes,neighborhood):
         """
         Description: Find N2(u) where u is specific node
@@ -701,11 +715,22 @@ class Node:
         if len(self.dominators) < int(args.m):
             for neighbor in self.N_of_u:
                 if neighbor in connected_dominating_set.keys():
-                    if dict_of_objects[neighbor] not in self.dominators:
-                        self.dominators.append(dict_of_objects[neighbor])
+                    if neighbor not in self.dominators:
+                        self.dominators.append(neighbor)
             if len(self.dominators) < int(args.m):
                 if self.name not in connected_dominating_set.keys():
-                    connected_dominating_set[self.name] = 1
+                    if args.algorithm != "3":
+                        connected_dominating_set[self.name] = 1
+                        add_node(self.name)
+                    else:
+                        counter = 0
+                        for neighbor in self.N_of_u:
+                            if neighbor in connected_dominating_set.keys():
+                                counter += 1
+                        if counter >= int(args.k):
+                            connected_dominating_set[self.name] = 1
+                            add_node(self.name)
+                            add_dominator_to_all_nodes(self.name)
                 else:
                     connected_dominating_set[self.name] += 1
             else:
@@ -713,22 +738,22 @@ class Node:
                     list_of_dominatees.append((self.name,metrics_dict[args.pci]))
                 else:
                     list_of_dominatees.append((self.name,metrics_dict["cl"]))
-
-    def find_number_of_dominatees(self):
-        """
-        Description: Find the number of dominateesof every node
-
-        Args:
-            args (obj): An object with all arguments of user
-
-        Returns:
-            -
-        """
-        for neighbor in self.N_of_u:
-            if neighbor not in connected_dominating_set.keys():
-                self.number_of_dominatees += 1
+        else:
+            if args.pci:
+                list_of_dominatees.append((self.name,metrics_dict[args.pci]))
+            else:
+                list_of_dominatees.append((self.name,metrics_dict["cl"]))
 
     def construct_m_value(self,args):
+        """
+        Description: Construct m value and return it
+
+        Args:
+            args (object): An object with all user arguments
+
+        Returns:
+            m
+        """
         m = 0
         if args.m:
             m = int(args.m)
@@ -750,23 +775,22 @@ class Node:
 
         for i in range(m):
             has_dominator = False
-            for node in connected_dominating_set:
+            for node in connected_dominating_set.keys():
                 node_obj = dict_of_objects[node]
                 if self.name in node_obj.get_N_of_u():
-                    if node_obj not in self.dominators:
-                        self.dominators.append(node_obj)
+                    if node not in self.dominators:
+                        self.dominators.append(node)
+                        add_dominator_to_all_nodes(node)
                         has_dominator = True
                         break
-
+                        
             self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
             if self.Nu_xPCIs_list[i][0] in connected_dominating_set.keys():
                 connected_dominating_set[self.Nu_xPCIs_list[i][0]] += 1
             else:
                 connected_dominating_set[self.Nu_xPCIs_list[i][0]] = 1
-
-            if dict_of_objects[self.Nu_xPCIs_list[i][0]] not in self.dominators:
-                self.dominators.append(dict_of_objects[self.Nu_xPCIs_list[i][0]])
-
+                add_dominator_to_all_nodes(self.Nu_xPCIs_list[i][0])
+                
     def all_2_hop_has_dominator(self):
         """
         Description: Check if all 2 hop neighbors have dominator
@@ -812,10 +836,10 @@ class Node:
                             connected_dominating_set[nodeObj.get_name()] = 1
                         else:
                             connected_dominating_set[nodeObj.get_name()] += 1
-                        if nodeObj not in _2_hop_neighborObj.dominators:
-                            _2_hop_neighborObj.dominators.append(nodeObj)
-                            if nodeObj not in self.dominators:
-                                self.dominators.append(nodeObj)
+                        if node[0] not in _2_hop_neighborObj.get_dominators():
+                            _2_hop_neighborObj.get_dominators().append(node[0])
+                            if node[0] not in self.dominators:
+                                self.dominators.append(node[0])
                             break
 
     def print_number_of_dominators(self):
