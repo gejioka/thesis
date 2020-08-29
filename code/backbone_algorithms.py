@@ -6,7 +6,9 @@ import time
 import sys
 
 ### Global variables ###
+MAX_SEQUENSE = 3
 ERROR_CODE = -1
+threshold = 20
 
 def last_step(algorithm,args):
     """
@@ -275,7 +277,7 @@ def robust_algorithm(user_input,args):
     list_of_dominatees.sort(key=lambda tup: tup[1],reverse=True)
     while True:
         if len(connected_dominating_set) == 0:
-            print "This input network cannot create {}-{}-MCDS".format(args.k,args.m)
+            write_message(args,"This input network cannot create {}-{}-MCDS".format(args.k,args.m),"INFO")
             break
         
         # Stop running algorithm when vertex_connectivity become smaller than k
@@ -295,17 +297,43 @@ def robust_algorithm(user_input,args):
         # Construct new graph
         write_message(args,"Start phase 3","INFO")
         construct_new_graph(edges,first_time,args)
-
-        while not g._is_k_connected(args):
-            name,metric = list_of_dominatees.pop(0)
-            node = dict_of_objects[name]
+        sequense_size = 1
+        next_node = 0
+        nodes_list = []
+        while not g._is_k_connected(args) or sequense_size > MAX_SEQUENSE:
+            previous_len_CDS = len(connected_dominating_set)
             
-            if len(node.get_dominators()) >= int(args.k):
-                connected_dominating_set[name] = 1
-                add_dominator_to_all_nodes(node.get_name())
-                add_node(node.get_name()) 
-            else:
-                list_of_dominatees.append((name,metric))   
+            for i in range(sequense_size):
+                nodes_list = find_sequense_nodes(nodes_list,list_of_dominatees[next_node])
+
+            find_nodes = True
+            for node in nodes_list:
+                if len(dict_of_objects[node[0]].get_dominators()) < int(args.k):
+                    find_nodes = False
+
+                    if next_node <= len(list_of_dominatees):
+                        write_message(args,"Nodes with names {} are not k connected with the other dominators".format(nodes_list),"INFO")
+                        next_node += 1
+                        find_nodes = False
+
+                        break
+                    else:
+                        next_node = 0
+                        sequense_size += 1
+
+            if find_nodes:
+                for node in nodes_list:
+                    connected_dominating_set[node[0]] = 1
+                    add_dominator_to_all_nodes(node[0])
+                    add_node(node[0])
+
+                    list_of_dominatees.pop(list_of_dominatees.index(node))
+                    
+                    write_message(args,"Node with name {} removed from list of dominatees!!!".format(node[0]),"INFO")
+                
+            if sequense_size > MAX_SEQUENSE:
+                write_message(args,"This input network cannot create {}-{}-MCDS".format(args.k,args.m),"INFO")
+                sys.exit(1)
 
         # Run algorithm
         write_message(args,"Start phase 4","INFO")

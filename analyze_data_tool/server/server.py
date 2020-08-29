@@ -122,7 +122,7 @@ def split_list_to_packets(listOfFiles):
     packed_list = []
     
     sl.write_log("[!] Server split list of files to packets.","info")
-
+    
     temp_list = []
     for filename in listOfFiles:
         temp_list.append(filename)
@@ -424,6 +424,15 @@ def client_thread_f(connection,client_address,number_of_cores):
                             sl.write_log("Send failed!!!"+str(err1),"warning")
                             time.sleep(1)
 
+def get_results_filename(path):
+    from os import walk
+
+    f = []
+    for (dirpath, dirnames, filenames) in walk(path):
+        f.extend(filenames)
+        break
+    return "results_"+str(int(sorted(f,key=lambda x : int(x.split("_")[1]),reverse=True)[0].split("_")[1])+1)
+
 def main():
     global user_interrupt
     global list_of_files
@@ -462,6 +471,7 @@ def main():
         wait_threads(accept_thread,list_of_clients)
     sock.close()
     
+
     filename = "results.txt"
     with open(filename,"w") as f:
         for line in list_of_files:

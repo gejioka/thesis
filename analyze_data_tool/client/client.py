@@ -205,7 +205,6 @@ def send_message(sock):
                                 sock.sendall("OK")
                             list_of_files += packet
                         except Exception as err:
-                            print "First error"
                             print err
                     list_of_files = create_relative_paths()
                     

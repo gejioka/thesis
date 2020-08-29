@@ -289,6 +289,20 @@ def remove_dominators_from_all_nodes(dominators):
         for dominator in dominators:
             node_obj.remove_dominator(dominator)
 
+def find_sequense_nodes(nodes_list,dominatee):
+    same_nodes = 0
+    
+    dominatee_obj = dict_of_objects[dominatee[0]]
+    for node in nodes_list:
+        if node in dominatee_obj.get_N_of_u():
+            same_nodes += 1
+    if same_nodes == len(nodes_list):
+        if dominatee[0] not in nodes_list:
+            nodes_list.append(dominatee)
+        
+        return nodes_list
+    return []
+
 def remove_nodes_from_DS(dominators):
     """
     Description: Remove dominators from dominating set.
