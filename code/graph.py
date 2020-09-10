@@ -5,7 +5,7 @@ from log import *
 import random
 import operator
 import networkx as nx
-# import matplotlib
+import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -180,6 +180,7 @@ def find_node_connectivity(new=False):
     Returns:
         node_connectivity
     """
+    global new_G
     global G
 
     node_connectivity = 0
@@ -219,6 +220,8 @@ def _is_k_connected(args):
     Returns:
         boolean
     """
+    global new_G
+
     if args == None:
         return nx.is_k_edge_connected(new_G, k=3)
     return nx.is_k_edge_connected(new_G, k=int(args.k))
@@ -232,6 +235,7 @@ def check_dominators_connectivity(args,n,node_type):
     Returns:
         boolean
     """
+
     candidate_dominators = {}
 
     results = None
@@ -265,6 +269,7 @@ def check_dominators_connectivity(args,n,node_type):
             if counter >= int(args.k):
                 connected_dominating_set[candidate_dominator] = 1
                 add_dominator_to_all_nodes(candidate_dominator)
+                remove_nodes_from_dominatees([candidate_dominator])
                 cdominators.append(candidate_dominator)
                 
                 break
@@ -347,6 +352,7 @@ def remain_on_DS(args,vertex_connectivity,first_time,new_nodes):
             if len(node_obj.get_dominators()) >= int(args.k):
                 connected_dominating_set[node] = 1
                 add_dominator_to_all_nodes(node)
+                remove_nodes_from_dominatees([node])
 
     return K
 

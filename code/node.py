@@ -731,18 +731,19 @@ class Node:
                             connected_dominating_set[self.name] = 1
                             add_node(self.name)
                             add_dominator_to_all_nodes(self.name)
+                            remove_nodes_from_dominatees([self.name])
                 else:
                     connected_dominating_set[self.name] += 1
             else:
                 if args.pci:
-                    list_of_dominatees.append((self.name,metrics_dict[args.pci]))
+                    get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
                 else:
-                    list_of_dominatees.append((self.name,metrics_dict["cl"]))
+                    get_list_of_dominatees().append((self.name,metrics_dict["cl"]))
         else:
             if args.pci:
-                list_of_dominatees.append((self.name,metrics_dict[args.pci]))
+                get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
             else:
-                list_of_dominatees.append((self.name,metrics_dict["cl"]))
+                get_list_of_dominatees().append((self.name,metrics_dict["cl"]))
 
     def construct_m_value(self,args):
         """
@@ -781,6 +782,7 @@ class Node:
                     if node not in self.dominators:
                         self.dominators.append(node)
                         add_dominator_to_all_nodes(node)
+                        remove_nodes_from_dominatees([node])
                         has_dominator = True
                         break
                         
@@ -790,6 +792,7 @@ class Node:
             else:
                 connected_dominating_set[self.Nu_xPCIs_list[i][0]] = 1
                 add_dominator_to_all_nodes(self.Nu_xPCIs_list[i][0])
+                remove_nodes_from_dominatees([self.Nu_xPCIs_list[i][0]])
                 
     def all_2_hop_has_dominator(self):
         """

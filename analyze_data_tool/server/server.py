@@ -308,7 +308,7 @@ def recognize_client_message(packed_message,number_of_cores):
 
         list_of_files[file_id] += file_contents
         
-        sl.write_log("List of contents after new data is: {}".format("".join([i for i in list_of_files if i != ""])),"debug")
+	sl.write_log("List of contents after new data is: [%s]"%",".join([i for i in list_of_files if i != ""]),"debug")
 
         if offset >= max_size:
             _is_over = True

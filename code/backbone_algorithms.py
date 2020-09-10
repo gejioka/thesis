@@ -265,24 +265,23 @@ def robust_algorithm(user_input,args):
         node.find_dominator(dict_of_objects,args)
 
     # Every node decides whether it is dominator or dominatee
-    # write_message(args,"Start phase 2","INFO")
+    write_message(args,"Start phase 2","INFO")
     for name, node in dict_of_objects.iteritems():
         node.node_decision(args)
     
     # Assign a very large number to k(G') for first time
     vertex_connectivity = float("inf")
 
-    counter = 0
     first_time = True
-    list_of_dominatees.sort(key=lambda tup: tup[1],reverse=True)
+    get_list_of_dominatees().sort(key=lambda tup: (len(dict_of_objects[tup[0]].get_dominators()),tup[1]),reverse=True)
+    previous_CDS_len = 0
+    previous_vertex_connectivity = vertex_connectivity
     while True:
         if len(connected_dominating_set) == 0:
             write_message(args,"This input network cannot create {}-{}-MCDS".format(args.k,args.m),"INFO")
-            break
+            return ERROR_CODE
         
         # Stop running algorithm when vertex_connectivity become smaller than k
-        if vertex_connectivity >= int(args.k) and vertex_connectivity != float("inf") and all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
-            break
         
         # Check constraint 5 and returns list with nodes to become dominators
         write_message(args,"[!] Starting check constraint 5","INFO")
@@ -297,54 +296,29 @@ def robust_algorithm(user_input,args):
         # Construct new graph
         write_message(args,"Start phase 3","INFO")
         construct_new_graph(edges,first_time,args)
-        sequense_size = 1
-        next_node = 0
-        nodes_list = []
-        while not g._is_k_connected(args) or sequense_size > MAX_SEQUENSE:
-            previous_len_CDS = len(connected_dominating_set)
-            
-            for i in range(sequense_size):
-                nodes_list = find_sequense_nodes(nodes_list,list_of_dominatees[next_node])
-
-            find_nodes = True
-            for node in nodes_list:
-                if len(dict_of_objects[node[0]].get_dominators()) < int(args.k):
-                    find_nodes = False
-
-                    if next_node <= len(list_of_dominatees):
-                        write_message(args,"Nodes with names {} are not k connected with the other dominators".format(nodes_list),"INFO")
-                        next_node += 1
-                        find_nodes = False
-
-                        break
-                    else:
-                        next_node = 0
-                        sequense_size += 1
-
-            if find_nodes:
-                for node in nodes_list:
-                    connected_dominating_set[node[0]] = 1
-                    add_dominator_to_all_nodes(node[0])
-                    add_node(node[0])
-
-                    list_of_dominatees.pop(list_of_dominatees.index(node))
-                    
-                    write_message(args,"Node with name {} removed from list of dominatees!!!".format(node[0]),"INFO")
-                
-            if sequense_size > MAX_SEQUENSE:
-                write_message(args,"This input network cannot create {}-{}-MCDS".format(args.k,args.m),"INFO")
-                sys.exit(1)
 
         # Run algorithm
         write_message(args,"Start phase 4","INFO")
-        vertex_connectivity = remain_on_DS(args,vertex_connectivity,first_time,dominators)
-
+        if previous_CDS_len != len(connected_dominating_set):
+            vertex_connectivity = int(remain_on_DS(args,vertex_connectivity,first_time,dominators))
+        else:
+            if previous_vertex_connectivity != vertex_connectivity:
+                add_dominatee_to_CDS(args)
+            else:
+                add_dominatee_to_CDS(args,True)
+        
+        # Update variables
         first_time = False     
-
+        previous_CDS_len = len(connected_dominating_set)
+        
         # Construct new graph
         if vertex_connectivity >= int(args.k):
             construct_new_graph(edges,first_time,args)
-    
+
+        # if vertex_connectivity >= int(args.k) and vertex_connectivity != float("inf") and all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
+        if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
+            break
+
     if args.time:
         end = time.time()
         write_message(args,"Time running process 3: {}".format(end-start),"INFO",True)

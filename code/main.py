@@ -189,13 +189,14 @@ if __name__=="__main__":
 
     # Solve problem with one of three algorithms
     pci = create_structures(user_input,args)
+    res = 0
     if user_input == 1:
         milcom_algorithm(pci,user_input,args)
     elif user_input == 2:
         new_algorithm(user_input,args)
     elif user_input == 3:
-        robust_algorithm(user_input,args)
-        
+        res = robust_algorithm(user_input,args)
+    
     # Write results to file
     if testing:
         testing_function(args)

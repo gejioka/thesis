@@ -284,7 +284,7 @@ def run_tests(list_of_arguments,offset,number_of_cores,list_of_metrics):
         sys.exit(0)
 
 def main():
-    list_of_metrics = ["cl","x","new","la","al","ml","ls","sl","degree"]
+    list_of_metrics = ["cl"]
     list_of_arguments=[]
     pool = []
     counter = 0

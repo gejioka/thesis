@@ -37,8 +37,9 @@ def write_results(network_type,backbone_type,args,string_to_write):
         with open(_root_folder+"/"+network_type+"/STATISTICS/Alg_2_Attempt_"+find_attempt(args.path)+"_Stat."+args.file_id, "w") as f:
             if args.cds:
                 if args.pci == "cl":
-                    f.write("Path of file is: "+args.path+"\n")
-                    f.fmelush()
+                    if args.k == "1" and args.m == "1":
+                        f.write("Path of file is: "+args.path+"\n")
+                        f.flush()
                 f.write("The metric that algorithms use to decide which nodes will be dominators is: {}\n".format(metrics_dict[args.pci]))
                 f.write("Type of backbone created is a {}\n".format(backbone_type))
                 if(args.algorithm == "3"):
@@ -46,6 +47,7 @@ def write_results(network_type,backbone_type,args,string_to_write):
             else:
                 f.write("Type of backbone created is a {}\n".format(backbone_type))
             f.flush()
+            # if len()
             if all_dominees_have_dominators():
                 list_of_layers = dominators_per_layer(connected_dominating_set)
                 for i in range(len(list_of_layers)):

@@ -72,9 +72,88 @@ def create_edges(nodes):
         for neighbor in dict_of_objects[node].get_N_of_u():
             if neighbor in connected_dominating_set.keys():
                 edges.append((node,neighbor))
-
+    
     return edges
 
+def add_dominatee_to_CDS(args,vertex_connectivity = False):
+    """
+    Description: Add dominatee to CDS 
+
+    Args:
+        args (obj): An object with all user input arguments
+
+    Returns:
+        - or ERROR_CODE
+    """
+    import graph as g
+
+    sequense_size = 1
+    next_node = 0
+    nodes_list = []
+    previous_len_CDS = 0
+    while (not g._is_k_connected(args) and sequense_size <= max(int(args.k),int(args.m)) and previous_len_CDS != len(connected_dominating_set)) or vertex_connectivity:
+        previous_len_CDS = len(connected_dominating_set)
+        
+        try:
+            nodes_list = [get_list_of_dominatees()[next_node][0]]
+        except Exception:
+            next_node = 0
+            sequense_size += 1
+        if sequense_size > 1:
+            for i in range(max(int(args.k),int(args.m))):
+                if next_node < len(get_list_of_dominatees()):
+                    nodes_list = find_sequense_nodes(nodes_list,get_list_of_dominatees())
+        
+        if len(nodes_list) == 0 or next_node >= len(get_list_of_dominatees()): #sequense_size:
+            next_node = 0
+            sequense_size += 1
+
+        dom_list = []
+        for node in nodes_list:
+            if len(dict_of_objects[node].get_dominators()) >= int(args.k):
+                dom_list.append(node)
+                if len(dom_list) >= max(int(args.k),int(args.m)):
+                    break
+
+        for node in dom_list:
+            connected_dominating_set[node] = 1
+            add_dominator_to_all_nodes(node)
+            remove_nodes_from_dominatees([node])
+            g.add_node(node)
+
+            try:
+                get_list_of_dominatees().pop(get_list_of_dominatees().index([i for i in get_list_of_dominatees() if i[0] == node][0]))
+                write_message(args,"Node with name {} removed from list of dominatees!!!".format(node),"INFO")
+                if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
+                    break
+            except Exception:
+                pass
+        
+        next_node += 1
+
+        if sequense_size > max(int(args.k),int(args.m)):
+            write_message(args,"This input network cannot create {}-{}-MCDS".format(args.k,args.m),"INFO")
+            return -1
+
+def get_network_layers():
+    """
+    Description: Return the number of layers in the network.
+
+    Args:
+        -
+
+    Returns:
+        number_of_layers
+    """
+    list_of_layers = []
+    number_of_layers = 0
+    
+    for key in dict_of_objects.keys():
+        if int(dict_of_objects[key].get_layer()) not in list_of_layers:
+            list_of_layers.append(int(dict_of_objects[key].get_layer()))
+            number_of_layers += 1
+    
+    return number_of_layers
 
 def check_connectivity(node_obj,connectivity_list,current_connected_dominating_set):
     """
@@ -161,7 +240,6 @@ def find_MCDS(args):
                     pass
             write_message(args,"Check if network is connected without node {}".format(key),"INFO")
             
-            # if all_dominators_have_k_dominators(min(int(args.k),int(args.m))) and all_dominees_have_m_dominators(min(int(args.k),int(args.m))) and g._is_k_connected(args):
             if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
                 for node in dict_of_objects:
                     node_obj = dict_of_objects[node]
@@ -201,6 +279,7 @@ def add_next_dominators(list_of_next_dominators,args):
         connected_dominating_set[node[0]] = node[1]
         g.add_node(node[0],False)
         add_dominator_to_all_nodes(node[0])
+        remove_nodes_from_dominatees([node[0]])
         write_message(args,"[+] Add to DS node with name {}".format(node[0]),"INFO")
         connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
         if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set) and all_dominees_have_dominators():
@@ -220,15 +299,16 @@ def remove_non_significant_nodes(non_significant_nodes,args):
         # Remove node from connected dominating set
         value = connected_dominating_set.pop(node)
         write_message(args,"[-] Try to remove node with name {} from CDS".format(node),"INFO")
+        
         # Check if DS is still connected
         try:
             connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
         except Exception as err:
-            pass
+            write_message(args,err,"WARNING")
+
         is_connected = False
         if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
             if int(args.algorithm) == 3:
-                # if not all_dominees_have_m_dominators(min(int(args.m),int(args.k))):
                 if not all_dominees_have_m_dominators(int(args.m)):
                     connected_dominating_set[node] = value
             else: 
@@ -289,18 +369,45 @@ def remove_dominators_from_all_nodes(dominators):
         for dominator in dominators:
             node_obj.remove_dominator(dominator)
 
+def remove_nodes_from_dominatees(nodes):
+    """
+    Description: Remove nodes from list of dominatees
+
+    Args:
+        nodes (list): A list with nodes to be deleted from list
+
+    Returns:
+        -
+    """
+    _to_remove = []
+    for node in nodes:
+        if node in connected_dominating_set.keys():
+            _to_remove.append(node)
+    
+    set_list_of_dominatees([i for i in get_list_of_dominatees() if i[0] not in _to_remove])
+
 def find_sequense_nodes(nodes_list,dominatee):
+    """
+    Description: Find a team of nodes who previous were dominatees and need turn to dominators 
+
+    Args:
+        nodes_list (list): A list with nodes to be added to CDS
+        dominatee (string): The name of the first dominatee
+    Returns:
+        nodes_list
+    """
     same_nodes = 0
     
-    dominatee_obj = dict_of_objects[dominatee[0]]
-    for node in nodes_list:
-        if node in dominatee_obj.get_N_of_u():
-            same_nodes += 1
-    if same_nodes == len(nodes_list):
-        if dominatee[0] not in nodes_list:
-            nodes_list.append(dominatee)
+    for dominatee in get_list_of_dominatees():
+        if dominatee not in nodes_list:
+            dominatee_obj = dict_of_objects[dominatee[0]]
+            for node in nodes_list:
+                if node in dominatee_obj.get_N_of_u():
+                    same_nodes += 1
+            if same_nodes == len(nodes_list):
+                nodes_list.append(dominatee[0])
         
-        return nodes_list
+                return nodes_list
     return []
 
 def remove_nodes_from_DS(dominators):
