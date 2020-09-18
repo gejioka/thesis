@@ -1,3 +1,4 @@
+from tqdm import tqdm
 from network_tools import *
 from metrics import *
 from graph import *
@@ -127,6 +128,130 @@ def plotting(args,input_graph=False):
             if args.plotting:
                 plot_input_graph()
 
+def preprocess(dict_of_objects,algorithm,args):
+    """
+    Description: Preprocess phase 
+
+    Args:
+        dict_of_objects (dict): A dictionary with all objects of nodes
+        algorithm (string): The name of the input algorithm
+        args (obj): An object with all arguments of user
+    Returns:
+        start
+    """
+    names = {"1": "milcom",
+             "2": "new",
+             "3": "robust"}
+
+    # Write log messages
+    start = 0
+    if args.log:
+        write_message(args,"[!] Start running {} algorithm".format(names[algorithm]),"INFO")
+    if args.time:
+        if args.mcds:
+            write_process_message(args,3,True)
+        else:
+            write_process_message(args,3,False)
+        start = time.time()
+
+    # for name, node in dict_of_objects.iteritems():
+    write_message(args,"Create object for each node...","INFO")
+    for name, node in tqdm(dict_of_objects.items()):
+        if args.pci == "cl":
+            node.set_unique_links_between_nodes(find_links_between_neighbors(node.get_xPCI_nodes()))
+            node.find_clPCI()
+
+        node.find_betweeness_centrality(dict_of_objects)
+    
+    write_message(args,"Calculate total centrality for each node...","INFO")
+    for name, node in tqdm(dict_of_objects.items()):
+        calculate_total_centrality(node)
+
+    write_message(args,"Find PCI metrics for every node...","INFO")
+    for name, node in tqdm(dict_of_objects.items()):
+        node.find_Nu_PCIs(dict_of_objects,args.pci)
+
+    write_message(args,"Find dominator for each node...","INFO")
+    for name, node in tqdm(dict_of_objects.items()):
+        node.find_dominator(dict_of_objects,args)
+
+    if algorithm == "3":
+        # Every node decides whether it is dominator or dominatee
+        write_message(args,"Start phase 2","INFO")
+        for name, node in dict_of_objects.iteritems():
+            node.node_decision(args)
+    return start
+
+def main_process(dict_of_objects,algorithm,args,user_input):
+    """
+    Description: Plot network
+
+    Args:
+        dict_of_objects (dict): A dictionary with all objects of nodes
+        algorithm (string): The name of the input algorithm
+        args (obj): An object with all arguments of user
+        user_input (string): A variable with user input
+    Returns:
+        -
+    """
+    import graph as g
+
+    if algorithm != "3":
+        # Add dominators to CDS
+        for name, node in dict_of_objects.iteritems():
+            node.add_node_in_CDS(user_input)
+            message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([dict_of_objects[a].get_name() for a in node.get_dominators()])
+            message = message.format(node.get_name(),len(node.get_dominators()))
+            write_message(args,message,"DEBUG")
+    else:
+        # Assign a very large number to k(G') for first time
+        vertex_connectivity = float("inf")
+
+        first_time = True
+        get_list_of_dominatees().sort(key=lambda tup: (len(dict_of_objects[tup[0]].get_dominators()),tup[1],tup[2]),reverse=True)
+        previous_CDS_len = 0
+        previous_vertex_connectivity = vertex_connectivity
+        while True:
+            if len(connected_dominating_set) == 0:
+                write_message(args,"This input network cannot create {}-{}-MCDS".format(args.k,args.m),"INFO")
+                return ERROR_CODE
+            
+            # Check constraint 5 and returns list with nodes to become dominators
+            write_message(args,"[!] Starting check constraint 5","INFO")
+            dominators = check_constraint5(args)
+            
+            # Add edges between old and new dominators
+            edges=[]
+            write_message(args,"[+] Create edges between new and old dominators.","INFO")
+            if dominators:
+                edges +=create_edges(dominators)
+            
+            # Construct new graph
+            write_message(args,"Start phase 3","INFO")
+            construct_new_graph(edges,first_time,args)
+
+            # Run algorithm
+            write_message(args,"Start phase 4","INFO")
+            if previous_CDS_len != len(connected_dominating_set):
+                vertex_connectivity = int(remain_on_DS(args,vertex_connectivity,first_time,dominators))
+            else:
+                if previous_vertex_connectivity != vertex_connectivity:
+                    add_dominatee_to_CDS(args)
+                else:
+                    add_dominatee_to_CDS(args,True)
+            
+            # Update variables
+            first_time = False     
+            previous_CDS_len = len(connected_dominating_set)
+            
+            # Construct new graph
+            if vertex_connectivity >= int(args.k):
+                construct_new_graph(edges,first_time,args)
+
+            # if vertex_connectivity >= int(args.k) and vertex_connectivity != float("inf") and all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
+            if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
+                break
+
 def milcom_algorithm(pci,user_input,args):
     """
     Description: Create a CDS for this network
@@ -137,35 +262,11 @@ def milcom_algorithm(pci,user_input,args):
 
     Returns:
         -
-    """
-    import log 
+    """ 
+    start = preprocess(dict_of_objects,args.algorithm,args)
 
-    if args.log:
-        write_message(args,"[!] Start running milcom algorithm","INFO")
-    if args.time:
-        if args.mcds:
-            write_process_message(args,3,True)
-        else:
-            write_process_message(args,3,False)
-        start = time.time()
-    
-    # Create Dominating Set (DS) of network
-    for name, node in dict_of_objects.iteritems():
-        if args.pci == "cl":
-            node.set_unique_links_between_nodes(find_links_between_neighbors(node.get_xPCI_nodes()))
-            node.find_clPCI()
-        node.find_Nu_PCIs(dict_of_objects,args.pci)
-        node.find_dominator(dict_of_objects,args)
-        message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([dict_of_objects[a].get_name() for a in node.get_dominators()])
-        message = message.format(node.get_name(),len(node.get_dominators()))
-        write_message(args,message,"DEBUG")
-    
-    for name, node in dict_of_objects.iteritems():
-        node.add_node_in_CDS(user_input)
-        message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([dict_of_objects[a].get_name() for a in node.get_dominators()])
-        message = message.format(node.get_name(),len(node.get_dominators()))
-        write_message(args,message,"DEBUG")
-    
+    main_process(dict_of_objects,args.algorithm,args,user_input)
+
     if args.time:
         end = time.time()
         write_message(args,"Time running process 3: {}".format(end-start),"INFO",True)
@@ -184,28 +285,10 @@ def new_algorithm(user_input,args):
     Returns:
         -
     """
-    if args.log:
-        write_message(args,"[!] Start running new algorithm","INFO")
-    if args.time:
-        if args.mcds:
-            write_process_message(args,3,True)
-        else:
-            write_process_message(args,3,False)
-        start = time.time()
-    # Create Dominating Set (DS) of network
-    for name, node in dict_of_objects.iteritems():
-        if args.pci == "cl":
-            node.set_unique_links_between_nodes(find_links_between_neighbors(node.get_xPCI_nodes()))
-            node.find_clPCI()
-        node.find_Nu_PCIs(dict_of_objects,args.pci)
-        node.find_dominator(dict_of_objects,args)
-    
-    for name, node in dict_of_objects.iteritems():
-        node.add_node_in_CDS(user_input)
-        message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([dict_of_objects[a].get_name() for a in node.get_dominators()])
-        message = message.format(node.get_name(),len(node.get_dominators()))
-        write_message(args,message,"DEBUG")
-    
+    start = preprocess(dict_of_objects,args.algorithm,args)
+
+    main_process(dict_of_objects,args.algorithm,args,user_input)
+
     if args.time:
         end = time.time()
         write_message(args,"Time running process 3: {}".format(end-start),"INFO",True)
@@ -240,85 +323,10 @@ def robust_algorithm(user_input,args):
     Returns:
         -
     """
-    import graph as g
-
-    # Check if input network is k-connected
-    k_connected(args)
-
-    # Write log messages
-    if args.log:
-        write_message(args,"[!] Start running robust algorithm","INFO")
-    if args.time:
-        if args.mcds:
-            write_process_message(args,3,True)
-        else:
-            write_process_message(args,3,False)
-        start = time.time()
+    start = preprocess(dict_of_objects,args.algorithm,args)
     
-    # Create Dominating Set (DS) of network
-    write_message(args,"Start phase 1","INFO")
-    for name, node in dict_of_objects.iteritems():
-        if args.pci == "cl":
-            node.set_unique_links_between_nodes(find_links_between_neighbors(node.get_xPCI_nodes()))
-            node.find_clPCI()
-        node.find_Nu_PCIs(dict_of_objects,args.pci)
-        node.find_dominator(dict_of_objects,args)
-
-    # Every node decides whether it is dominator or dominatee
-    write_message(args,"Start phase 2","INFO")
-    for name, node in dict_of_objects.iteritems():
-        node.node_decision(args)
+    main_process(dict_of_objects,args.algorithm,args,user_input)
     
-    # Assign a very large number to k(G') for first time
-    vertex_connectivity = float("inf")
-
-    first_time = True
-    get_list_of_dominatees().sort(key=lambda tup: (len(dict_of_objects[tup[0]].get_dominators()),tup[1]),reverse=True)
-    previous_CDS_len = 0
-    previous_vertex_connectivity = vertex_connectivity
-    while True:
-        if len(connected_dominating_set) == 0:
-            write_message(args,"This input network cannot create {}-{}-MCDS".format(args.k,args.m),"INFO")
-            return ERROR_CODE
-        
-        # Stop running algorithm when vertex_connectivity become smaller than k
-        
-        # Check constraint 5 and returns list with nodes to become dominators
-        write_message(args,"[!] Starting check constraint 5","INFO")
-        dominators = check_constraint5(args)
-        
-        # Add edges between old and new dominators
-        edges=[]
-        write_message(args,"[+] Create edges between new and old dominators.","INFO")
-        if dominators:
-            edges +=create_edges(dominators)
-        
-        # Construct new graph
-        write_message(args,"Start phase 3","INFO")
-        construct_new_graph(edges,first_time,args)
-
-        # Run algorithm
-        write_message(args,"Start phase 4","INFO")
-        if previous_CDS_len != len(connected_dominating_set):
-            vertex_connectivity = int(remain_on_DS(args,vertex_connectivity,first_time,dominators))
-        else:
-            if previous_vertex_connectivity != vertex_connectivity:
-                add_dominatee_to_CDS(args)
-            else:
-                add_dominatee_to_CDS(args,True)
-        
-        # Update variables
-        first_time = False     
-        previous_CDS_len = len(connected_dominating_set)
-        
-        # Construct new graph
-        if vertex_connectivity >= int(args.k):
-            construct_new_graph(edges,first_time,args)
-
-        # if vertex_connectivity >= int(args.k) and vertex_connectivity != float("inf") and all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
-        if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
-            break
-
     if args.time:
         end = time.time()
         write_message(args,"Time running process 3: {}".format(end-start),"INFO",True)

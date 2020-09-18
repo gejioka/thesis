@@ -161,7 +161,7 @@ def decice_pci_algorithm(args,nodes,node,node_obj,all_layers):
         node_obj.set_localPCI(single_layer_pci(nodes,node)[0])
         mlPCI = find_mlPCI(nodes,node)
         node_obj.set_mlPCI(mlPCI)
-        node_obj.set_newPCI(mlPCI)
+        node_obj.set_newPCI(find_newPCI(nodes,node,mlPCI))
         node_obj.find_weight()
     elif args.pci == "la":
         node_obj.set_laPCI(find_laPCI(nodes,node)[0])
@@ -204,6 +204,19 @@ def single_layer_pci(nodes,node):
 
     return (pci_value,list_of_nodes)
 
+def calculate_total_centrality(node):
+    """
+    Description: Calculate total centrality for a node
+
+    Args:
+        node (String): The specific node
+
+    Returns:
+        -
+    """
+    for name,centrality in node.get_centralities_list():
+        dict_of_objects[name].increace_centrality(centrality)
+            
 def create_interlayer_nodes_list(nodes,parent,key,list_of_interlayer_nodes):
     """
     Description: Create a list with all nodes which participate the xPCI

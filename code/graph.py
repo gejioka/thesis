@@ -104,6 +104,11 @@ def add_node(node,new=True):
     else:
         G.add_edges_from(edges)
 
+def return_subgraph(list_of_nodes):
+    global G
+
+    return G.subgraph(list_of_nodes)
+
 def remove_node(node,new=True):
     """
     Description: Remove node from network
@@ -320,8 +325,10 @@ def remain_on_DS(args,vertex_connectivity,first_time,new_nodes):
 
     nodes_to_remove = []
     if first_time:
-        vertex_connectivity = find_minimum_vertex_cut(True)
-
+        try:
+            vertex_connectivity = find_minimum_vertex_cut(True)
+        except Exception:
+            pass
         for node in new_nodes:
             for dominator in connected_dominating_set.keys():
                 if dominator not in dict_of_objects[node].get_N_of_u():
@@ -338,14 +345,17 @@ def remain_on_DS(args,vertex_connectivity,first_time,new_nodes):
 
                 if len(vertex_connectivity) < K:
                     K = len(vertex_connectivity)
+        try:
+            remove_dominators_from_all_nodes(vertex_connectivity)
+            remove_nodes_from_DS(vertex_connectivity)
+            remove_nodes_from_graph(vertex_connectivity)
 
-        remove_dominators_from_all_nodes(vertex_connectivity)
-        remove_nodes_from_DS(vertex_connectivity)
-        remove_nodes_from_graph(vertex_connectivity)
+            write_message(args,"[!] Minimum vertex cut for backbone is: [%s]"%", ".join(list(vertex_connectivity)),"INFO")
+            if len(vertex_connectivity) < K:
+                K = len(vertex_connectivity)
 
-        write_message(args,"[!] Minimum vertex cut for backbone is: [%s]"%", ".join(list(vertex_connectivity)),"INFO")
-        if len(vertex_connectivity) < K:
-            K = len(vertex_connectivity)
+        except Exception:
+            K = 0
     else:
         for node in new_nodes:
             node_obj = dict_of_objects[node]

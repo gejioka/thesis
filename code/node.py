@@ -27,12 +27,14 @@ class Node:
         self.localPCI = 0
         self.lsPCI = 0
         self.weight = 0.0
+        self.centrality = 0.0
         self.N_of_u = []
         self.N2_of_u = []
         self.N3_of_u = []
         self.dominators = []
         self.dominatees = []
         self.temp_dominators = []
+        self.centralities_list = []
         self.number_of_dominatees = 0
 
         self.Ns_of_u_dict = {1:self.N_of_u,2:self.N2_of_u,3:self.N3_of_u}
@@ -413,6 +415,59 @@ class Node:
         """
         return self.weight
 
+    def find_betweeness_centrality(self,dict_of_objects):
+        """
+        Description: Create local network and find betweeness centrality for node
+
+        Args:
+            dict_of_objects: A dictionary with all nodes of input network
+
+        Returns:
+            betweeness centrality
+        """
+        list_of_nodes = []
+        
+        list_of_nodes = self.N_of_u
+        local_network = return_subgraph(list_of_nodes)
+        
+        self.centralities_list = sorted([items for items in nx.betweenness_centrality(local_network).items() if items[1] > 0.0],key=lambda x: x[1],reverse=True)
+    
+    def get_centrality(self):
+        """
+        Description: Return node betweeness centrality
+
+        Args:
+            -
+
+        Returns:
+            betweeness centrality
+        """
+        return self.centrality
+
+    def increace_centrality(self,centrality):
+        """
+        Description: Increace node betweeness centrality
+
+        Args:
+            centrality (float): Centrality of node
+
+        Returns:
+            betweeness centrality
+        """
+        self.centrality += centrality
+
+    def get_centralities_list(self):
+        """
+        Description: Return a list with betweeness centralities for all neighbor nodes
+
+        Args:
+            -
+
+        Returns:
+            centralities list
+        """
+        return self.centralities_list
+
     def find_clPCI(self):
         """
         Description: Find clPCI value for this node
@@ -637,24 +692,25 @@ class Node:
             node_obj = dict_of_objects[neighbor]
             if node_obj != None:
                 if pci == "degree":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_node_degree()))
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_node_degree(),node_obj.get_centrality()))
                 elif pci == "sl":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_localPCI()))
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_localPCI(),node_obj.get_centrality()))
                 elif pci == "la":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_laPCI()))
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_laPCI(),node_obj.get_centrality()))
                 elif pci == "al":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_alPCI()))
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_alPCI(),node_obj.get_centrality()))
                 elif pci == "ml":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_mlPCI()))
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_mlPCI(),node_obj.get_centrality()))
                 elif pci == "ls":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_lsPCI()))
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_lsPCI(),node_obj.get_centrality()))
                 elif pci == "x":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_xPCI()))
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_xPCI(),node_obj.get_centrality()))
                 elif pci == "cl":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_clPCI()))
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_clPCI(),node_obj.get_centrality()))
                 elif pci == "new":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_weight()))
-        self.Nu_xPCIs_list.sort(key=lambda tup: tup[1],reverse=True)
+                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_weight(),node_obj.get_centrality()))
+                
+        self.Nu_xPCIs_list.sort(key=lambda tup: (tup[1],tup[2]),reverse=True)
     
     def check_for_dominator(self,dict_of_objects):
         """
@@ -736,14 +792,14 @@ class Node:
                     connected_dominating_set[self.name] += 1
             else:
                 if args.pci:
-                    get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
+                    get_list_of_dominatees().append((self.name,metrics_dict[args.pci],self.centrality))
                 else:
-                    get_list_of_dominatees().append((self.name,metrics_dict["cl"]))
+                    get_list_of_dominatees().append((self.name,metrics_dict["cl"],self.centrality))
         else:
             if args.pci:
-                get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
+                get_list_of_dominatees().append((self.name,metrics_dict[args.pci],self.centrality))
             else:
-                get_list_of_dominatees().append((self.name,metrics_dict["cl"]))
+                get_list_of_dominatees().append((self.name,metrics_dict["cl"],self.centrality))
 
     def construct_m_value(self,args):
         """

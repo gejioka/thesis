@@ -197,6 +197,8 @@ if __name__=="__main__":
     elif user_input == 3:
         res = robust_algorithm(user_input,args)
     
+    print dominators_per_layer(connected_dominating_set)
+
     # Write results to file
     if testing:
         testing_function(args)
