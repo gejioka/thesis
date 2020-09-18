@@ -160,16 +160,17 @@ def preprocess(dict_of_objects,algorithm,args):
         if args.pci == "cl":
             node.set_unique_links_between_nodes(find_links_between_neighbors(node.get_xPCI_nodes()))
             node.find_clPCI()
-
-        node.find_betweeness_centrality(dict_of_objects)
+        if args.centrality:
+            node.find_betweeness_centrality(dict_of_objects)
     
     write_message(args,"Calculate total centrality for each node...","INFO")
-    for name, node in tqdm(dict_of_objects.items()):
-        calculate_total_centrality(node)
+    if args.centrality:
+        for name, node in tqdm(dict_of_objects.items()):
+            calculate_total_centrality(node)
 
     write_message(args,"Find PCI metrics for every node...","INFO")
     for name, node in tqdm(dict_of_objects.items()):
-        node.find_Nu_PCIs(dict_of_objects,args.pci)
+        node.find_Nu_PCIs(dict_of_objects,args.pci,args)
 
     write_message(args,"Find dominator for each node...","INFO")
     for name, node in tqdm(dict_of_objects.items()):
@@ -199,7 +200,7 @@ def main_process(dict_of_objects,algorithm,args,user_input):
     if algorithm != "3":
         # Add dominators to CDS
         for name, node in dict_of_objects.iteritems():
-            node.add_node_in_CDS(user_input)
+            node.add_node_in_CDS(user_input,args)
             message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([dict_of_objects[a].get_name() for a in node.get_dominators()])
             message = message.format(node.get_name(),len(node.get_dominators()))
             write_message(args,message,"DEBUG")
@@ -208,7 +209,11 @@ def main_process(dict_of_objects,algorithm,args,user_input):
         vertex_connectivity = float("inf")
 
         first_time = True
-        get_list_of_dominatees().sort(key=lambda tup: (len(dict_of_objects[tup[0]].get_dominators()),tup[1],tup[2]),reverse=True)
+        if args.centrality:
+            get_list_of_dominatees().sort(key=lambda tup: (len(dict_of_objects[tup[0]].get_dominators()),tup[1],tup[2]),reverse=True)
+        else:
+            get_list_of_dominatees().sort(key=lambda tup: (len(dict_of_objects[tup[0]].get_dominators()),tup[1]),reverse=True)
+            
         previous_CDS_len = 0
         previous_vertex_connectivity = vertex_connectivity
         while True:

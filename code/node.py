@@ -677,7 +677,7 @@ class Node:
         """
         return self.all_3hop_nodes
 
-    def find_Nu_PCIs(self,dict_of_objects,pci):
+    def find_Nu_PCIs(self,dict_of_objects,pci,args):
         """
         Description: Add all xPCI values of neighbors to a list and sort it
 
@@ -692,26 +692,57 @@ class Node:
             node_obj = dict_of_objects[neighbor]
             if node_obj != None:
                 if pci == "degree":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_node_degree(),node_obj.get_centrality()))
+                    if args.centrality:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_node_degree(),node_obj.get_centrality()))
+                    else:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_node_degree()))
                 elif pci == "sl":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_localPCI(),node_obj.get_centrality()))
+                    if args.centrality:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_localPCI(),node_obj.get_centrality()))
+                    else:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_localPCI()))
                 elif pci == "la":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_laPCI(),node_obj.get_centrality()))
+                    if args.centrality:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_laPCI(),node_obj.get_centrality()))
+                    else:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_laPCI()))
                 elif pci == "al":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_alPCI(),node_obj.get_centrality()))
+                    if args.centrality:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_alPCI(),node_obj.get_centrality()))
+                    else:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_alPCI()))
                 elif pci == "ml":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_mlPCI(),node_obj.get_centrality()))
+                    if args.centrality:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_mlPCI(),node_obj.get_centrality()))
+                    else:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_mlPCI()))
                 elif pci == "ls":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_lsPCI(),node_obj.get_centrality()))
+                    if args.centrality:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_lsPCI(),node_obj.get_centrality()))
+                    else:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_lsPCI()))
                 elif pci == "x":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_xPCI(),node_obj.get_centrality()))
+                    if args.centrality:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_xPCI(),node_obj.get_centrality()))
+                    else:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_xPCI()))
                 elif pci == "cl":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_clPCI(),node_obj.get_centrality()))
+                    if args.centrality:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_clPCI(),node_obj.get_centrality()))
+                    else:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_clPCI()))
                 elif pci == "new":
-                    self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_weight(),node_obj.get_centrality()))
-                
-        self.Nu_xPCIs_list.sort(key=lambda tup: (tup[1],tup[2]),reverse=True)
-    
+                    if args.centrality:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_weight(),node_obj.get_centrality()))
+                    else:
+                        self.Nu_xPCIs_list.append((node_obj.get_name(),node_obj.get_weight()))
+
+        if args.centrality:      
+            self.Nu_xPCIs_list.sort(key=lambda tup: (tup[1],tup[2]),reverse=True)
+        else:
+            self.Nu_xPCIs_list.sort(key=lambda tup: tup[1],reverse=True)
+        print self.Nu_xPCIs_list
+
     def check_for_dominator(self,dict_of_objects):
         """
         Description: Check if all nodes has dominators
@@ -792,14 +823,26 @@ class Node:
                     connected_dominating_set[self.name] += 1
             else:
                 if args.pci:
-                    get_list_of_dominatees().append((self.name,metrics_dict[args.pci],self.centrality))
+                    if args.centrality:
+                        get_list_of_dominatees().append((self.name,metrics_dict[args.pci],self.centrality))
+                    else:
+                        get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
                 else:
-                    get_list_of_dominatees().append((self.name,metrics_dict["cl"],self.centrality))
+                    if args.centrality:
+                        get_list_of_dominatees().append((self.name,metrics_dict["cl"],self.centrality))
+                    else:
+                        get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
         else:
             if args.pci:
-                get_list_of_dominatees().append((self.name,metrics_dict[args.pci],self.centrality))
+                if args.centrality:
+                    get_list_of_dominatees().append((self.name,metrics_dict[args.pci],self.centrality))
+                else:
+                    get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
             else:
-                get_list_of_dominatees().append((self.name,metrics_dict["cl"],self.centrality))
+                if args.centrality:
+                    get_list_of_dominatees().append((self.name,metrics_dict["cl"],self.centrality))
+                else:
+                    get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
 
     def construct_m_value(self,args):
         """
@@ -841,8 +884,12 @@ class Node:
                         remove_nodes_from_dominatees([node])
                         has_dominator = True
                         break
-                        
-            self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
+
+            if args.centrality:         
+                self.Nu_xPCIs_list.sort(key=lambda x: (x[1],x[2]),reverse=True)
+            else:
+                self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
+
             if self.Nu_xPCIs_list[i][0] in connected_dominating_set.keys():
                 connected_dominating_set[self.Nu_xPCIs_list[i][0]] += 1
             else:
@@ -870,7 +917,7 @@ class Node:
                 return False
         return True
 
-    def add_node_in_CDS(self,algorithm):
+    def add_node_in_CDS(self,algorithm,args):
         """
         Description: Check if exists node of N2 of u without dominator as neighbor
                      and if so add as dominator node of N of u this with largest xPCI
@@ -882,7 +929,12 @@ class Node:
         Returns:
             -
         """
-        self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
+        
+        if args.centrality:
+            self.Nu_xPCIs_list.sort(key=lambda x: (x[1],x[2]),reverse=True)
+        else:
+            self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
+
         if not self.all_2_hop_has_dominator():
             for node in self.Nu_xPCIs_list:
                 nodeObj = dict_of_objects[node[0]]

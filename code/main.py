@@ -98,6 +98,8 @@ def get_args():
         action="store", dest="cores_num", default=False)
     parser.add_argument("--merge", help="Merge threads files to main file", \
         action="store_true", dest="merge", default=False)
+    parser.add_argument("--centrality", help="Add betweeness centrality as an extra metric for every node", \
+        action="store_true", dest="centrality", default=False)
     parser.add_argument("--cds", help="Create a connected dominating set for backbone in network", \
         action="store_true", dest="cds", default=False)
     parser.add_argument("--mcds", help="Create a minimum connected dominating set for backbone in network", \
@@ -169,6 +171,8 @@ def check_log():
         print "An error occured: " + str(err)
 
 if __name__=="__main__":
+    # TODO: User to decide if wanna as metric only PCIs or PCIs and centrality
+
     args = get_args()
     testing = is_testing(args)
     
@@ -189,13 +193,12 @@ if __name__=="__main__":
 
     # Solve problem with one of three algorithms
     pci = create_structures(user_input,args)
-    res = 0
     if user_input == 1:
         milcom_algorithm(pci,user_input,args)
     elif user_input == 2:
         new_algorithm(user_input,args)
     elif user_input == 3:
-        res = robust_algorithm(user_input,args)
+        robust_algorithm(user_input,args)
     
     print dominators_per_layer(connected_dominating_set)
 
