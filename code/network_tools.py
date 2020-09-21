@@ -91,47 +91,47 @@ def add_dominatee_to_CDS(args,vertex_connectivity = False):
     next_node = 0
     nodes_list = []
     previous_len_CDS = 0
-    while (not g._is_k_connected(args) and sequense_size <= max(int(args.k),int(args.m)) and previous_len_CDS != len(connected_dominating_set)) or vertex_connectivity:
+    _add_dominatee = False
+    while not _add_dominatee:
         previous_len_CDS = len(connected_dominating_set)
         
         try:
             nodes_list = [get_list_of_dominatees()[next_node][0]]
-        except Exception:
+        except Exception as err:
+            print err
+
             next_node = 0
             sequense_size += 1
         if sequense_size > 1:
-            for i in range(max(int(args.k),int(args.m))):
+            for i in range(int(args.k)):
                 if next_node < len(get_list_of_dominatees()):
                     nodes_list = find_sequense_nodes(nodes_list,get_list_of_dominatees())
         
-        if len(nodes_list) == 0 or next_node >= len(get_list_of_dominatees()): #sequense_size:
+        if next_node >= len(get_list_of_dominatees()) or sequense_size > int(args.k):
             next_node = 0
             sequense_size += 1
 
+            if sequense_size > int(args.k):
+                write_message(args,"Input file with name {} cannot create {}-{} CDS","INFO")
+                return 
+
         dom_list = []
         for node in nodes_list:
-            if len(dict_of_objects[node].get_dominators()) >= int(args.k):
+            if len(dict_of_objects[node].get_dominators()) >= int(args.k)-sequense_size+1:
                 dom_list.append(node)
-                if len(dom_list) >= max(int(args.k),int(args.m)):
+                if len(dom_list) >= int(args.k):
                     break
 
         for node in dom_list:
+            _add_dominatee = True
             connected_dominating_set[node] = 1
             add_dominator_to_all_nodes(node)
             remove_nodes_from_dominatees([node])
             g.add_node(node)
 
-            try:
-                get_list_of_dominatees().pop(get_list_of_dominatees().index([i for i in get_list_of_dominatees() if i[0] == node][0]))
-                write_message(args,"Node with name {} removed from list of dominatees!!!".format(node),"INFO")
-                if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
-                    break
-            except Exception:
-                pass
-        
         next_node += 1
 
-        if sequense_size > max(int(args.k),int(args.m)):
+        if sequense_size > int(args.k):
             write_message(args,"This input network cannot create {}-{}-MCDS".format(args.k,args.m),"INFO")
             return -1
 
@@ -384,7 +384,8 @@ def remove_nodes_from_dominatees(nodes):
         if node in connected_dominating_set.keys():
             _to_remove.append(node)
     
-    set_list_of_dominatees([i for i in get_list_of_dominatees() if i[0] not in _to_remove])
+    for node in _to_remove:
+        remove_node_of_dominatees(node)
 
 def find_sequense_nodes(nodes_list,dominatee):
     """
@@ -434,13 +435,15 @@ def all_dominees_have_m_dominators(m,return_list=False):
         -
     """
     _no_connected_dominatees = []
-    for key in dict_of_objects.keys():
-        node_obj = dict_of_objects[key]
+    counter = 0
+    for key in list_of_dominatees:
+        node_obj = dict_of_objects[key[0]]
         if len(node_obj.get_dominators()) < int(m):
             if not return_list:
                 return False
             else:
                 _no_connected_dominatees.append(key)
+        counter += 1
     if not return_list:
         return True
     else:

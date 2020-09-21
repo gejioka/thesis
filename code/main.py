@@ -71,6 +71,9 @@ def check_arguments(parser,args):
             parser.error("k and m numbers must be greater than zero")
             sys.exit(1)
 
+    if not args.tolerance:
+        args.tolerance = TOLERANCE
+
 def get_args():
     """
     Description: Create a parser and parse all arguments program needs to run
@@ -94,6 +97,8 @@ def get_args():
         action="store", dest="m", default=False)
     parser.add_argument("-i", "--fid", help="An increament integer which append to filename", \
         action="store", dest="file_id", default=False)
+    parser.add_argument("-tol", "--tolerance", help="Tolerance between PCI or and centrality selection", \
+        action="store", dest="tolerance", default=False)
     parser.add_argument("-n", "--noc", help="An integer tells us the number of logical cores needed to solve input graphs", \
         action="store", dest="cores_num", default=False)
     parser.add_argument("--merge", help="Merge threads files to main file", \
@@ -171,8 +176,6 @@ def check_log():
         print "An error occured: " + str(err)
 
 if __name__=="__main__":
-    # TODO: User to decide if wanna as metric only PCIs or PCIs and centrality
-
     args = get_args()
     testing = is_testing(args)
     
@@ -200,8 +203,6 @@ if __name__=="__main__":
     elif user_input == 3:
         robust_algorithm(user_input,args)
     
-    print dominators_per_layer(connected_dominating_set)
-
     # Write results to file
     if testing:
         testing_function(args)

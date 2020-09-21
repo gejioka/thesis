@@ -154,6 +154,9 @@ def preprocess(dict_of_objects,algorithm,args):
             write_process_message(args,3,False)
         start = time.time()
 
+    if algorithm == "3":
+        set_list_of_dominatees([(i,0.0,0.0) for i in dict_of_objects.keys()])
+
     # for name, node in dict_of_objects.iteritems():
     write_message(args,"Create object for each node...","INFO")
     for name, node in tqdm(dict_of_objects.items()):
@@ -207,7 +210,6 @@ def main_process(dict_of_objects,algorithm,args,user_input):
     else:
         # Assign a very large number to k(G') for first time
         vertex_connectivity = float("inf")
-
         first_time = True
         if args.centrality:
             get_list_of_dominatees().sort(key=lambda tup: (len(dict_of_objects[tup[0]].get_dominators()),tup[1],tup[2]),reverse=True)
@@ -244,16 +246,14 @@ def main_process(dict_of_objects,algorithm,args,user_input):
                     add_dominatee_to_CDS(args)
                 else:
                     add_dominatee_to_CDS(args,True)
-            
+                
             # Update variables
             first_time = False     
             previous_CDS_len = len(connected_dominating_set)
             
             # Construct new graph
-            if vertex_connectivity >= int(args.k):
-                construct_new_graph(edges,first_time,args)
-
-            # if vertex_connectivity >= int(args.k) and vertex_connectivity != float("inf") and all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
+            construct_new_graph(edges,first_time,args)
+            
             if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
                 break
 

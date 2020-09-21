@@ -18,6 +18,8 @@ LOWCONNECTIVITY     = 3
 MEDIUMCONNECTIVITY  = 10
 HIGHCONNECTIVITY    = 20 
 
+TOLERANCE           = 0.2       # Default value for the tolerance 
+
 connected_dominating_set = {}   # A dictionary with all node in CDS
 dict_of_objects = {}            # A dictionary with all objects represent nodes
 list_of_dominatees = []         # A list with all dominaties
@@ -32,6 +34,40 @@ LEVELS = {  'debug'     : logging.DEBUG,
             'error'     : logging.ERROR,
             'critical'  : logging.CRITICAL
 }
+
+def append_list_of_dominatees(node):
+    """
+    Description: Append node to list of dominatees
+
+    Args:
+        node(string): The name of node
+
+    Returns:
+        -
+    """
+    global list_of_dominatees
+
+    try:
+        list_of_dominatees[list_of_dominatees.index([i for i in list_of_dominatees if node[0] in i][0])] = node
+    except:
+        pass
+
+def remove_node_of_dominatees(node):
+    """
+    Description: Remove node of list of dominatees
+
+    Args:
+        node(string): The name of node
+
+    Returns:
+        -
+    """
+    global list_of_dominatees
+
+    try:
+        list_of_dominatees.pop(list_of_dominatees.index([i for i in list_of_dominatees if node in i][0]))
+    except Exception:
+        pass
 
 def set_list_of_dominatees(list_of_dom):
     """

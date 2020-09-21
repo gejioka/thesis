@@ -638,6 +638,15 @@ class Node:
             pass
     
     def clear_temp_dominators(self):
+        """
+        Description: Clear list of temp dominators
+
+        Args:
+            -
+
+        Returns:
+            -
+        """
         self.temp_dominators = []
 
     def get_temp_dominators(self):
@@ -741,7 +750,6 @@ class Node:
             self.Nu_xPCIs_list.sort(key=lambda tup: (tup[1],tup[2]),reverse=True)
         else:
             self.Nu_xPCIs_list.sort(key=lambda tup: tup[1],reverse=True)
-        print self.Nu_xPCIs_list
 
     def check_for_dominator(self,dict_of_objects):
         """
@@ -808,7 +816,6 @@ class Node:
                 if self.name not in connected_dominating_set.keys():
                     if args.algorithm != "3":
                         connected_dominating_set[self.name] = 1
-                        add_node(self.name)
                     else:
                         counter = 0
                         for neighbor in self.N_of_u:
@@ -816,7 +823,6 @@ class Node:
                                 counter += 1
                         if counter >= int(args.k):
                             connected_dominating_set[self.name] = 1
-                            add_node(self.name)
                             add_dominator_to_all_nodes(self.name)
                             remove_nodes_from_dominatees([self.name])
                 else:
@@ -824,25 +830,25 @@ class Node:
             else:
                 if args.pci:
                     if args.centrality:
-                        get_list_of_dominatees().append((self.name,metrics_dict[args.pci],self.centrality))
+                        append_list_of_dominatees((self.name,metrics_dict[args.pci],self.centrality))
                     else:
-                        get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
+                        append_list_of_dominatees((self.name,metrics_dict[args.pci]))
                 else:
                     if args.centrality:
-                        get_list_of_dominatees().append((self.name,metrics_dict["cl"],self.centrality))
+                        append_list_of_dominatees((self.name,metrics_dict["cl"],self.centrality))
                     else:
-                        get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
+                        append_list_of_dominatees((self.name,metrics_dict[args.pci]))
         else:
             if args.pci:
                 if args.centrality:
-                    get_list_of_dominatees().append((self.name,metrics_dict[args.pci],self.centrality))
+                    append_list_of_dominatees((self.name,metrics_dict[args.pci],self.centrality))
                 else:
-                    get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
+                    append_list_of_dominatees((self.name,metrics_dict[args.pci]))
             else:
                 if args.centrality:
-                    get_list_of_dominatees().append((self.name,metrics_dict["cl"],self.centrality))
+                    append_list_of_dominatees((self.name,metrics_dict["cl"],self.centrality))
                 else:
-                    get_list_of_dominatees().append((self.name,metrics_dict[args.pci]))
+                    append_list_of_dominatees((self.name,metrics_dict[args.pci]))
 
     def construct_m_value(self,args):
         """
@@ -860,6 +866,54 @@ class Node:
         else:
             m = 1
         return m
+
+    def choose_node(self,node_1,node_2,args):
+        """
+        Description: Compare two nodes and return more significant
+
+        Args:
+            node_1 (tuple): A tuple with informations for node 1 (name,PCI,centrality)
+            node_2 (tuple): A tuple with informations for node 2 (name,PCI,centrality)
+        Returns:
+            node
+        """
+        if node_1[2] / node_2[2] <= 1 - float(args.tolerance): 
+            return node_2[0]
+        else:
+            if node_2[1] / node_1[1] > 1 - node_1[2] / node_2[2]: 
+                return node_1[0]
+            else:
+                return node_2[0]
+            return node_1[0]
+
+    def compare_nodes(self,node_1,node_2,args):
+        """
+        Description: Compare n and n-1 nodes and return the most significant of two nodes 
+
+        Args:
+            node_1 (tuple): A tuple with all informations for node 1
+            node_2 (tuple): A tuple with all informations for node 2 
+            args (obj): An object with all user arguments
+        Returns:
+            node 
+        """
+        
+        if node_1[1] > 0:
+            if node_2[1] / node_1[1] >= 1 - float(args.tolerance): # Find the ratio between PCIn-1 and PCIn and compare it with user input tolerance
+                if node_2[2] > node_1[2]:
+                    return self.choose_node(node_1,node_2,args) 
+                else:
+                    if node_1[2] > 0: 
+                        return self.choose_node(node_2,node_1,args)
+                    else:
+                        return node_1[0]
+        else:
+            if node_2[2] > node_1[2]:
+                return node_2[0]
+            else:
+                return node_1[0]
+
+        return node_1[0]
 
     def find_dominator(self,dict_of_objects,args):
         """
@@ -885,17 +939,18 @@ class Node:
                         has_dominator = True
                         break
 
-            if args.centrality:         
-                self.Nu_xPCIs_list.sort(key=lambda x: (x[1],x[2]),reverse=True)
-            else:
-                self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
+        if args.centrality:         
+            self.Nu_xPCIs_list.sort(key=lambda x: (x[1],x[2]),reverse=True)
+        else:
+            self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
 
-            if self.Nu_xPCIs_list[i][0] in connected_dominating_set.keys():
-                connected_dominating_set[self.Nu_xPCIs_list[i][0]] += 1
-            else:
-                connected_dominating_set[self.Nu_xPCIs_list[i][0]] = 1
-                add_dominator_to_all_nodes(self.Nu_xPCIs_list[i][0])
-                remove_nodes_from_dominatees([self.Nu_xPCIs_list[i][0]])
+        new_node = self.compare_nodes(self.Nu_xPCIs_list[0],self.Nu_xPCIs_list[1],args) if len(self.Nu_xPCIs_list) > 1 and args.centrality else self.Nu_xPCIs_list[0][0]
+        if new_node in connected_dominating_set.keys():
+            connected_dominating_set[new_node] += 1
+        else:
+            connected_dominating_set[new_node] = 1
+            add_dominator_to_all_nodes(new_node)
+            remove_nodes_from_dominatees([new_node])
                 
     def all_2_hop_has_dominator(self):
         """
@@ -934,10 +989,11 @@ class Node:
             self.Nu_xPCIs_list.sort(key=lambda x: (x[1],x[2]),reverse=True)
         else:
             self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
-
+        
         if not self.all_2_hop_has_dominator():
+            counter = 1
             for node in self.Nu_xPCIs_list:
-                nodeObj = dict_of_objects[node[0]]
+                nodeObj = dict_of_objects[self.compare_nodes(self.Nu_xPCIs_list[counter-1],self.Nu_xPCIs_list[counter],args)] if len(self.Nu_xPCIs_list) > 1 and args.centrality else dict_of_objects[node[0]]
                 if self.all_2_hop_has_dominator():
                     break
                 for _2_hop_neighbor in nodeObj.get_N_of_u():
@@ -952,6 +1008,7 @@ class Node:
                             if node[0] not in self.dominators:
                                 self.dominators.append(node[0])
                             break
+                counter += 1
 
     def print_number_of_dominators(self):
         """
