@@ -9,7 +9,7 @@ import ast
 import sys
 import re
 
-def choose_parser(path,args):
+def choose_parser(path:str,args:argparse.ArgumentParser):
     """
     Description: Choose parser for specific file
 
@@ -32,7 +32,7 @@ def choose_parser(path,args):
 
     return 2
 
-def create_dict_of_nodes(args):
+def create_dict_of_nodes(args:argparse.ArgumentParser):
     """
     Description: Create a dictionary with all nodes and their links
 
@@ -49,7 +49,7 @@ def create_dict_of_nodes(args):
                 if line[0] != "#" and len(line) > 1:
                     line = line.replace(", ",",")
                     item = re.split(' |\t',line)
-                    item = filter(None,item)
+                    item = list(filter(None,item))
                     neighbors = item[2].split(";")
                     for i in range(len(neighbors)):
                         neighbors[i] = ast.literal_eval(neighbors[i])
@@ -65,7 +65,7 @@ def create_dict_of_nodes(args):
 
     return links
 
-def create_structures(user_input,args):
+def create_structures(user_input:int,args:argparse.ArgumentParser):
     """
     Description: Create a dictionary with all objects of nodes in network
 
@@ -95,7 +95,7 @@ def create_structures(user_input,args):
             else:
                 write_process_message(args,2,False)
             start = time.time()
-        dict_of_objects = create_objects_of_nodes(links,user_input,args)
+        dict_of_objects = create_objects_of_nodes(links,args)
         
         # Release links
         links = None
@@ -116,7 +116,16 @@ def create_structures(user_input,args):
 
     return pci
 
-def find_number_of_layers(nodes):
+def find_number_of_layers(nodes:list):
+    """
+    Description: Find the number of all layers in the graph and return it
+
+    Args:
+        nodes (int): A list with all the nodes in the graph
+
+    Returns:
+        all_layers
+    """
     all_layers=[]
     for node in nodes:
         for layer in nodes[node]["interlinks"]:
@@ -124,7 +133,7 @@ def find_number_of_layers(nodes):
                 all_layers.append(layer)
     return all_layers
 
-def create_objects_of_nodes(nodes,user_input,args):
+def create_objects_of_nodes(nodes:dict,args:argparse.ArgumentParser): 
     """
     Description: Create all objects of nodes for this network
 

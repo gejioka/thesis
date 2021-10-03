@@ -22,7 +22,7 @@ import re
 
 sys.setrecursionlimit(150000)
 
-def check_arguments(parser,args):
+def check_arguments(parser:argparse.ArgumentParser,args:argparse.ArgumentParser):
     """
     Description: Check if all arguments exist and are correct
 
@@ -37,39 +37,30 @@ def check_arguments(parser,args):
         sys.exit(1)
     if not args.path:
         parser.error("Need to give an input network")
-        sys.exit(1)
     else:
         if not os.path.isfile(args.path):
             parser.error("Invalid input network. This file doesn't exist "+args.path+" "+os.getcwd())
-            sys.exit(1)
     if not args.algorithm:
         parser.error("Need to give an input algorithm")
-        sys.exit(1)
     else:
         if not (args.algorithm == "1" or args.algorithm == "2" or args.algorithm == "3"):
             parser.error("Invalid input algorithm. This algorithm doesn't exist.\n\t\t1.MILCOM\n\t\t2.NEW\n\t\t3.ROBUST")
-            sys.exit(1)
     if args.pci not in ["cl","x","new","la","al","ml","ls","sl","degree"]:
         parser.error("Invalid PCI. This PCI code doesn't exist.\n\t\tcl:\tCross-Layer PCI\n\t\tx:\tExhaustive PCI\
                         \n\t\tnew:\tNew PCI\n\t\tla:\tLayer-agnostic PCI\n\t\tal:\tAll-Layer PCI\n\t\tml:\tMinimal-Layer PCI\n\t\tls:\tLayer-Symetric\n\t\tsl:\tSingle-Layer PCI\
                             \n\t\tdegree:\tDegree of node")
-        sys.exit(1)
     if args.store_log and not args.log_file:
         parser.error("Need to define a filename to store log messages.")
-        sys.exit(1)
     if args.log:
         if args.logLevel:
-            if args.logLevel.upper() not in [a.upper() for a in LEVELS.keys()]:
-                parser.error("There in no log level {}. The list with all log levels is {}".format(args.logLevel.upper(),[name.upper() for name,obj in LEVELS.iteritems()]))
-                sys.exit(1)
+            if args.logLevel.upper() not in [a.upper() for a in list(LEVELS.keys())]:
+                parser.error("There in no log level {}. The list with all log levels is {}".format(args.logLevel.upper(),[name.upper() for name,obj in LEVELS.items()]))
     else:
         if args.logLevel:
             parser.error("Cannot pass level argument without enable logging.")
-            sys.exit(1)
     if args.rmcds:
         if int(args.k) <= 0 or int(args.m) <= 0:
             parser.error("k and m numbers must be greater than zero")
-            sys.exit(1)
 
     if not args.tolerance:
         args.tolerance = TOLERANCE
@@ -131,7 +122,7 @@ def get_args():
 
     return args
 
-def is_testing(args):
+def is_testing(args:argparse.ArgumentParser):
     """
     Description: Check if user run testing
 
@@ -148,12 +139,12 @@ def is_testing(args):
         pass
     return testing
 
-def check_input_algorithm(user_input):
+def check_input_algorithm(user_input:int):
     """
     Description: Check if user gives correct algorithm as input
 
     Args:
-        args(Object):   A variable with algorithm ID
+        args(int):   A variable with algorithm ID
     Returns:
         -
     """
@@ -173,7 +164,7 @@ def check_log():
     try:
         os.remove("../code/out.txt")
     except Exception as err:
-        print "An error occured: " + str(err)
+        print("An error occured: " + str(err))
 
 if __name__=="__main__":
     args = get_args()
@@ -197,11 +188,11 @@ if __name__=="__main__":
     # Solve problem with one of three algorithms
     pci = create_structures(user_input,args)
     if user_input == 1:
-        milcom_algorithm(pci,user_input,args)
+        milcom_algorithm(args)
     elif user_input == 2:
-        new_algorithm(user_input,args)
+        new_algorithm(args)
     elif user_input == 3:
-        robust_algorithm(user_input,args)
+        robust_algorithm(args)
     
     # Write results to file
     if testing:

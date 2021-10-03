@@ -1,8 +1,6 @@
+import argparse
 import matplotlib.pyplot as plt
 from itertools import groupby
-import numpy as np
-import pandas as pd 
-import random
 import sys
 import re
 
@@ -18,7 +16,7 @@ robust_results = [[None]*10]
 new_results = [[None]*10]
 #########################
 
-def get_next_limits(data_list,line_number):
+def get_next_limits(data_list:list,line_number:int):
     """
     Description: Return a tuple with the next limits (start_point, end_point) of a list
 
@@ -31,14 +29,13 @@ def get_next_limits(data_list,line_number):
     """
     return [i+line_number for i, s in enumerate(data_list[line_number:]) if '.txt' in s][:2]
 
-def find_layers_of_file(data_list,results_path,algorithm,line_number,limits):
+def find_layers_of_file(data_list:list,algorithm:str,limits:tuple):
     """
     Description: Find the number of layers of the input network
 
     Args:
         data_list (list): A list with all results of a specific algorithm
-        results_path(string): The path of the results for a specific algorithm
-        line_number(int): A variable that tells you where to start searching for the next input file in the results file
+        algorithm(str): A string which contains the requested algorithm
         limits(tuple): A tuple with the limits of the specific chunk (In this implementation the chunk is all the results of a specific input file in the results file)
     Returns:
         number_of_layers
@@ -48,7 +45,7 @@ def find_layers_of_file(data_list,results_path,algorithm,line_number,limits):
     
     return grouped_L[1]/2 if algorithm == "new" else grouped_L[1]
 
-def find_keys(data_list,limits,alg):
+def find_keys(data_list:list,limits:tuple,alg:str):
     """
     Description: Find the number and the names of keys for a specific algorithm
 
@@ -65,7 +62,7 @@ def find_keys(data_list,limits,alg):
     elif alg == "new":
         return [i.split(": ")[1].strip() for i in data_list[limits[0]:limits[1]] if "PCI" in i]
 
-def create_structure(results,algorithm,number_of_layers,layer,key):
+def create_structure(results:dict,algorithm:str,number_of_layers:int,layer:int,key:str):
     """
     Description: Create the structure with all results for all input files for a specific algorithm.
 
@@ -102,19 +99,19 @@ def create_structure(results,algorithm,number_of_layers,layer,key):
             results[0][number_of_layers][algorithm][key][layer] = {}
     else:
         if algorithm == "new":
-            if layer not in results[0][number_of_layers][algorithm].keys():
+            if layer not in list(results[0][number_of_layers][algorithm].keys()):
                 results[0][number_of_layers][algorithm][layer] = {}
-            if "CDS" not in results[0][number_of_layers][algorithm][layer].keys():
+            if "CDS" not in list(results[0][number_of_layers][algorithm][layer].keys()):
                 results[0][number_of_layers][algorithm][layer]["CDS"] = {}
-            if "MCDS" not in results[0][number_of_layers][algorithm][layer].keys():
+            if "MCDS" not in list(results[0][number_of_layers][algorithm][layer].keys()):
                 results[0][number_of_layers][algorithm][layer]["MCDS"] = {}
         if algorithm == "robust":
-            if key not in results[0][number_of_layers][algorithm].keys():
+            if key not in list(results[0][number_of_layers][algorithm].keys()):
                 results[0][number_of_layers][algorithm][key] = {}
-            if layer not in results[0][number_of_layers][algorithm][key].keys():
+            if layer not in list(results[0][number_of_layers][algorithm][key].keys()):
                 results[0][number_of_layers][algorithm][key][layer] = {}
 
-def construct_robust_final_structure(data_list,limits,algorithm,key,layer,backbone,number_of_layers):
+def construct_robust_final_structure(data_list:list,limits:tuple,algorithm:str,key:str,layer:int,backbone:str,number_of_layers:int):
     """
     Description: Construct the final structure for results of robust algorithm
 
@@ -133,26 +130,26 @@ def construct_robust_final_structure(data_list,limits,algorithm,key,layer,backbo
     try:
         create_structure(robust_results,algorithm,number_of_layers,layer,key)
 
-        index = next_data[0:limits[1]].index([i.strip() for i in next_data[0:limits[1]] if "k: "+str(key[0]) == i.strip()][0])
+        index = next_data[0:limits[1]].index(next([i.strip() for i in next_data[0:limits[1]] if "k: "+str(key[0]) == i.strip()][0]))
         next_data = next_data[index+1:limits[1]]
         
-        index = next_data[0:limits[1]].index([i.strip() for i in next_data[0:limits[1]] if "m: "+str(key[1]) == i.strip()][0])
+        index = next_data[0:limits[1]].index(next([i.strip() for i in next_data[0:limits[1]] if "m: "+str(key[1]) == i.strip()][0]))
         next_data = next_data[index+1:limits[1]]
         
         if backbone == "MCDS":
-            index = next_data[index+1:limits[1]].index([i.strip() for i in next_data if "MCDS" in i.strip()][0])
+            index = next_data[index+1:limits[1]].index(next([i.strip() for i in next_data if "MCDS" in i.strip()][0]))
             next_data = next_data[index+1:limits[1]]
         
-        if backbone not in robust_results[0][number_of_layers][algorithm][key][layer].keys():
+        if backbone not in list(robust_results[0][number_of_layers][algorithm][key][layer].keys()):
             robust_results[0][number_of_layers][algorithm][key][layer][backbone] = [int(next_data[0:number_of_layers][layer].split(" ")[1])]
         else:
             robust_results[0][number_of_layers][algorithm][key][layer][backbone].append(int(next_data[0:number_of_layers][layer].split(" ")[1]))
     
     except Exception as err:
-        print err
+        print(err)
     
 
-def construct_new_final_structure(data_list,limits,algorithm,key,layer,number_of_layers):
+def construct_new_final_structure(data_list:list,limits:tuple,algorithm:str,key:str,layer:int,number_of_layers:int):
     """
     Description: Construct the final structure for results of new algorithm
 
@@ -170,27 +167,27 @@ def construct_new_final_structure(data_list,limits,algorithm,key,layer,number_of
 
     try:
         create_structure(new_results,algorithm,number_of_layers,layer,key)
-        next_data = next_data[next_data[0:limits[1]].index([i.strip() for i in next_data[0:limits[1]] if key in i.strip()][0])+1:limits[1]]
+        next_data = next_data[next_data[0:limits[1]].index(next([i.strip() for i in next_data[0:limits[1]] if key in i.strip()][0]))+1:limits[1]]
         
-        if "CDS" not in new_results[0][number_of_layers][algorithm][layer].keys():
+        if "CDS" not in list(new_results[0][number_of_layers][algorithm][layer].keys()):
             new_results[0][number_of_layers][algorithm][layer]["CDS"] = {}
-        if key not in new_results[0][number_of_layers][algorithm][layer]["CDS"].keys():
+        if key not in lis(new_results[0][number_of_layers][algorithm][layer]["CDS"].keys()):
             new_results[0][number_of_layers][algorithm][layer]["CDS"][key] = [int(next_data[0:number_of_layers][layer].split(" ")[1])]             
         else:
             new_results[0][number_of_layers][algorithm][layer]["CDS"][key].append(int(next_data[0:number_of_layers][layer].split(" ")[1]))
         
         next_data = next_data[number_of_layers:limits[1]]
         
-        if "MCDS" not in new_results[0][number_of_layers][algorithm][layer].keys():
+        if "MCDS" not in list(new_results[0][number_of_layers][algorithm][layer].keys()):
             new_results[0][number_of_layers][algorithm][layer]["MCDS"] = {}
-        if key not in new_results[0][number_of_layers][algorithm][layer]["MCDS"].keys():
+        if key not in list(new_results[0][number_of_layers][algorithm][layer]["MCDS"].keys()):
             new_results[0][number_of_layers][algorithm][layer]["MCDS"][key] = [int(next_data[0:number_of_layers][layer].split(" ")[1])]
         else:
             new_results[0][number_of_layers][algorithm][layer]["MCDS"][key].append(int(next_data[0:number_of_layers][layer].split(" ")[1]))
     except Exception as err:
-        print err
+        print(err)
 
-def init(results_path,alg):
+def init(results_path:str,alg:argparse.ArgumentParser):
     """
     Description: Initialize and construct the final structure
 
@@ -226,7 +223,7 @@ def init(results_path,alg):
 
         return final_structure
 
-def bar_plot(ax, data, fig=None, colors=None, total_width=0.8, single_width=1, legend=True):
+def bar_plot(ax:object, data:dict, fig:object=None, colors:object=None, total_width:float=0.8, single_width:int=1):
     """Draws a bar plot with multiple bars per data point.
 
     Parameters
@@ -273,7 +270,7 @@ def bar_plot(ax, data, fig=None, colors=None, total_width=0.8, single_width=1, l
     
     # Iterate over all data
     bars = []
-    for i, (name, values) in enumerate(data.items()):
+    for i, (_, values) in enumerate(data.items()):
         # The offset in x direction of that bar
         x_offset = (i - n_bars / 2) * bar_width + bar_width / 2
 
@@ -283,11 +280,11 @@ def bar_plot(ax, data, fig=None, colors=None, total_width=0.8, single_width=1, l
         bars.append(bar[0])
     
     if fig != None:
-        fig.legend(bars,data.keys(), loc='upper right')
+        fig.legend(bars,list(data.keys()), loc='upper right')
     
     return fig
 
-def get_plot_data(backbone,alg,results):
+def get_plot_data(backbone:str,alg:str,results:dict):
     """
     Description: Return data to plot
 
@@ -301,22 +298,22 @@ def get_plot_data(backbone,alg,results):
     plot_data = {}
     
     if alg == "new":
-        for key in results.keys():
-            if key not in plot_data.keys():
+        for key in list(results.keys()):
+            if key not in list(plot_data.keys()):
                 plot_data[key] = {}
-            for pci in results[key][backbone].keys():
-                if pci not in plot_data[key].keys():
+            for pci in list(results[key][backbone].keys()):
+                if pci not in list(plot_data[key].keys()):
                     plot_data[key][pci] = results[key][backbone][pci]
     elif alg == "robust":
-        for key in results.keys():
-            for layer in results[key].keys():
-                if layer not in plot_data.keys():
+        for key in list(results.keys()):
+            for layer in list(results[key].keys()):
+                if layer not in list(plot_data.keys()):
                     plot_data[layer] = {}
                 plot_data[layer]["k: "+key[0]+", m: "+key[1]] = results[key][layer][backbone]
                     
     return plot_data
 
-def plot_results(alg,res):
+def plot_results(alg:str,res:dict):
     """
     Description: Plot the results for a specific algorithm
 
@@ -337,7 +334,7 @@ def plot_results(alg,res):
             fig.text(0.04, 0.5, "CDS", va="center", rotation="vertical")
             
             counter = 0
-            for key in plot_data.keys():
+            for key in list(plot_data.keys()):
                 if counter == 0:
                     fig = bar_plot(axs[counter],plot_data[key],fig)
                 else:

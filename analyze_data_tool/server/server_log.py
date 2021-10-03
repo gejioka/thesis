@@ -32,7 +32,7 @@ def configure_logging():
     logger.addHandler(handler)
     logger.setLevel(level=LEVELS.get("debug",logging.NOTSET))
 
-def write_log(message,level):
+def write_log(message:str,level:str):
     """
     Description: Method that use server to write log messages
 

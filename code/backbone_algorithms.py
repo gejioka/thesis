@@ -11,7 +11,7 @@ MAX_SEQUENSE = 3
 ERROR_CODE = -1
 threshold = 20
 
-def last_step(algorithm,args):
+def last_step(algorithm:str,args:argparse.ArgumentParser):
     """
     Description: Check if DS is connected, minimize it and plot it
 
@@ -21,6 +21,7 @@ def last_step(algorithm,args):
     Returns:
         -
     """
+    
     # Check if DS is connected
     if args.algorithm == "1" or args.algorithm == "2":
         if args.time:
@@ -29,38 +30,40 @@ def last_step(algorithm,args):
             else:
                 write_process_message(args,4,False)
             start = time.time()
-
-        connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
-        if args.time:
-            end = time.time()
-            write_message(args,"Time running process 4: {}".format(end-start),"INFO",True)
-        is_connected = False
-        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
-            write_message(args,"Dominating set (DS) is connected.","INFO")
-            is_connected = True
-        else:
-            write_message(args,"Dominating set (DS) is not connected.","INFO")
-        
-        if algorithm == 2:
-            if args.time:
-                if args.mcds:
-                    write_process_message(args,5,True)
-                else:
-                    write_process_message(args,5,False)
-                start = time.time()
-            results = poll_nodes_for_dominators({},args)
-            non_significant_nodes = [k for k,v in results[0].iteritems() if int(v) == 0]
-            write_message(args,"[+] Create list with non significant nodes","INFO")
-            write_message(args,"List of non significant list created. Nodes induced to list are [%s]"%", ".join(non_significant_nodes),"DEBUG")
-            if not is_connected:
-                add_next_dominators(results[1],args)
-                remove_non_significant_nodes(non_significant_nodes,args)
-            else:
-                add_next_dominators(results[1],args)
-                remove_non_significant_nodes(non_significant_nodes,args)
+        try:
+            connectivity_list = check_connectivity(dict_of_objects[list(connected_dominating_set.keys())[0]],[],connected_dominating_set)
             if args.time:
                 end = time.time()
-                write_message(args,"Time running process 5: {}".format(end-start),"INFO",True)
+                write_message(args,"Time running process 4: {}".format(end-start),"INFO",True)
+            is_connected = False
+            if len(set(connectivity_list) & set(list(dict_of_objects.keys()))) == len(connected_dominating_set):
+                write_message(args,"Dominating set (DS) is connected.","INFO")
+                is_connected = True
+            else:
+                write_message(args,"Dominating set (DS) is not connected.","INFO")
+
+            if algorithm == 2:
+                if args.time:
+                    if args.mcds:
+                        write_process_message(args,5,True)
+                    else:
+                        write_process_message(args,5,False)
+                    start = time.time()
+                results = poll_nodes_for_dominators({},args)
+                non_significant_nodes = [k for k,v in results[0].items() if int(v) == 0]
+                write_message(args,"[+] Create list with non significant nodes","INFO")
+                write_message(args,"List of non significant list created. Nodes induced to list are [%s]"%", ".join(non_significant_nodes),"DEBUG")
+                if not is_connected:
+                    add_next_dominators(results[1],args)
+                    remove_non_significant_nodes(non_significant_nodes,args)
+                else:
+                    add_next_dominators(results[1],args)
+                    remove_non_significant_nodes(non_significant_nodes,args)
+                if args.time:
+                    end = time.time()
+                    write_message(args,"Time running process 5: {}".format(end-start),"INFO",True)
+        except Exception as err:
+            print(err)
             
     # Find Minimum Connected Dominating Set (MCDS)
     if args.mcds:
@@ -92,16 +95,19 @@ def last_step(algorithm,args):
                 write_message(args,"Time running process 4: {}".format(end-start),"INFO",True)
     
     if args.algorithm == "1" or args.algorithm == "2":
-        connectivity_list = check_connectivity(dict_of_objects[connected_dominating_set.keys()[0]],[],connected_dominating_set)
-        if len(set(connectivity_list) & set(dict_of_objects.keys())) == len(connected_dominating_set):
-            write_message(args,"Dominating set (DS) is connected.","INFO")
-        else:
-            write_message(args,"Dominating set (DS) is not connected.","INFO")
+        try:
+            connectivity_list = check_connectivity(dict_of_objects[list(connected_dominating_set.keys())[0]],[],connected_dominating_set)
+            if len(set(connectivity_list) & set(list(dict_of_objects.keys()))) == len(connected_dominating_set):
+                write_message(args,"Dominating set (DS) is connected.","INFO")
+            else:
+                write_message(args,"Dominating set (DS) is not connected.","INFO")
+        except Exception as err:
+            print(err)
 
     plotting(args,True)
     all_dominees_have_dominators()
 
-def plotting(args,input_graph=False):
+def plotting(args:argparse.ArgumentParser,input_graph:bool=False):
     """
     Description: Plot network
 
@@ -128,7 +134,7 @@ def plotting(args,input_graph=False):
             if args.plotting:
                 plot_input_graph()
 
-def preprocess(dict_of_objects,algorithm,args):
+def preprocess(dict_of_objects:dict,algorithm:str,args:argparse.ArgumentParser):
     """
     Description: Preprocess phase 
 
@@ -155,9 +161,8 @@ def preprocess(dict_of_objects,algorithm,args):
         start = time.time()
 
     if algorithm == "3":
-        set_list_of_dominatees([(i,0.0,0.0) for i in dict_of_objects.keys()])
+        set_list_of_dominatees([(i,0.0,0.0) for i in list(dict_of_objects.keys())])
 
-    # for name, node in dict_of_objects.iteritems():
     write_message(args,"Create object for each node...","INFO")
     for name, node in tqdm(dict_of_objects.items()):
         if args.pci == "cl":
@@ -182,11 +187,11 @@ def preprocess(dict_of_objects,algorithm,args):
     if algorithm == "3":
         # Every node decides whether it is dominator or dominatee
         write_message(args,"Start phase 2","INFO")
-        for name, node in dict_of_objects.iteritems():
+        for name, node in tqdm(dict_of_objects.items()):
             node.node_decision(args)
     return start
 
-def main_process(dict_of_objects,algorithm,args,user_input):
+def main_process(dict_of_objects:dict,algorithm:str,args:argparse.ArgumentParser):
     """
     Description: Plot network
 
@@ -202,8 +207,8 @@ def main_process(dict_of_objects,algorithm,args,user_input):
 
     if algorithm != "3":
         # Add dominators to CDS
-        for name, node in dict_of_objects.iteritems():
-            node.add_node_in_CDS(user_input,args)
+        for _ , node in tqdm(dict_of_objects.items()):
+            node.add_node_in_CDS(args)
             message = "Node with name {} has {} dominators. The dominators are [%s]"%", ".join([dict_of_objects[a].get_name() for a in node.get_dominators()])
             message = message.format(node.get_name(),len(node.get_dominators()))
             write_message(args,message,"DEBUG")
@@ -242,10 +247,11 @@ def main_process(dict_of_objects,algorithm,args,user_input):
             if previous_CDS_len != len(connected_dominating_set):
                 vertex_connectivity = int(remain_on_DS(args,vertex_connectivity,first_time,dominators))
             else:
-                if previous_vertex_connectivity != vertex_connectivity:
-                    add_dominatee_to_CDS(args)
-                else:
-                    add_dominatee_to_CDS(args,True)
+                add_dominatee_to_CDS(args)
+                # if previous_vertex_connectivity != vertex_connectivity:
+                #     add_dominatee_to_CDS(args)
+                # else:
+                #     add_dominatee_to_CDS(args)
                 
             # Update variables
             first_time = False     
@@ -257,7 +263,7 @@ def main_process(dict_of_objects,algorithm,args,user_input):
             if all_dominators_have_k_dominators(int(args.k)) and all_dominees_have_m_dominators(int(args.m)) and g._is_k_connected(args):
                 break
 
-def milcom_algorithm(pci,user_input,args):
+def milcom_algorithm(args:argparse.ArgumentParser):
     """
     Description: Create a CDS for this network
 
@@ -270,7 +276,7 @@ def milcom_algorithm(pci,user_input,args):
     """ 
     start = preprocess(dict_of_objects,args.algorithm,args)
 
-    main_process(dict_of_objects,args.algorithm,args,user_input)
+    main_process(dict_of_objects,args.algorithm,args)
 
     if args.time:
         end = time.time()
@@ -280,7 +286,7 @@ def milcom_algorithm(pci,user_input,args):
     
     last_step(1,args)
 
-def new_algorithm(user_input,args):
+def new_algorithm(args:argparse.ArgumentParser):
     """
     Description: Create a CDS for this network
 
@@ -292,7 +298,7 @@ def new_algorithm(user_input,args):
     """
     start = preprocess(dict_of_objects,args.algorithm,args)
 
-    main_process(dict_of_objects,args.algorithm,args,user_input)
+    main_process(dict_of_objects,args.algorithm,args)
 
     if args.time:
         end = time.time()
@@ -302,7 +308,7 @@ def new_algorithm(user_input,args):
 
     last_step(2,args)
 
-def k_connected(args):
+def k_connected(args:argparse.ArgumentParser):
     """
     Description: Check if network is k-connected
 
@@ -318,7 +324,7 @@ def k_connected(args):
         write_message(args,"This network is {}-connected.".format(network_connectivity),"INFO",args.testing)
         exit(1)
 
-def robust_algorithm(user_input,args):
+def robust_algorithm(args:argparse.ArgumentParser):
     """
     Description: Create a CDS for this network
 
@@ -330,7 +336,7 @@ def robust_algorithm(user_input,args):
     """
     start = preprocess(dict_of_objects,args.algorithm,args)
     
-    main_process(dict_of_objects,args.algorithm,args,user_input)
+    main_process(dict_of_objects,args.algorithm,args)
     
     if args.time:
         end = time.time()

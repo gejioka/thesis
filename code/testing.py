@@ -8,7 +8,7 @@ import re
 
 _root_folder = "Experiment Networks"
 
-def append_file_to_file(src_file,dest_file):
+def append_file_to_file(src_file:str,dest_file:str):
     file_data=""
     with open(src_file,"r") as f:
         for line in f:
@@ -22,7 +22,7 @@ def append_file_to_file(src_file,dest_file):
 def find_attempt(filename):
     return filename[filename.find("NETWORKS_REPOSITORY_")+20]
 
-def write_results(network_type,backbone_type,args,string_to_write):
+def write_results(network_type:str,backbone_type:str,args:argparse.ArgumentParser,string_to_write:str):
     metrics_dict = {"degree"        : "Degree",
                         "cl"        : "Cross-Layer PCI",
                         "x"         : "Exhaustive PCI",
@@ -67,7 +67,7 @@ def write_results(network_type,backbone_type,args,string_to_write):
         write_message(args,err,"ERROR")
         sys.exit(1)
 
-def testing_function(args):
+def testing_function(args:argparse.ArgumentParser):
     string_to_write = ""
     backbone_type = "CDS" if args.cds else ("MCDS" if args.mcds else "RMCDS")
     

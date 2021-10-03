@@ -4,7 +4,7 @@ from global_variables import *
 
 logger = None
 
-def configure_logging(args):
+def configure_logging(args:argparse.ArgumentParser):
     """
     Description: Configure logging
 
@@ -28,7 +28,7 @@ def configure_logging(args):
     else:
         logger.setLevel(level=LEVELS.get("debug",logging.NOTSET))
 
-def write_process_message(args,process_number,mcds):
+def write_process_message(args:argparse.ArgumentParser,process_number:int,mcds:bool):
     """
     Description: Write log message for algorithm process
 
@@ -54,7 +54,7 @@ def write_process_message(args,process_number,mcds):
         else:
             write_message(args,"Process "+str(process_number)+" of 3","INFO",True)
 
-def write_message(args,message,message_type,time_flag=False):
+def write_message(args:argparse.ArgumentParser,message:str,message_type:str,time_flag=False):
     """
     Description: Write log message to console
 

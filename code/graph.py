@@ -2,17 +2,19 @@ from networkx.algorithms.connectivity import minimum_st_node_cut
 from global_variables import *
 from network_tools import *
 from log import *
+from tqdm import tqdm
 import random
 import operator
 import networkx as nx
 import matplotlib
-# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+# matplotlib.use('Agg')
+
 
 G = None
 new_G = None
 
-def initialize_graph(new=False):
+def initialize_graph(new:bool=False):
     """
     Description: Initialize a new graph object
 
@@ -30,7 +32,7 @@ def initialize_graph(new=False):
     else:
         new_G = nx.Graph()
 
-def add_nodes(new=False,args=None):
+def add_nodes(new:bool=False,args:argparse.ArgumentParser=None):
     """
     Description: Add nodes to graph
 
@@ -45,7 +47,7 @@ def add_nodes(new=False,args=None):
 
     edges = []
     if not new:
-        for name, node in dict_of_objects.iteritems():
+        for name, node in tqdm(dict_of_objects.items()):
             for neighbor in node.get_N_of_u():
                 try:
                     if neighbor not in G.neighbors(node.get_name()):
@@ -61,7 +63,7 @@ def add_nodes(new=False,args=None):
     if args != None:
         write_message(args,"[+] All edges added to graph.","INFO")
     
-def construct_new_graph(edges,first_time,args=None):
+def construct_new_graph(edges:list,first_time:int,args:argparse.ArgumentParser=None):
     """
     Description: Construct new graph only with nodes of CDS
 
@@ -80,7 +82,7 @@ def construct_new_graph(edges,first_time,args=None):
     else:
         new_G.add_edges_from(edges)
 
-def add_node(node,new=True):
+def add_node(node:str,new:bool=True):
     """
     Description: Add node to network
 
@@ -104,12 +106,12 @@ def add_node(node,new=True):
     else:
         G.add_edges_from(edges)
 
-def return_subgraph(list_of_nodes):
+def return_subgraph(list_of_nodes:list):
     global G
 
     return G.subgraph(list_of_nodes)
 
-def remove_node(node,new=True):
+def remove_node(node:str,new:bool=True):
     """
     Description: Remove node from network
 
@@ -127,7 +129,7 @@ def remove_node(node,new=True):
     else:
         G.remove_node(node)
 
-def remove_nodes_from_graph(nodes,new=True):
+def remove_nodes_from_graph(nodes:list,new:bool=True):
     """
     Description: Remove nodes from graph.
 
@@ -143,7 +145,7 @@ def remove_nodes_from_graph(nodes,new=True):
         else:
             remove_node(dominator,False)
 
-def check_k_connectivity(args,source,destination):
+def check_k_connectivity(args:argparse.ArgumentParser,source:str,destination:str):
     """
     Description: Check if network is k-connected
 
@@ -176,7 +178,7 @@ def check_k_connectivity(args,source,destination):
     
     return len(maximum_disjoint_paths)
 
-def find_node_connectivity(new=False):
+def find_node_connectivity(new:bool=False):
     """
     Description: Find connectivity of network
 
@@ -196,7 +198,7 @@ def find_node_connectivity(new=False):
     
     return node_connectivity
 
-def find_minimum_vertex_cut(new=False,s=None,t=None):
+def find_minimum_vertex_cut(new:bool=False,s:tuple=None,t:tuple=None):
     """
     Description: Find minimum vertex cut
 
@@ -216,7 +218,7 @@ def find_minimum_vertex_cut(new=False,s=None,t=None):
         return nx.minimum_node_cut(new_G)
     return None
 
-def _is_k_connected(args):
+def _is_k_connected(args:argparse.ArgumentParser):
     """
     Description: Check if network is k-connected
 
@@ -231,7 +233,7 @@ def _is_k_connected(args):
         return nx.is_k_edge_connected(new_G, k=3)
     return nx.is_k_edge_connected(new_G, k=int(args.k))
 
-def check_dominators_connectivity(args,n,node_type):
+def check_dominators_connectivity(args:argparse.ArgumentParser,n:int,node_type:str):
     """
     Description: Check if all dominators are k-connected
 
@@ -256,19 +258,19 @@ def check_dominators_connectivity(args,n,node_type):
         for node in results:
             node_obj = dict_of_objects[node]
             for neighbor in node_obj.get_N_of_u():
-                if neighbor not in connected_dominating_set.keys():
-                    if neighbor not in candidate_dominators.keys():
+                if neighbor not in list(connected_dominating_set.keys()):
+                    if neighbor not in list(candidate_dominators.keys()):
                         candidate_dominators[neighbor] = 1
                     else:
                         candidate_dominators[neighbor] += 1
         candidate_dominators = dict(sorted(candidate_dominators.items(), key=operator.itemgetter(1)))
 
         cdominators = []
-        for candidate_dominator in candidate_dominators.keys():
+        for candidate_dominator in list(candidate_dominators.keys()):
             dominator_obj = dict_of_objects[candidate_dominator]
             counter = 0
             for neighbor in dominator_obj.get_N_of_u():
-                if neighbor in connected_dominating_set.keys():
+                if neighbor in list(connected_dominating_set.keys()):
                     counter += 1
             
             if counter >= int(args.k):
@@ -281,7 +283,7 @@ def check_dominators_connectivity(args,n,node_type):
         
         return cdominators
 
-def check_constraint5(args):
+def check_constraint5(args:argparse.ArgumentParser):
     """
     Description: Check if constraint 5 is satisfied
 
@@ -308,7 +310,7 @@ def check_constraint5(args):
     
     return dominators
 
-def remain_on_DS(args,vertex_connectivity,first_time,new_nodes):
+def remain_on_DS(args:argparse.ArgumentParser,vertex_connectivity:float,first_time:bool,new_nodes:list):
     """
     Description: Decide which nodes will remain in CDS
 
@@ -330,7 +332,7 @@ def remain_on_DS(args,vertex_connectivity,first_time,new_nodes):
         except Exception:
             pass
         for node in new_nodes:
-            for dominator in connected_dominating_set.keys():
+            for dominator in list(connected_dominating_set.keys()):
                 if dominator not in dict_of_objects[node].get_N_of_u():
                     vertex_connectivity = find_minimum_vertex_cut(True,node,dominator)
                     
@@ -366,7 +368,7 @@ def remain_on_DS(args,vertex_connectivity,first_time,new_nodes):
 
     return K
 
-def poll_nodes_for_dominators(dict_of_next_dominators,args):
+def poll_nodes_for_dominators(dict_of_next_dominators:dict,args:argparse.ArgumentParser):
     """
     Description: All nodes in connected dominating set poll other nodes to join
 
@@ -384,12 +386,12 @@ def poll_nodes_for_dominators(dict_of_next_dominators,args):
     write_message(args,"[!] Try to add most significant nodes to DS and remove non significant nodes.","INFO")
     for i in range(counter,len(connected_dominating_set)):
         for j in range(counter+1,len(connected_dominating_set)):
-            node_obj = dict_of_objects[connected_dominating_set.keys()[i]]
-            if connected_dominating_set.keys()[j] not in node_obj.get_N_of_u():
-                paths = list(nx.all_shortest_paths(G,connected_dominating_set.keys()[i],connected_dominating_set.keys()[j]))
+            node_obj = dict_of_objects[list(connected_dominating_set.keys())[i]]
+            if list(connected_dominating_set.keys())[j] not in node_obj.get_N_of_u():
+                paths = list(nx.all_shortest_paths(G,list(connected_dominating_set.keys())[i],list(connected_dominating_set.keys())[j]))
                 for path in paths:
                     message = "Sortest path from {} --> {} is [%s]"%", ".join(path)
-                    message = message.format(dict_of_objects[connected_dominating_set.keys()[i]].get_name(),dict_of_objects[connected_dominating_set.keys()[j]].get_name())
+                    message = message.format(dict_of_objects[list(connected_dominating_set.keys())[i]].get_name(),dict_of_objects[list(connected_dominating_set.keys())[j]].get_name())
                     write_message(args,message,"DEBUG")
                     for node in path[1:len(path)-1]:
                         write_message(args,"[!] Check significance of node with name {}".format(node),"INFO")
@@ -417,7 +419,7 @@ def poll_nodes_for_dominators(dict_of_next_dominators,args):
     
     return (dict_of_significant_nodes,dict_of_next_dominators) 
 
-def nodes_to_remove(connected_dominating_set,percentage):
+def nodes_to_remove(connected_dominating_set:dict,percentage:int):
     """
     Description: Reutn the number of node to be removed from network
 
@@ -430,7 +432,7 @@ def nodes_to_remove(connected_dominating_set,percentage):
     return int(round((len(connected_dominating_set)*percentage)/100.0))
 
 
-def check_robustness(connected_dominating_set):
+def check_robustness(connected_dominating_set:dict,args:argparse.ArgumentParser):
     """
     Description: Check the robustness of the backbone
 
@@ -443,14 +445,14 @@ def check_robustness(connected_dominating_set):
 
     number_of_nodes = nodes_to_remove(connected_dominating_set,20)
     for i in range(number_of_nodes):
-        connected_dominating_set.pop(random.choice(connected_dominating_set.keys()))
+        connected_dominating_set.pop(random.choice(list(connected_dominating_set.keys())))
         if all_dominees_have_dominators():
-            print "Have removed " + str(i+1) + " nodes"
+            write_message(args, "Have removed " + str(i+1) + " nodes", "DEBUG")
         else:
-            print "Network disconnected"
+            write_message(args, "Network disconnected", "DEBUG")
             break
 
-def plot_local_graph(network):
+def plot_local_graph(network:nx.Graph):
     """
     Description: Create and plot local network
 
@@ -463,7 +465,7 @@ def plot_local_graph(network):
     nx.draw(network,with_labels = True)
     plt.show()
 
-def plot_input_graph(new=False):
+def plot_input_graph(new:bool=False):
     """
     Description: Create and plot input network
 
@@ -480,10 +482,11 @@ def plot_input_graph(new=False):
         try:
             nx.draw(G, with_labels = True)
         except Exception as err:
-            print err
+            print(err)
     else:
         try:
-            nx.draw(new_G,with_labels = True)
+            nx.draw(new_G, with_labels = True)
         except Exception as err:
-            print err
-    plt.show()
+            print(err)
+    
+    plt.plot()

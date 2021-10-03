@@ -6,7 +6,7 @@ from graph import *
 from global_variables import *
 
 class Node:
-    def __init__(self,name):
+    def __init__(self:object,name:str):
         """
         Description: Initialize object
 
@@ -39,7 +39,7 @@ class Node:
 
         self.Ns_of_u_dict = {1:self.N_of_u,2:self.N2_of_u,3:self.N3_of_u}
        
-    def get_name(self):
+    def get_name(self:object):
         """
         Description: Return name of node
 
@@ -51,7 +51,7 @@ class Node:
         """
         return self.name
     
-    def set_layer(self,layer):
+    def set_layer(self:object,layer:int):
         """
         Description: Set layer of node
 
@@ -63,7 +63,7 @@ class Node:
         """
         self.layer = layer
     
-    def get_layer(self):
+    def get_layer(self:object):
         """
         Description: Return layer of node
 
@@ -75,7 +75,7 @@ class Node:
         """
         return self.layer
     
-    def set_node_degree(self,node_degree):
+    def set_node_degree(self:object,node_degree:int):
         """
         Description: Set degree of node
 
@@ -87,7 +87,7 @@ class Node:
         """
         self.node_degree = node_degree
 
-    def get_node_degree(self):
+    def get_node_degree(self:object):
         """
         Description: Return node degree
 
@@ -99,7 +99,7 @@ class Node:
         """
         return self.node_degree
 
-    def find_N_of_u(self,intralinks,interlinks):
+    def find_N_of_u(self:object,intralinks:list,interlinks:list):
         """
         Description: Find N(u) where u is specific node
 
@@ -116,7 +116,7 @@ class Node:
         self.N_of_u = self.remove_duplicate(self.N_of_u)
         self.Ns_of_u_dict[1] = self.N_of_u
 
-    def set_N_of_u(self,N_of_u):
+    def set_N_of_u(self:object,N_of_u:list):
         """
         Description: Set N(u)
 
@@ -128,7 +128,7 @@ class Node:
         """
         self.N_of_u = N_of_u
     
-    def get_N_of_u(self):
+    def get_N_of_u(self:object):
         """
         Description: Return N(u) where u is specific node
 
@@ -140,7 +140,7 @@ class Node:
         """
         return self.N_of_u
     
-    def set_intralinks(self,intralinks):
+    def set_intralinks(self:object,intralinks:list):
         """
         Description: Set list with intra-layer links 
 
@@ -152,7 +152,7 @@ class Node:
         """
         self.intralinks = intralinks
     
-    def get_intralinks(self):
+    def get_intralinks(self:object):
         """
         Description: Return list with intra-layer links
 
@@ -163,7 +163,7 @@ class Node:
         """
         return self.intralinks
 
-    def set_interlinks(self,interlinks):
+    def set_interlinks(self:object,interlinks:list):
         """
         Description: Set list with inter-layer links
 
@@ -175,7 +175,7 @@ class Node:
         """
         self.interlinks = interlinks
     
-    def get_interlinks(self):
+    def get_interlinks(self:object):
         """
         Description: Return list of inter-layer links
 
@@ -187,7 +187,7 @@ class Node:
         """
         return self.interlinks
     
-    def set_localPCI(self,localPCI):
+    def set_localPCI(self:object,localPCI:int):
         """
         Description: Set local PCI of this node
 
@@ -199,7 +199,7 @@ class Node:
         """
         self.localPCI = localPCI
     
-    def get_localPCI(self):
+    def get_localPCI(self:object):
         """
         Description: Return local PCI of this node
 
@@ -211,7 +211,7 @@ class Node:
         """
         return self.localPCI
 
-    def set_xPCI(self,xPCI_value):
+    def set_xPCI(self:object,xPCI_value:float):
         """
         Description: Set xPCI value of node
 
@@ -223,7 +223,7 @@ class Node:
         """
         self.xPCI_value = xPCI_value
     
-    def get_xPCI(self):
+    def get_xPCI(self:object):
         """
         Description: Return xPCI value of node
 
@@ -235,7 +235,7 @@ class Node:
         """
         return self.xPCI_value
     
-    def set_xPCI_nodes(self,xPCI_nodes):
+    def set_xPCI_nodes(self:object,xPCI_nodes:list):
         """
         Description: Set xPCI nodes list
 
@@ -247,7 +247,7 @@ class Node:
         """
         self.xPCI_nodes = xPCI_nodes
     
-    def get_xPCI_nodes(self):
+    def get_xPCI_nodes(self:object):
         """
         Description: Return a list with all nodes participate xPCI of this node
 
@@ -259,7 +259,7 @@ class Node:
         """
         return self.xPCI_nodes
     
-    def set_laPCI(self,laPCI):
+    def set_laPCI(self:object,laPCI:int):
         """
         Description: Set laPCI for this node.
 
@@ -271,7 +271,7 @@ class Node:
         """
         self.laPCI = laPCI
 
-    def get_laPCI(self):
+    def get_laPCI(self:object):
         """
         Description: Return laPCI for this node
 
@@ -283,7 +283,7 @@ class Node:
         """
         return self.laPCI
 
-    def set_alPCI(self,alPCI):
+    def set_alPCI(self:object,alPCI:int):
         """
         Description: Set alPCI for this node.
 
@@ -295,7 +295,7 @@ class Node:
         """
         self.alPCI = alPCI
     
-    def get_alPCI(self):
+    def get_alPCI(self:object):
         """
         Description: Return alPCI for this node
 
@@ -307,7 +307,7 @@ class Node:
         """
         return self.alPCI
 
-    def set_mlPCI(self,mlPCI):
+    def set_mlPCI(self:object,mlPCI:int):
         """
         Description: Set mlPCI for this node.
 
@@ -319,7 +319,7 @@ class Node:
         """
         self.mlPCI = mlPCI
 
-    def get_mlPCI(self):
+    def get_mlPCI(self:object):
         """
         Description: Return mlPCI for this node
 
@@ -331,7 +331,7 @@ class Node:
         """
         return self.mlPCI
 
-    def set_lsPCI(self,lsPCI):
+    def set_lsPCI(self:object,lsPCI:int):
         """
         Description: Set lsPCI for this node.
 
@@ -343,7 +343,7 @@ class Node:
         """
         self.lsPCI = lsPCI
 
-    def get_lsPCI(self):
+    def get_lsPCI(self:object):
         """
         Description: Return lsPCI for this node
 
@@ -355,7 +355,7 @@ class Node:
         """
         return self.lsPCI
 
-    def set_newPCI(self,newPCI):
+    def set_newPCI(self:object,newPCI:int):
         """
         Description: Set newPCI for this node
 
@@ -367,7 +367,7 @@ class Node:
         """
         self.newPCI = newPCI
 
-    def get_newPCI(self):
+    def get_newPCI(self:object):
         """
         Description: Return newPCI for this node
 
@@ -379,7 +379,7 @@ class Node:
         """
         return self.newPCI
 
-    def find_weight(self):
+    def find_weight(self:object):
         """
         Description: Find how important is this node
 
@@ -391,7 +391,7 @@ class Node:
         """
         self.weight = 0.3*self.localPCI + 0.7*self.newPCI
 
-    def set_weight(self,weight):
+    def set_weight(self:object,weight:float):
         """
         Description: Set total weight for this node 
 
@@ -403,7 +403,7 @@ class Node:
         """
         self.weight = weight
 
-    def get_weight(self):
+    def get_weight(self:object):
         """
         Description: Return the weight for this node
 
@@ -415,7 +415,7 @@ class Node:
         """
         return self.weight
 
-    def find_betweeness_centrality(self,dict_of_objects):
+    def find_betweeness_centrality(self:object):
         """
         Description: Create local network and find betweeness centrality for node
 
@@ -432,7 +432,7 @@ class Node:
         
         self.centralities_list = sorted([items for items in nx.betweenness_centrality(local_network).items() if items[1] > 0.0],key=lambda x: x[1],reverse=True)
     
-    def get_centrality(self):
+    def get_centrality(self:object):
         """
         Description: Return node betweeness centrality
 
@@ -444,7 +444,7 @@ class Node:
         """
         return self.centrality
 
-    def increace_centrality(self,centrality):
+    def increace_centrality(self:object,centrality:float):
         """
         Description: Increace node betweeness centrality
 
@@ -456,7 +456,7 @@ class Node:
         """
         self.centrality += centrality
 
-    def get_centralities_list(self):
+    def get_centralities_list(self:object):
         """
         Description: Return a list with betweeness centralities for all neighbor nodes
 
@@ -468,7 +468,7 @@ class Node:
         """
         return self.centralities_list
 
-    def find_clPCI(self):
+    def find_clPCI(self:object):
         """
         Description: Find clPCI value for this node
 
@@ -483,7 +483,7 @@ class Node:
         except Exception:
             self.clPCI = 0.0
 
-    def get_clPCI(self):
+    def get_clPCI(self:object):
         """
         Description: Return clPCI value for this node
 
@@ -495,7 +495,7 @@ class Node:
         """
         return self.clPCI
 
-    def set_unique_links_between_nodes(self,unique_links):
+    def set_unique_links_between_nodes(self:object,unique_links:int):
         """
         Description: Set unique links between nodes participate xPCI for this node
 
@@ -507,7 +507,7 @@ class Node:
         """
         self.unique_links = unique_links
 
-    def remove_duplicate(self,input_list):
+    def remove_duplicate(self:object,input_list:list):
         """
         Description: Remove all duplicate items of input list
 
@@ -523,7 +523,7 @@ class Node:
                 final_list.append(item) 
         return final_list
     
-    def remove_dominator(self,dominator):
+    def remove_dominator(self:object,dominator:str):
         """
         Description: Remove dominator of list
 
@@ -536,7 +536,7 @@ class Node:
         if dominator in self.dominators:
             self.dominators.remove(dominator)
     
-    def find_N2_or_N3_of_u(self,nodes,neighborhood):
+    def find_N2_or_N3_of_u(self:object,nodes:dict,neighborhood:list):
         """
         Description: Find N2(u) where u is specific node
 
@@ -574,7 +574,7 @@ class Node:
         
         return self.Ns_of_u_dict[neighborhood]
 
-    def get_N2_of_u(self):
+    def get_N2_of_u(self:object):
         """
         Description: Return two hopes away neighbors of this node
 
@@ -586,7 +586,7 @@ class Node:
         """
         return self.N2_of_u
     
-    def get_N3_of_u(self):
+    def get_N3_of_u(self:object):
         """
         Description: Return three hopes away neighbors of this node
 
@@ -598,7 +598,7 @@ class Node:
         """
         return self.N3_of_u
     
-    def get_dominators(self):
+    def get_dominators(self:object):
         """
         Description: Return a list with all dominators for this node
 
@@ -610,7 +610,7 @@ class Node:
         """
         return self.dominators
     
-    def add_temp_dominator(self,temp_dominator):
+    def add_temp_dominator(self:object,temp_dominator:str):
         """
         Description: Add a temporary dominator to list
 
@@ -622,7 +622,7 @@ class Node:
         """
         self.temp_dominators.append(temp_dominator)
     
-    def delete_temp_dominator(self,temp_dominator):
+    def delete_temp_dominator(self:object,temp_dominator:str):
         """
         Description: Delete a temporary dominator frmo list
 
@@ -637,7 +637,7 @@ class Node:
         except Exception:
             pass
     
-    def clear_temp_dominators(self):
+    def clear_temp_dominators(self:object):
         """
         Description: Clear list of temp dominators
 
@@ -649,7 +649,7 @@ class Node:
         """
         self.temp_dominators = []
 
-    def get_temp_dominators(self):
+    def get_temp_dominators(self:object):
         """
         Description: Return temporary dominators of this node
 
@@ -661,7 +661,7 @@ class Node:
         """
         return self.temp_dominators
     
-    def find_all_nodes_to_3hops(self):
+    def find_all_nodes_to_3hops(self:object):
         """
         Description: Create a list with all nodes 3-hop away from each node in network
 
@@ -674,7 +674,7 @@ class Node:
         self.all_3hop_nodes = []
         self.all_3hop_nodes = self.N_of_u + self.N2_of_u + self.N3_of_u
 
-    def get_all_nodes_to_3hop(self):
+    def get_all_nodes_to_3hop(self:object):
         """
         Description: Return a list with all nodes 3-hop away from this node
 
@@ -686,7 +686,7 @@ class Node:
         """
         return self.all_3hop_nodes
 
-    def find_Nu_PCIs(self,dict_of_objects,pci,args):
+    def find_Nu_PCIs(self:object,dict_of_objects:dict,pci:str,args:argparse.ArgumentParser):
         """
         Description: Add all xPCI values of neighbors to a list and sort it
 
@@ -751,7 +751,7 @@ class Node:
         else:
             self.Nu_xPCIs_list.sort(key=lambda tup: tup[1],reverse=True)
 
-    def check_for_dominator(self,dict_of_objects):
+    def check_for_dominator(self:object,dict_of_objects:dict):
         """
         Description: Check if all nodes has dominators
 
@@ -767,7 +767,7 @@ class Node:
                 return dominator
         return None
 
-    def find_next_dominators(self,node_obj,next_dominators_dict):
+    def find_next_dominators(self:object,node_obj:object,next_dominators_dict:dict):
         """
         Description: Find next dominator
 
@@ -779,14 +779,13 @@ class Node:
         """
         if not set(node_obj.get_N_of_u()) & set([a[0] for a in connected_dominating_set]):
             for neighbor in node_obj.get_N_of_u():
-                neighbor_obj = dict_of_objects[neighbor]
                 if neighbor not in next_dominators_dict:
                     next_dominators_dict[neighbor] = 1
                 else:
                     next_dominators_dict[neighbor] += 1
         return next_dominators_dict
 
-    def node_decision(self,args):
+    def node_decision(self:object,args:argparse.ArgumentParser):
         """
         Description: Node decide for itself to be a dominator
 
@@ -809,17 +808,17 @@ class Node:
 
         if len(self.dominators) < int(args.m):
             for neighbor in self.N_of_u:
-                if neighbor in connected_dominating_set.keys():
+                if neighbor in list(connected_dominating_set.keys()):
                     if neighbor not in self.dominators:
                         self.dominators.append(neighbor)
             if len(self.dominators) < int(args.m):
-                if self.name not in connected_dominating_set.keys():
+                if self.name not in list(connected_dominating_set.keys()):
                     if args.algorithm != "3":
                         connected_dominating_set[self.name] = 1
                     else:
                         counter = 0
                         for neighbor in self.N_of_u:
-                            if neighbor in connected_dominating_set.keys():
+                            if neighbor in list(connected_dominating_set.keys()):
                                 counter += 1
                         if counter >= int(args.k):
                             connected_dominating_set[self.name] = 1
@@ -867,7 +866,7 @@ class Node:
             m = 1
         return m
 
-    def choose_node(self,node_1,node_2,args):
+    def choose_node(self:object,node_1:tuple,node_2:tuple,args:argparse.ArgumentParser):
         """
         Description: Compare two nodes and return more significant
 
@@ -882,11 +881,10 @@ class Node:
         else:
             if node_2[1] / node_1[1] > 1 - node_1[2] / node_2[2]: 
                 return node_1[0]
-            else:
-                return node_2[0]
-            return node_1[0]
+            return node_2[0]
+            
 
-    def compare_nodes(self,node_1,node_2,args):
+    def compare_nodes(self:object,node_1:tuple,node_2:tuple,args:argparse.ArgumentParser):
         """
         Description: Compare n and n-1 nodes and return the most significant of two nodes 
 
@@ -915,7 +913,7 @@ class Node:
 
         return node_1[0]
 
-    def find_dominator(self,dict_of_objects,args):
+    def find_dominator(self:object,dict_of_objects:dict,args:argparse.ArgumentParser):
         """
         Description: Find dominator of node
 
@@ -928,15 +926,13 @@ class Node:
         m = self.construct_m_value(args)
 
         for i in range(m):
-            has_dominator = False
-            for node in connected_dominating_set.keys():
+            for node in list(connected_dominating_set.keys()):
                 node_obj = dict_of_objects[node]
                 if self.name in node_obj.get_N_of_u():
                     if node not in self.dominators:
                         self.dominators.append(node)
                         add_dominator_to_all_nodes(node)
                         remove_nodes_from_dominatees([node])
-                        has_dominator = True
                         break
 
         if args.centrality:         
@@ -945,14 +941,14 @@ class Node:
             self.Nu_xPCIs_list.sort(key=lambda x: x[1],reverse=True)
 
         new_node = self.compare_nodes(self.Nu_xPCIs_list[0],self.Nu_xPCIs_list[1],args) if len(self.Nu_xPCIs_list) > 1 and args.centrality else self.Nu_xPCIs_list[0][0]
-        if new_node in connected_dominating_set.keys():
+        if new_node in list(connected_dominating_set.keys()):
             connected_dominating_set[new_node] += 1
         else:
             connected_dominating_set[new_node] = 1
             add_dominator_to_all_nodes(new_node)
             remove_nodes_from_dominatees([new_node])
                 
-    def all_2_hop_has_dominator(self):
+    def all_2_hop_has_dominator(self:object):
         """
         Description: Check if all 2 hop neighbors have dominator
 
@@ -966,13 +962,13 @@ class Node:
             nodeObj = dict_of_objects[_2_hop_neighbor]
             has_dominator = False
             for neighbor in nodeObj.get_N_of_u():
-                if neighbor in connected_dominating_set.keys() and neighbor in self.N_of_u:
+                if neighbor in list(connected_dominating_set.keys()) and neighbor in self.N_of_u:
                     has_dominator = True
             if not has_dominator:
                 return False
         return True
 
-    def add_node_in_CDS(self,algorithm,args):
+    def add_node_in_CDS(self:object,args:argparse.ArgumentParser):
         """
         Description: Check if exists node of N2 of u without dominator as neighbor
                      and if so add as dominator node of N of u this with largest xPCI
@@ -999,7 +995,7 @@ class Node:
                 for _2_hop_neighbor in nodeObj.get_N_of_u():
                     if _2_hop_neighbor in self.N2_of_u:
                         _2_hop_neighborObj = dict_of_objects[_2_hop_neighbor]
-                        if nodeObj.get_name() not in connected_dominating_set.keys():
+                        if nodeObj.get_name() not in list(connected_dominating_set.keys()):
                             connected_dominating_set[nodeObj.get_name()] = 1
                         else:
                             connected_dominating_set[nodeObj.get_name()] += 1
@@ -1010,7 +1006,7 @@ class Node:
                             break
                 counter += 1
 
-    def print_number_of_dominators(self):
+    def print_number_of_dominators(self:object,args:argparse.ArgumentParser):
         """
         Description: Print the number of dominators for specific node
 
@@ -1020,12 +1016,12 @@ class Node:
         Returns:
             -
         """
-        if self.name not in connected_dominating_set.keys():
-            print "Number of dominators for node with name {} is {}".format(self.name,len(self.dominators)) + " and list of names is: [%s]"%", ".join([a.get_name() for a in self.dominators])
+        if self.name not in list(connected_dominating_set.keys()):
+            write_message(args, "Number of dominators for node with name {} is {}".format(self.name,len(self.dominators)) + " and list of names is: [%s]"%", ".join([a.get_name() for a in self.dominators]), "INFO")
         else:
-            print "Node with name {} is dominator and number of dominators for this node is {}".format(self.name,len(self.dominators)) + " and list of names is: [%s]"%", ".join([a.get_name() for a in self.dominators])
+            write_message(args, "Node with name {} is dominator and number of dominators for this node is {}".format(self.name,len(self.dominators)) + " and list of names is: [%s]"%", ".join([a.get_name() for a in self.dominators]), "INFO")
     
-    def __str__(self):
+    def __str__(self:object):
         """
         Description: Change str representation of node object
 

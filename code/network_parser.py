@@ -5,7 +5,7 @@ from log import *
 import time
 import sys
 
-def parser(user_input,args):
+def parser(args:argparse.ArgumentParser):
     """
     Description: Parse a file represents a network and create the first structure for this
 
@@ -69,7 +69,7 @@ def parser(user_input,args):
                 else:
                     write_process_message(args,2,False)
                 start_time = time.time()
-            dict_of_objects = structures.create_objects_of_nodes(nodes,user_input,args)
+            dict_of_objects = structures.create_objects_of_nodes(nodes,args)
             if args.time:
                 end_time = time.time()
                 write_message(args,"Time running process 2: {}".format(end_time-start_time),"INFO",True)

@@ -28,7 +28,7 @@ global_list = [i for i in range(MAX_SIZE)]
 list_of_files = []
 ##########################
 
-def connect_to_server(number_of_cores):
+def connect_to_server(number_of_cores:int):
     """
     Description: Client create a connection with server
 
@@ -43,7 +43,7 @@ def connect_to_server(number_of_cores):
 
     # Connect the socket to the port where the server is listening
     server_address = (serverIP, server_port)
-    print "connecting to %s port %s" % server_address
+    print("connecting to %s port %s" % server_address)
     sock.connect(server_address)
 
     # Send packet with number of cores to server
@@ -53,7 +53,7 @@ def connect_to_server(number_of_cores):
 
     return sock
 
-def create_message(message_id,number_of_cores,file_id,file_text,offset):
+def create_message(message_id:int,number_of_cores:int,file_id:int,file_text:str,offset:int):
     """
     Description: Client create a connection with server
 
@@ -91,7 +91,7 @@ def create_message(message_id,number_of_cores,file_id,file_text,offset):
         return packed_message
     return None
 
-def recognize_server_packet(packed_message):
+def recognize_server_packet(packed_message:str):
     """
     Description: Method that client recognize server packet
 
@@ -116,9 +116,9 @@ def recognize_server_packet(packed_message):
             file_id = unpack("i", packed_message[12:16])[0]
             last_fd = file_id
             
-            print "Start point in list is:", offset
-            print "End point in list is:", chunk_end
-            print "File ID is:", file_id
+            print("Start point in list is:", offset)
+            print("End point in list is:", chunk_end)
+            print("File ID is:", file_id)
 
             proc = subprocess.Popen(["python", "../../tools/test_algorithms.py", str(number_of_cores), str(offset), str(chunk_end), str(list_of_files)],stdout=subprocess.PIPE)
             proc.wait()
@@ -154,7 +154,7 @@ def create_relative_paths():
         list_of_files[i] = list_of_files[i][list_of_files[i].find("Experiment Networks"):]
     return list_of_files
 
-def send_message(sock):
+def send_message(sock:object):
     """
     Description: Method that use client to send message to server
 
@@ -205,7 +205,7 @@ def send_message(sock):
                                 sock.sendall("OK")
                             list_of_files += packet
                         except Exception as err:
-                            print err
+                            print(err)
                     list_of_files = create_relative_paths()
                     
                     message = create_message(2,0,0,0,0)
@@ -219,17 +219,17 @@ def send_message(sock):
                         sock.sendall(message)
             time.sleep(1)
         except socket.error as err:
-            print err
+            print(err)
             sys.exit(1)
         except IOError as err:
-            print err
+            print(err)
             
             if err.errno == errno.EPIPE:
                 sys.exit(1)
             else:
                 sys.exit(1)            
 
-def close_session_with_server(sock):
+def close_session_with_server(sock:object):
     """
     Description: Close session with server
 
@@ -244,7 +244,7 @@ def close_session_with_server(sock):
     user_interrupt = True
     sock.sendall(message)
     sock.close()
-    print "\nClient is terminated by Ctrl+C signal!!!"
+    print("\nClient is terminated by Ctrl+C signal!!!")
     sys.exit(1)
 
 def main():
@@ -265,9 +265,9 @@ def main():
             time.sleep(0.1)
             # number_of_cores = raw_input("Give number of cores: ")
         except KeyboardInterrupt as err:
-            print err
+            print(err)
             close_session_with_server(sock)
-    print "Server is closed!!!"
+    print("Server is closed!!!")
 
 if __name__=="__main__":
     main()

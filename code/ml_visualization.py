@@ -1,9 +1,9 @@
 from pymnet import *
 from global_variables import *
 from metrics import *
-# import matplotlib
-# matplotlib.use('Agg')
+import matplotlib
 import matplotlib.pyplot as plt
+# matplotlib.use('Agg')
 
 # mnet = MultilayerNetwork(aspects=1)
 mnet = MultilayerNetwork(aspects=1)
@@ -18,7 +18,7 @@ def multilayer_visualization():
         -
     """
     nodeColorDict = {}      # A dictionary for colors of nodes of network
-    for name, node in dict_of_objects.iteritems():
+    for name, node in dict_of_objects.items():
         for neighbor in node.get_N_of_u():
             neighbor_obj = dict_of_objects[neighbor]
             if neighbor in connected_dominating_set:

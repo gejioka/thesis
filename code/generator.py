@@ -22,7 +22,7 @@ def generate_layers_of_nodes():
     
     return nodes_layers_list
 
-def add_neighbor_to_node(node,neighbor):
+def add_neighbor_to_node(node:tuple,neighbor:tuple):
     """
     Description: Add a new node as neighbor of this node
 
@@ -40,7 +40,7 @@ def add_neighbor_to_node(node,neighbor):
     
     return nodes_layers_list
 
-def generate_neighbors(nodes_layers_list,node,first_time):
+def generate_neighbors(nodes_layers_list:list,node:tuple,first_time:bool):
     """
     Description: Generate neighbors of the specific node
 
@@ -81,7 +81,7 @@ def generate_neighbors(nodes_layers_list,node,first_time):
     
     return nodes_layers_list
 
-def create_str(node,layer,neighbors):
+def create_str(node:str,layer:int,neighbors:list):
     """
     Description: Create a string representation of the node it's layer and neighbors
 
@@ -101,36 +101,36 @@ def create_str(node,layer,neighbors):
     
     return string_to_write
 
-def check_arguments(args):
-    if len(argv) > 2:
-        print "Takes maximum 2 arguments. (3 given)"
-        print "Run program like: python <path to program> <network size>"
-        print "python <path to program> --help for more details"
+def check_arguments(args:list):
+    if len(args) > 2:
+        print("Takes maximum 2 arguments. (3 given)")
+        print("Run program like: python <path to program> <network size>")
+        print("python <path to program> --help for more details")
         exit(1)
-    elif len(argv) == 2:
-        if argv[1] == "--help":
-            print "Usage of program:"
-            print "\tsmall:\t\tCreate a network with 10 nodes, maximum 5 neighbors and 1 layer"
-            print "\tmedium:\t\tCreate a network with 100 nodes, maximum 50 neighbors and 10 layers (default)"
-            print "\tlarge:\t\tCreate a network with 1000 nodes, maximum 500 neighbors and 100 layers"
-            print "\tenormous:\tCreate a network with 10000 nodes, maximum 5000 neighbors and 1000 layers"
-        elif argv[1] == "small":
+    elif len(args) == 2:
+        if args[1] == "--help":
+            print("Usage of program:")
+            print("\tsmall:\t\tCreate a network with 10 nodes, maximum 5 neighbors and 1 layer")
+            print("\tmedium:\t\tCreate a network with 100 nodes, maximum 50 neighbors and 10 layers (default)")
+            print("\tlarge:\t\tCreate a network with 1000 nodes, maximum 500 neighbors and 100 layers")
+            print("\tenormous:\tCreate a network with 10000 nodes, maximum 5000 neighbors and 1000 layers")
+        elif args[1] == "small":
             gv.set_number_of_nodes(gv.SMALL)
             gv.set_number_of_neighbors(6)
             gv.set_number_of_layers(1)
-        elif argv[1] == "medium":
+        elif args[1] == "medium":
             gv.set_number_of_nodes(gv.MEDIUM)
             gv.set_number_of_neighbors(int(gv.MEDIUM/2))
             gv.set_number_of_layers(int(gv.MEDIUM/10))
-        elif argv[1] == "large":
+        elif args[1] == "large":
             gv.set_number_of_nodes(gv.LARGE)
             gv.set_number_of_neighbors(int(gv.LARGE/2))
             gv.set_number_of_layers(int(gv.LARGE/10))
-        elif argv[1] == "enormous":
+        elif args[1] == "enormous":
             gv.set_number_of_nodes(gv.ENORMOUS)
             gv.set_number_of_neighbors(int(10))
             gv.set_number_of_layers(int(20))
-    elif len(argv) == 1:
+    elif len(args) == 1:
         gv.set_number_of_nodes(gv.MEDIUM)
         gv.set_number_of_neighbors(int(gv.MEDIUM/2))
         gv.set_number_of_layers(int(gv.MEDIUM/10))
@@ -150,7 +150,7 @@ if __name__=="__main__":
     else:
         type_of_network = "medium"
 
-    with open("networks/dynamic_" + type_of_network + "_network.txt","a") as f:
+    with open("dynamic_" + type_of_network + "_network.txt","w+") as f:
         stdout.write("Start writing network.")
         stdout.flush()
         time.sleep(1)
@@ -171,4 +171,4 @@ if __name__=="__main__":
             string_to_write = create_str(node[0][0],node[0][1],node[1])
             f.write(string_to_write)
             f.write("\n")
-        print "\nA new network created!"
+        print("\nA new network created!")

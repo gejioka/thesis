@@ -2,6 +2,7 @@ from sys import *
 import logging
 import metrics
 import collections
+import argparse
 
 NUMBEROFNODES                   = 0     # A variable of number of nodes for this network
 NUMBEROFNEIGHBORS               = 0     # A variable of number of neighbors for this network
@@ -35,7 +36,7 @@ LEVELS = {  'debug'     : logging.DEBUG,
             'critical'  : logging.CRITICAL
 }
 
-def append_list_of_dominatees(node):
+def append_list_of_dominatees(node:tuple):
     """
     Description: Append node to list of dominatees
 
@@ -48,11 +49,11 @@ def append_list_of_dominatees(node):
     global list_of_dominatees
 
     try:
-        list_of_dominatees[list_of_dominatees.index([i for i in list_of_dominatees if node[0] in i][0])] = node
+        list_of_dominatees[list_of_dominatees.index(next([i for i in list_of_dominatees if node[0] in i][0]))] = node
     except:
         pass
 
-def remove_node_of_dominatees(node):
+def remove_node_of_dominatees(node:str):
     """
     Description: Remove node of list of dominatees
 
@@ -65,11 +66,11 @@ def remove_node_of_dominatees(node):
     global list_of_dominatees
 
     try:
-        list_of_dominatees.pop(list_of_dominatees.index([i for i in list_of_dominatees if node in i][0]))
+        list_of_dominatees.pop(list_of_dominatees.index(next([i for i in list_of_dominatees if node in i][0])))
     except Exception:
         pass
 
-def set_list_of_dominatees(list_of_dom):
+def set_list_of_dominatees(list_of_dom:list):
     """
     Description: Update list of dominatees
 
@@ -97,7 +98,7 @@ def get_list_of_dominatees():
 
     return list_of_dominatees
 
-def set_number_of_nodes(num_of_nodes):
+def set_number_of_nodes(num_of_nodes:int):
     """
     Description: Set number of nodes for this network
 
@@ -110,7 +111,7 @@ def set_number_of_nodes(num_of_nodes):
     global NUMBEROFNODES
     NUMBEROFNODES = num_of_nodes
 
-def set_number_of_neighbors(num_of_neighbors):
+def set_number_of_neighbors(num_of_neighbors:int):
     """
     Description: Set number of neighbors for this network
 
@@ -123,7 +124,7 @@ def set_number_of_neighbors(num_of_neighbors):
     global NUMBEROFNEIGHBORS
     NUMBEROFNEIGHBORS = num_of_neighbors
 
-def set_number_of_layers(num_of_layers):
+def set_number_of_layers(num_of_layers:int):
     """
     Description: Set number of layers for this network
 
@@ -136,7 +137,7 @@ def set_number_of_layers(num_of_layers):
     global NUMBEROFLAYERS
     NUMBEROFLAYERS = num_of_layers
 
-def set_number_of_central_nodes(number_of_central_nodes):
+def set_number_of_central_nodes(number_of_central_nodes:int):
     """
     Description: Set number of central nodes for this network
 
@@ -149,7 +150,7 @@ def set_number_of_central_nodes(number_of_central_nodes):
     global NUMBEROFCENTRALNODES
     NUMBEROFCENTRALNODES = number_of_central_nodes
 
-def set_number_of_neighbors_for_central_nodes(network_type):
+def set_number_of_neighbors_for_central_nodes(network_type:str):
     """
     Description: Set number of neighbors for central nodes of this network
 
@@ -170,7 +171,7 @@ def set_number_of_neighbors_for_central_nodes(network_type):
     elif network_type == "enormous":
         NUMBEROFCENTRALNODESNEIGHBORS = ENORMOUS/20
 
-def print_CDS(args):
+def print_CDS(args:argparse.ArgumentParser):
     """
     Description: Print Connected Dominating Set(CDS) for this network
 
@@ -185,7 +186,7 @@ def print_CDS(args):
 
     to_print = ""
 
-    for node, value in connected_dominating_set.iteritems():
+    for node, value in connected_dominating_set.items():
         number_of_dominatees = nt.find_number_of_dominatees(dict_of_objects[node])
         log.write_message(args,"Node name is " + node + " and number of dominatees is " + str(number_of_dominatees),"INFO")
     

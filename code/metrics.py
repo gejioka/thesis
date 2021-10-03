@@ -1,10 +1,13 @@
 from __future__ import division
 import time
 import random
+
+from networkx.generators.small import dodecahedral_graph
+import node
 from itertools import chain
 from global_variables import *
 
-def find_node_degree(nodes,key):
+def find_node_degree(nodes:dict,key:str):
     """
     Description: Find the degree of node
 
@@ -18,7 +21,7 @@ def find_node_degree(nodes,key):
     
     return len(nodes[key]['intralinks'])
 
-def find_total_degree(nodes,key):
+def find_total_degree(nodes:dict,key:str):
     """
     Description: Find total degree of node
 
@@ -30,7 +33,7 @@ def find_total_degree(nodes,key):
         Size of total links of specific node
     """
     all_neighbors=[]
-    if "interlinks" in nodes[key].keys():
+    if "interlinks" in list(nodes[key].keys()):
         all_neighbors=nodes[key]["intralinks"]
         for layer in nodes[key]["interlinks"]:
             for neighbor in nodes[key]["interlinks"][layer]:
@@ -41,7 +44,7 @@ def find_total_degree(nodes,key):
 
     return len(all_neighbors)
 
-def find_neighbors_per_layer(nodes,node,neighbor):
+def find_neighbors_per_layer(nodes:dict,node:str,neighbor:str):
     """
     Description: Find the neighbors per layer for input node
 
@@ -62,7 +65,7 @@ def find_neighbors_per_layer(nodes,node,neighbor):
     
     return neighbors_per_layer 
 
-def dominators_per_layer(connected_dominating_set):
+def dominators_per_layer(connected_dominating_set:dict):
     """
     Description: Find dominators per layer and add them to list
 
@@ -85,20 +88,18 @@ def dominators_per_layer(connected_dominating_set):
 
     return list_of_layers
     
-def different_layers_node_reach(nodes,key):
+def different_layers_node_reach(nodes:dict):
     """
     Description: Find how many layers specific node reach
 
     Args:
         nodes (dictionary): A dictionary with all informations of all nodes
-        key (String): The key of specific node
-
     Returns:
         Size of all different layers which this node reach
     """
     return len(nodes["key"]["interlinks"])
 
-def find_links_between_neighbors(pci_nodes):
+def find_links_between_neighbors(pci_nodes:list):
     """
     Description: Find all links between neighbors which partitiate PCI of specific node
 
@@ -113,7 +114,7 @@ def find_links_between_neighbors(pci_nodes):
     for node in pci_nodes:
         node_obj = dict_of_objects[node[0]]
         for neighbor in node_obj.get_N_of_u():
-            if filter(lambda tup: neighbor in tup, pci_nodes):
+            if list(filter(lambda tup: neighbor in tup, pci_nodes)):
                 if neighbor < node[0] and (neighbor,node[0]) not in list_of_links:
                     list_of_links.append((neighbor,node[0]))
                     unique_links += 1
@@ -122,7 +123,7 @@ def find_links_between_neighbors(pci_nodes):
                     unique_links += 1
     return unique_links
 
-def random_nodes(list_of_nodes,pci_value):
+def random_nodes(list_of_nodes:list,pci_value:int):
     """
     Description: Return k random nodes of list
 
@@ -135,7 +136,7 @@ def random_nodes(list_of_nodes,pci_value):
     """
     return random.sample(list_of_nodes,pci_value)
 
-def decice_pci_algorithm(args,nodes,node,node_obj,all_layers):
+def decice_pci_algorithm(args:argparse.ArgumentParser,nodes:list,node:dict,node_obj:node.Node,all_layers:int):
     """
     Description: Decide which pci algorithm to use as metric
 
@@ -174,7 +175,7 @@ def decice_pci_algorithm(args,nodes,node,node_obj,all_layers):
     elif args.pci == "sl":
         node_obj.set_localPCI(single_layer_pci(nodes,node)[0])
 
-def single_layer_pci(nodes,node):
+def single_layer_pci(nodes:dict,node:str):
     """
     Description: Find pci value for node
 
@@ -204,7 +205,7 @@ def single_layer_pci(nodes,node):
 
     return (pci_value,list_of_nodes)
 
-def calculate_total_centrality(node):
+def calculate_total_centrality(node:str):
     """
     Description: Calculate total centrality for a node
 
@@ -217,7 +218,7 @@ def calculate_total_centrality(node):
     for name,centrality in node.get_centralities_list():
         dict_of_objects[name].increace_centrality(centrality)
             
-def create_interlayer_nodes_list(nodes,parent,key,list_of_interlayer_nodes):
+def create_interlayer_nodes_list(nodes:dict,parent:str,key:str,list_of_interlayer_nodes:list):
     """
     Description: Create a list with all nodes which participate the xPCI
 
@@ -225,7 +226,7 @@ def create_interlayer_nodes_list(nodes,parent,key,list_of_interlayer_nodes):
         nodes (dictionary): A dictionary with all informations of all nodes
         parent (String): The parent of specific node
         key (String): The key of the specific node
-        list_of_interlayer_nodes: A list with all interlayer nodes
+        list_of_interlayer_nodes(list): A list with all interlayer nodes
 
     Returns:
         list_of_interlayer_nodes
@@ -240,7 +241,7 @@ def create_interlayer_nodes_list(nodes,parent,key,list_of_interlayer_nodes):
                     list_of_interlayer_nodes = create_interlayer_nodes_list(nodes,key,node,list_of_interlayer_nodes)
     return list_of_interlayer_nodes
     
-def find_xPCI(nodes,node):
+def find_xPCI(nodes:dict,node:str):
     """
     Description: Calculate xPCI value for specific node
 
@@ -268,7 +269,7 @@ def find_xPCI(nodes,node):
     
     return (xPCI,xPCI_nodes)
 
-def find_laPCI(nodes,node):
+def find_laPCI(nodes:dict,node:str):
     """
     Description: Calculate laPCI value for specific node
 
@@ -309,7 +310,7 @@ def find_laPCI(nodes,node):
     
     return (laPCI,list_of_nodes)
 
-def create_list_of_neighbors(nodes,node):
+def create_list_of_neighbors(nodes:dict,node:str):
     """
     Description: Create a list with all neighbors of node
 
@@ -331,7 +332,7 @@ def create_list_of_neighbors(nodes,node):
             list_of_neighbors.append(neighbors_per_layer)
     return list_of_neighbors
 
-def has_atleast_k_neighbors(k,list_of_neighbors,all_layers=None):
+def has_atleast_k_neighbors(k:int,list_of_neighbors:list,all_layers:int=None):
     """
     Description: Check if specific node has atleast k_neighbors
 
@@ -355,7 +356,7 @@ def has_atleast_k_neighbors(k,list_of_neighbors,all_layers=None):
         return True
     return False
 
-def has_interlinks(interlinks,n,k,intra_flag):
+def has_interlinks(interlinks:dict,n:int,k:int,intra_flag:bool):
     """
     Description: Check if specific node has atleast k_neighbors to n layers
 
@@ -380,7 +381,7 @@ def has_interlinks(interlinks,n,k,intra_flag):
                 return True
     return False
 
-def k_neighbors_to_n_layers(n,list_of_neighbors):
+def k_neighbors_to_n_layers(n:int,list_of_neighbors:list):
     """
     Description: Check if has k neighbors with k neighbors each in n layers
 
@@ -418,7 +419,7 @@ def k_neighbors_to_n_layers(n,list_of_neighbors):
     
     return k
 
-def find_alPCI(nodes,node,all_layers):
+def find_alPCI(nodes:dict,node:str,all_layers:int):
     """
     Description: Calculate alPCI value for specific node
 
@@ -441,7 +442,7 @@ def find_alPCI(nodes,node,all_layers):
             break
     return number_of_nodes
 
-def find_mlPCI(nodes,node):
+def find_mlPCI(nodes:dict,node:str):
     """
     Description: Calculate mlPCI value for specific node
 
@@ -465,7 +466,7 @@ def find_mlPCI(nodes,node):
             break
     return sum(mlPCI)
 
-def find_lsPCI(nodes,node):
+def find_lsPCI(nodes:dict,node:str):
     """
     Description: Calculate mlPCI value for specific node
 
@@ -489,7 +490,7 @@ def find_lsPCI(nodes,node):
             break
     return len(mlPCI)
 
-def find_newPCI(nodes,node,mlPCI):
+def find_newPCI(nodes:dict,node:str,mlPCI:float):
     """
     Description: Find newPCI metric for this node
 

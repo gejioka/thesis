@@ -60,7 +60,7 @@ def init_server():
     
     server_address = (server_IP, server_port)
     sl.write_log("[!] Server open TCP/IP socket with IP address {} and port {}!!!".format(server_IP,server_port),"info")
-    print "starting up on %s port %s" % server_address
+    print("starting up on %s port %s" % server_address)
 
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind(server_address)
@@ -69,7 +69,7 @@ def init_server():
 
     return sock
 
-def accept_clients(sock):
+def accept_clients(sock:object):
     """
     Description: Method that use server to accept clients
 
@@ -86,7 +86,7 @@ def accept_clients(sock):
     # Listen for incoming connections
     sock.listen(backlog)
     
-    print "Waiting for connection..."
+    print("Waiting for connection...")
     while not user_interrupt:
         try:
             connection, client_address = sock.accept()
@@ -110,7 +110,7 @@ def accept_clients(sock):
                         list_of_clients[i] = None
                 list_of_clients = [client for client in list_of_clients if client != None]
 
-def split_list_to_packets(listOfFiles):
+def split_list_to_packets(listOfFiles:list):
     """
     Description: Split list of files to packets.
 
@@ -134,7 +134,7 @@ def split_list_to_packets(listOfFiles):
     
     return packed_list
 
-def send_list_to_client(connection):
+def send_list_to_client(connection:object):
     """
     Description: Method that use server to send list of files to client
 
@@ -165,7 +165,7 @@ def send_list_to_client(connection):
         connection.sendall("OK")
         sl.write_log("[!] Server send successfully all files to client","info")
         
-def create_list_of_files(_root_folder):
+def create_list_of_files(_root_folder:str):
     """
     Description: Method that use server create a list with all input files that clients needs to process
 
@@ -178,7 +178,7 @@ def create_list_of_files(_root_folder):
     sl.write_log("[!] Server create a list with all input files for clients.","info")
 
     listOfFiles = list()
-    for (dirpath, dirnames, filenames) in os.walk(_root_folder):
+    for (dirpath, _, filenames) in os.walk(_root_folder):
         listOfFiles += [os.path.join(dirpath, file) for file in filenames]
     return listOfFiles
 
@@ -208,7 +208,7 @@ def find_max_size():
     return max_size
     
 
-def create_next_packet(offset,number_of_cores,fileID,message_id):
+def create_next_packet(offset:int,number_of_cores:int,fileID:int,message_id:int):
     """
     Description: Method that use server to create next packet for client
 
@@ -244,7 +244,7 @@ def create_next_packet(offset,number_of_cores,fileID,message_id):
         return packed_message
     return None
 
-def recognize_client_message(packed_message,number_of_cores):
+def recognize_client_message(packed_message:str,number_of_cores:int):
     """
     Description: Method that use server recognize client message
 
@@ -352,7 +352,7 @@ def close_session_with_all_clients():
             pass
     sl.write_log("Server successfully close all sessions with clients.","info")
 
-def wait_threads(accept_thread,list_of_clients):
+def wait_threads(accept_thread:object,list_of_clients:list):
     """
     Description: Wait all threads end their jobs
 
@@ -368,7 +368,7 @@ def wait_threads(accept_thread,list_of_clients):
         if client != None:
             client.join()
 
-def client_thread_f(connection,client_address,number_of_cores):
+def client_thread_f(connection:object,client_address:tuple,number_of_cores:int):
     """
     Description: A thread method for client threads
     Args:
@@ -386,8 +386,8 @@ def client_thread_f(connection,client_address,number_of_cores):
 
     client_interrupt = False
 
-    print "Try to connect client with IP {} and port {}!!!".format(client_address[0],client_address[1])  
-    print "Number of cores is:", number_of_cores
+    print("Try to connect client with IP {} and port {}!!!".format(client_address[0],client_address[1]))
+    print("Number of cores is:", number_of_cores)
 
     send_list_to_client(connection)
 
@@ -404,7 +404,7 @@ def client_thread_f(connection,client_address,number_of_cores):
                         try:
                             client_interrupt = True
                             
-                            print "connections", list_of_connections
+                            print("connections", list_of_connections)
                             list_of_connections.remove((connection,client_address))
                             connection.close()
                         except Exception as err:
@@ -424,11 +424,18 @@ def client_thread_f(connection,client_address,number_of_cores):
                             sl.write_log("Send failed!!!"+str(err1),"warning")
                             time.sleep(1)
 
-def get_results_filename(path):
+def get_results_filename(path:str):
+    """
+    Description: Get the filename with the results
+    Args:
+        path(string): A variable that represents the path of the results file
+    Returns:
+        results
+    """
     from os import walk
 
     f = []
-    for (dirpath, dirnames, filenames) in walk(path):
+    for (_, _, filenames) in walk(path):
         f.extend(filenames)
         break
     return "results_"+str(int(sorted(f,key=lambda x : int(x.split("_")[1]),reverse=True)[0].split("_")[1])+1)
@@ -459,10 +466,10 @@ def main():
             
             time.sleep(.1)
     except KeyboardInterrupt:
-        print "\nA Ctrl+C signal occured. Program terminated!!!"
+        print("\nA Ctrl+C signal occured. Program terminated!!!")
         for text in list_of_files:
             if text != "":
-                print text
+                print(text)
             else:
                 break
         close_session_with_all_clients()

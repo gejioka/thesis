@@ -12,7 +12,7 @@ ROBUST_ALG = True
 MAX_K = 4
 MAX_M = 4
 
-def execute_command(filename,metric,algorithm,backbone,pool,counter,k,m,number_of_cores,merge=False):
+def execute_command(filename:str,metric:str,algorithm:int,backbone:str,pool:list,counter:int,k:int,m:int,number_of_cores:int,merge:bool=False):
     """
     Description: Run thesis for specific input file with specific arguments
 
@@ -43,11 +43,10 @@ def execute_command(filename,metric,algorithm,backbone,pool,counter,k,m,number_o
         else:
             proc = subprocess.Popen(["python", "../../code/main.py", "-fp", filename, "-a", algorithm, "-p", metric, "-k", str(k), "-m", str(m), "-i", str(counter), "-n", str(number_of_cores), "--testing", backbone])
     pool.append(proc)
-    pid  = proc.pid
-
+    
     return pool
 
-def wait_processes(pool):
+def wait_processes(pool:list):
     """
     Description: Wait all processes to finish their jobs
 
@@ -56,9 +55,9 @@ def wait_processes(pool):
     Returns:
         -
     """
-    exit_codes = [p.wait() for p in pool]
+    [p.wait() for p in pool]
 
-def append_milcom_arguments(filename,metric,list_of_arguments,counter):
+def append_milcom_arguments(filename:str,metric:str,list_of_arguments:list,counter:int):
     """
     Description: A method that appends to list of arguments all arguments needed for MILCOM algorithm to run
 
@@ -77,7 +76,7 @@ def append_milcom_arguments(filename,metric,list_of_arguments,counter):
 
     return list_of_arguments,counter
 
-def append_new_arguments(filename,metric,list_of_arguments,counter):
+def append_new_arguments(filename:str,metric:str,list_of_arguments:list,counter:int):
     """
     Description: A method that appends to list of arguments all arguments needed for NEW algorithm to run
 
@@ -96,7 +95,7 @@ def append_new_arguments(filename,metric,list_of_arguments,counter):
 
     return list_of_arguments,counter
 
-def append_robust_arguments(filename,metric,list_of_arguments,counter):
+def append_robust_arguments(filename:str,metric:str,list_of_arguments:list,counter:int):
     """
     Description: A method that appends to list of arguments all arguments needed for ROBUST algorithm to run
 
@@ -116,7 +115,7 @@ def append_robust_arguments(filename,metric,list_of_arguments,counter):
             counter += 1
     return list_of_arguments,counter
 
-def create_list_of_arguments(filename,metric,pool,counter,list_of_arguments):
+def create_list_of_arguments(filename:str,metric:str,counter:int,list_of_arguments:list):
     """
     Description: Create a list with all arguments which processes needs
 
@@ -151,7 +150,7 @@ def create_list_of_arguments(filename,metric,pool,counter,list_of_arguments):
 
     return counter,list_of_arguments
 
-def add_merge_field(list_of_arguments,number_of_cores):
+def add_merge_field(list_of_arguments:list,number_of_cores:int):
     """
     Description: Add merge field where it needed
 
@@ -168,7 +167,7 @@ def add_merge_field(list_of_arguments,number_of_cores):
         except:
             pass
 
-def delete_files(_root_folder,offset,number_of_cores):
+def delete_files(_root_folder:str,offset:int,number_of_cores:int):
     """
     Description: Delete all files when all processes finish their jobs
 
@@ -180,7 +179,7 @@ def delete_files(_root_folder,offset,number_of_cores):
         -
     """
     list_of_files=[]
-    for (dirpath, dirnames, filenames) in os.walk(_root_folder):
+    for (dirpath, _, filenames) in os.walk(_root_folder):
         list_of_files += [os.path.join(dirpath, file) for file in filenames]
     
     for filename in list_of_files:
@@ -190,7 +189,7 @@ def delete_files(_root_folder,offset,number_of_cores):
         except Exception as err:
             pass
 
-def merge_files(number_of_cores,offset):
+def merge_files(number_of_cores:int,offset:int):
     """
     Description: Merge all output files of processes to one
 
@@ -240,7 +239,7 @@ def merge_files(number_of_cores,offset):
     sys.stdout.write(total_data)
     sys.stdout.flush()
 
-def print_arguments(list_of_arguments):
+def print_arguments(list_of_arguments:list):
     """
     Description: Print list of arguments
 
@@ -250,9 +249,9 @@ def print_arguments(list_of_arguments):
         -
     """
     for argument in list_of_arguments:
-        print argument
+        print(argument)
 
-def run_tests(list_of_arguments,offset,number_of_cores,list_of_metrics):
+def run_tests(list_of_arguments:list,offset:int,number_of_cores:int):
     """
     Description: Run all tests
 
@@ -278,7 +277,7 @@ def run_tests(list_of_arguments,offset,number_of_cores,list_of_metrics):
         wait_processes(pool)
         merge_files(number_of_cores,offset)
     except KeyboardInterrupt:
-        print "An Ctrl+C interrupt occured!!! Program terminated!!!"
+        print("An Ctrl+C interrupt occured!!! Program terminated!!!")
         for process in pool:
             process.terminate()
         sys.exit(0)
@@ -286,20 +285,18 @@ def run_tests(list_of_arguments,offset,number_of_cores,list_of_metrics):
 def main():
     list_of_metrics = ["cl"]
     list_of_arguments=[]
-    pool = []
     counter = 0
 
     number_of_cores = sys.argv[1]
     offset = sys.argv[2]
-    chunk_end = sys.argv[3]
     argument = sys.argv[4].replace("\"","")
     listOfFiles = ast.literal_eval(argument)
     
     for i in range(len(listOfFiles)):
         for metric in list_of_metrics:
-            counter,list_of_arguments = create_list_of_arguments(listOfFiles[i],metric,[],counter,list_of_arguments)
+            counter,list_of_arguments = create_list_of_arguments(listOfFiles[i],metric,counter,list_of_arguments)
         add_merge_field(list_of_arguments,int(number_of_cores))
-    run_tests(list_of_arguments,int(offset),int(number_of_cores),list_of_metrics)
+    run_tests(list_of_arguments,int(offset),int(number_of_cores))
 
 if __name__=="__main__":
     main()
